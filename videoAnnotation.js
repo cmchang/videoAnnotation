@@ -136,6 +136,13 @@ google.setOnLoadCallback(_run);
  * 2. Progressbar-related Code  
  */
 
+function progressbar_click(mouseX){
+	var percentage = mouseX/660;
+	$("#progressbar").progressbar("option","value",percentage*100); //updates progressbar location
+	var currentSec = percentage*ytplayer.getDuration();
+	ytplayer.seekTo(currentSec, true); //updates ytplayer location in video
+}
+
 jQuery(document).ready(function(){
    $(document).mousemove(function(e){
       $('#status').html(e.pageX +', '+ e.pageY);
@@ -147,5 +154,6 @@ jQuery(document).ready(function(){
 		var relX = e.pageX - parentOffset.left;
 		var relY = e.pageY - parentOffset.top;
 		$('#offset').html(relX + ', ' + relY);
+		progressbar_click(relX);
 	});
 })
