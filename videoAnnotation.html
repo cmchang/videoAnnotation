@@ -1,0 +1,45 @@
+<!--
+You are free to copy and use this sample in accordance with the terms of the
+Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Video Annotation</title>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+	<script type="text/javascript">
+		google.load("swfobject", "2.1");
+	</script>    
+	<script src = "videoAnnotation.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="videoAnnotation.css">
+
+</head>
+<body>
+	<div class = "videoView">
+		<div class = "videoContainer">
+			<div id="videoDiv">Loading...</div>
+		</div>
+		<div class = "videoMenu">
+			<div class = "playORpause_holder"><img class = "playORpause" onclick="playORpause();" src="images/play.png"></div>
+			<div id="progressbar"></div>
+			<div class = "muteORunmute_holder"><img class = "muteORunmute" onclick="muteORunmute()" src = "images/mute.png"></div>
+			
+		</div>
+	</div>
+
+	<div class = "commentsView"></div>
+
+	<div id="videoInfo" class = "videoInfo">
+		<p>Player state: <span id="playerState">--</span></p>
+		<p>Current Time: <span id="videoCurrentTime">--:--</span> | Duration: <span id="videoDuration">--:--</span></p>
+		<p>Bytes Total: <span id="bytesTotal">--</span> | Start Bytes: <span id="startBytes">--</span> | Bytes Loaded: <span id="bytesLoaded">--</span></p>
+		<p><input id="volumeSetting" type="text" size="3" />&nbsp;<a href="javascript:void(0)" onclick="setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
+	</div>				
+</body>
+</html>
+​

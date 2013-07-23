@@ -1,0 +1,37 @@
+.videoView, .commentsView, .videoInfo{
+	display:inline-block;
+}
+.videoView, .videoContainer, .videoInfo{
+	width: 752px;
+}
+
+.videoMenu{
+	width: 752px;
+	height:35px;
+	background: #E6E6E6;
+	border-radius: 5px;
+}
+
+.playORpause_holder, #progressbar, .muteORunmute_holder{
+	display:inline-block;
+}
+.playORpause_holder, .muteORunmute_holder{
+	width: 35px;
+}
+
+#progressbar{
+	width:665px; 
+	height: 10px;
+	margin-bottom: 10px;
+}
+
+
+.commentsView{
+	left: 752px;
+	width: 300px;
+	height: 463px;
+	background: #E6E6E6;
+	margin-top:2px; 
+}
+
+
