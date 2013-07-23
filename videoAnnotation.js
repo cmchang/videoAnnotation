@@ -1,5 +1,11 @@
 /*
- * Chromeless player has no controls.
+ * Table of Contents - Organized by astrixed comment sections
+ *		1. Youtube Video-Related Code
+ *		2. Progressbar-related Code 
+ */
+
+/*
+ * 1. Youtube Video-Related Code
  */
 
 // Update a particular HTML element with a new value
@@ -24,11 +30,18 @@ function updatePlayerInfo() {
 	if(ytplayer && ytplayer.getDuration) {
 		updateHTML("videoDuration", ytplayer.getDuration());
 		updateHTML("videoCurrentTime", ytplayer.getCurrentTime());
+		var percentage = 100*ytplayer.getCurrentTime()/ytplayer.getDuration();
+		//$("#progressbar").progressbar("option","value", percentage);
+		updateHTML("videoPercentage", percentage);
 		updateHTML("bytesTotal", ytplayer.getVideoBytesTotal());
 		updateHTML("startBytes", ytplayer.getVideoStartBytes());
 		updateHTML("bytesLoaded", ytplayer.getVideoBytesLoaded());
 		updateHTML("volume", ytplayer.getVolume());
 	}
+}
+function updateProgressBar(){
+	var percentage = 100*ytplayer.getCurrentTime()/ytplayer.getDuration();
+	$("#progressbar").progressbar("option","value", percentage);
 }
 
 // Allow the user to set the volume from 0-100
@@ -92,6 +105,7 @@ function onYouTubePlayerReady(playerId) {
 	ytplayer = document.getElementById("ytPlayer");
 	// This causes the updatePlayerInfo function to be called every 250ms to
 	// get fresh data from the player
+	setInterval(updateProgressBar, 1000);
 	setInterval(updatePlayerInfo, 250);
 	updatePlayerInfo();
 	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
@@ -114,6 +128,24 @@ function loadPlayer() {
 function _run() {
 	loadPlayer();
 	$("#progressbar").progressbar();
-	$("#progressbar").progressbar("option","value",37);
+	$("#progressbar").progressbar("option","value",0);
 }
 google.setOnLoadCallback(_run);
+
+/*
+ * 2. Progressbar-related Code  
+ */
+
+jQuery(document).ready(function(){
+   $(document).mousemove(function(e){
+      $('#status').html(e.pageX +', '+ e.pageY);
+   }); 
+
+   $("#progressbar").click(function(e){
+		var parentOffset = $(this).parent().offset(); 
+		//or $(this).offset(); if you really just want the current element's offset
+		var relX = e.pageX - parentOffset.left;
+		var relY = e.pageY - parentOffset.top;
+		$('#offset').html(relX + ', ' + relY);
+	});
+})

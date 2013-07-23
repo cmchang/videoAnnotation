@@ -1,37 +1,51 @@
 .videoView, .commentsView, .videoInfo{
-	display:inline-block;
+	position: absolute;
+	top: 5px;
 }
 .videoView, .videoContainer, .videoInfo{
 	width: 752px;
 }
 
 .videoMenu{
-	width: 752px;
+	padding: 5px;
+	width: 740px;
 	height:35px;
 	background: #E6E6E6;
 	border-radius: 5px;
 }
 
-.playORpause_holder, #progressbar, .muteORunmute_holder{
+.playORpause_holder, .progressbar_container, .muteORunmute_holder{
 	display:inline-block;
 }
 .playORpause_holder, .muteORunmute_holder{
 	width: 35px;
 }
 
-#progressbar{
-	width:665px; 
+.progressbar_container{
+	width: 660px;
 	height: 10px;
+	margin-bottom: 12px;
+
+}
+#progressbar{
+	position: relative;
+	width:100%; 
+	height: 100%;
 	margin-bottom: 10px;
 }
 
 
 .commentsView{
-	left: 752px;
+	left: 765px;
 	width: 300px;
 	height: 463px;
 	background: #E6E6E6;
 	margin-top:2px; 
+	border-radius: 5px;
+}
+
+.videoInfo{
+	top: 470px;
 }
 
 

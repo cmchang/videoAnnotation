@@ -26,17 +26,20 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		</div>
 		<div class = "videoMenu">
 			<div class = "playORpause_holder"><img class = "playORpause" onclick="playORpause();" src="images/play.png"></div>
-			<div id="progressbar"></div>
+			<div class = "progressbar_container"><div id="progressbar"></div></div>
 			<div class = "muteORunmute_holder"><img class = "muteORunmute" onclick="muteORunmute()" src = "images/mute.png"></div>
 			
 		</div>
 	</div>
 
-	<div class = "commentsView"></div>
+	<div class = "commentsView">
+		<p id="status">0, 0</p>
+		<p id = "offset">0, 0</p>
+	</div>
 
 	<div id="videoInfo" class = "videoInfo">
 		<p>Player state: <span id="playerState">--</span></p>
-		<p>Current Time: <span id="videoCurrentTime">--:--</span> | Duration: <span id="videoDuration">--:--</span></p>
+		<p>Current Time: <span id="videoCurrentTime">--:--</span> | Duration: <span id="videoDuration">--:--</span> | Percentage: <span id = "videoPercentage">--:--</span></p>
 		<p>Bytes Total: <span id="bytesTotal">--</span> | Start Bytes: <span id="startBytes">--</span> | Bytes Loaded: <span id="bytesLoaded">--</span></p>
 		<p><input id="volumeSetting" type="text" size="3" />&nbsp;<a href="javascript:void(0)" onclick="setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
 	</div>				
