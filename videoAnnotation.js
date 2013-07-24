@@ -2,6 +2,7 @@
  * Table of Contents - Organized by astrixed comment sections
  *		1. Youtube Video-Related Code
  *		2. Progressbar-related Code 
+ *		3. Commenting-related Code
  */
 
 /*
@@ -103,6 +104,15 @@ function unMuteVideo() {
 // This function is automatically called by the player once it loads
 function onYouTubePlayerReady(playerId) {
 	ytplayer = document.getElementById("ytPlayer");
+
+	//This hack is an attempt to eliminate the big red play button by default
+	//it prevents the default play button from playing the video without changing my own play button
+	//it also starts the loading of the video sooner
+	window.setTimeout(function() {
+		ytplayer.playVideo();
+	    ytplayer.pauseVideo();
+	}, 0);
+
 	// This causes the updatePlayerInfo function to be called every 250ms to
 	// get fresh data from the player
 	setInterval(updateProgressBar, 1000);
@@ -157,3 +167,17 @@ jQuery(document).ready(function(){
 		progressbar_click(relX);
 	});
 })
+
+/*
+ * 3. Commenting-related Code
+ */
+
+var commentObj = {};
+
+function show_addNewComment(){
+	$(".commentsView_newComment").css("display", "");
+}
+function comment_btn(){
+	ytplayer.pauseVideo();
+	show_addNewComment();
+}

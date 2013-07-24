@@ -39,9 +39,39 @@
 	left: 765px;
 	width: 300px;
 	height: 469px;
-	background: #E6E6E6;
 	margin-top:2px; 
 	border-radius: 5px;
+	overflow: hidden;
+}
+
+.commentsView_menu{
+	background: #E6E6E6;
+	border-radius: 5px;
+	padding: 5px;
+	margin-bottom: 5px;
+
+}
+
+.commentsView_newComment{
+	padding: 5px;
+	background: #E6E6E6;
+	height: 150px;
+	border-radius: 5px;
+	margin-bottom: 5px;
+}
+
+.newCommentTextbox{
+	height: 60px;
+	width: 98%;
+	resize: none;
+}
+.commentsView_holder{
+	background: #E6E6E6;
+	height: 429px;
+	border-radius: 5px;
+}
+
+.addNote_btn{
 }
 
 .videoInfo{

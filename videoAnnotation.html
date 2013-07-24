@@ -33,8 +33,21 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 	</div>
 
 	<div class = "commentsView">
-		<p id="status">0, 0</p>
-		<p id = "offset">0, 0</p>
+		<div class = "commentsView_menu">
+			<button class = "addNote_btn" onclick="comment_btn()">Comment</button>
+		</div>
+		<div class = "commentsView_newComment" style = "display:none;">
+			<div>
+			<textarea class = "newCommentTextbox"></textarea>
+			</div>
+			<button class = "submitComment_btn">Submit</button>
+		</div>
+		<div class = "commentsView_holder">
+			<div style = "display:none;">
+				<div>Mouse Postion: <text id="status">0, 0</text></div>
+				<div>Relative Mouse Postion in Progressbar:<text id = "offset">0, 0</text> </div>
+			</div>
+		</div>
 	</div>
 
 	<div id="videoInfo" class = "videoInfo">
