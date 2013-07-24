@@ -57,6 +57,9 @@ function setVideoVolume() {
 	}
 }
 
+function videoClicked(){
+	playORpause();
+}
 function playORpause(){
 	if ($(".playORpause").attr("src") == "images/play.png"){
 		$(".playORpause").attr("src", "images/pause.png")
@@ -168,16 +171,19 @@ jQuery(document).ready(function(){
 		$('#offset').html(relX + ', ' + relY);
 		progressbar_click(relX);
 	});
-	$(function() {
-		$( "#accordion" ).accordion();
-		$("#accordion").accordion({ header: "h3", collapsible: true, active: false });
-	});
+	setupAccordion();
    addTicks();
 })
+
 
 /*
  * 3. Commenting-related Code
  */
+
+function setupAccordion(){
+	$( "#accordion" ).accordion();
+	$("#accordion").accordion({ header: "h3", collapsible: true, active: false}); //heightStyle:"content"
+}
 
 var commentObj = [];
 var commentNum = 0;
@@ -192,10 +198,20 @@ function comment_btn(){
 
 function submitNewComment(){
 	$(".commentsView_newComment").css("display", "none");
-	var text = $(".newCommentTextbox").val().
+	var text = $(".newCommentTextbox").val();
 	commentObj.push({ "commentID": commentNum,
 						"text" : text });
+	$(".newCommentTextbox").val("");
+	commentNum+=1;
+	showNewComment();
 
+}
+
+function showNewComment(){
+	var html = "<text>New Comment</text><div>"+commentObj[commentNum-1].text + "</div>"; //add code here
+	console.log(html);
+	$("#accordion").append(html).accordion('destroy');
+	setupAccordion();
 }
 
 /*
