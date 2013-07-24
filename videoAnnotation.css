@@ -1,4 +1,4 @@
-.videoView, .commentsView, .videoInfo{
+.videoView, .commentsView, .videoInfo, .tickmarkView{
 	position: absolute;
 	top: 5px;
 }
@@ -24,16 +24,22 @@
 .progressbar_container{
 	width: 660px;
 	height: 10px;
-	margin-bottom: 12px;
-
+	margin-bottom: 13px;
 }
+
 #progressbar{
 	position: relative;
 	width:100%; 
 	height: 100%;
-	margin-bottom: 10px;
+
 }
 
+#videoTimeDisplay{
+	text-align: right;	
+	height: 100%;
+	font-size: 8pt;
+	font-family: verdana, helvetica, arial, sans-serif;
+}
 
 .commentsView{
 	left: 765px;
@@ -52,6 +58,9 @@
 
 }
 
+.commentsView_holder{
+	font-size: 8pt;	
+}
 .commentsView_newComment{
 	padding: 5px;
 	background: #E6E6E6;
@@ -66,12 +75,41 @@
 	resize: none;
 }
 .commentsView_holder{
+	overflow: scroll;
 	background: #E6E6E6;
 	height: 429px;
 	border-radius: 5px;
 }
 
-.addNote_btn{
+.tickmarkView{
+	padding: 5px;
+	width: 740px;
+	height:35px;
+	background: #E6E6E6;
+	border-radius: 5px;
+	margin-top: 15px;
+	top: 470px;
+}
+#tickmark_holder{
+	position: absolute;
+	width: 660px;
+	height: 10px;
+	margin-bottom: 12px;
+	background: white;
+	border: solid 1px #B5AF9F;
+	border-radius: 3px;
+	top: 10px;
+	left: 40px;
+}
+
+#tickmark{
+	position: absolute;
+	left: 25px;
+	width: 2px;
+	height: 100%;
+	background: red;
+	opacity: .4;
+
 }
 
 .videoInfo{

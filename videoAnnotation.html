@@ -26,7 +26,10 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		</div>
 		<div class = "videoMenu">
 			<div class = "playORpause_holder"><img class = "playORpause" onclick="playORpause();" src="images/play.png"></div>
-			<div class = "progressbar_container"><div id="progressbar"></div></div>
+			<div class = "progressbar_container">
+				<div id="progressbar"></div>
+				<div id = "videoTimeDisplay">Time:--:--</div>
+			</div>
 			<div class = "muteORunmute_holder"><img class = "muteORunmute" onclick="muteORunmute()" src = "images/mute.png"></div>
 			
 		</div>
@@ -40,17 +43,54 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			<div>
 			<textarea class = "newCommentTextbox"></textarea>
 			</div>
-			<button class = "submitComment_btn">Submit</button>
+			<button class = "submitComment_btn" onclick="submitNewComment()">Submit</button>
 		</div>
 		<div class = "commentsView_holder">
 			<div style = "display:none;">
 				<div>Mouse Postion: <text id="status">0, 0</text></div>
 				<div>Relative Mouse Postion in Progressbar:<text id = "offset">0, 0</text> </div>
 			</div>
+			<div id="accordion">
+				<text>Comment 1</text>
+				<div>
+				<p>
+				Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+				ut neque. 
+				</p>
+				</div>
+				<text>Comment 2</text>
+				<div>
+				<p>
+				Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+				ut neque. 
+				</p>
+				</div>
+				<text>Comment 3</text>
+				<div>
+				<p>
+				Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+				ut neque. 
+				</p>
+				</div>
+				<text>Comment 4</text>
+				<div>
+				<p>
+				Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+				ut neque. 
+				</p>
+				</div>
+			</div> 
+<!-- end of accordian div -->
 		</div>
 	</div>
 
-	<div id="videoInfo" class = "videoInfo">
+	<div class = "tickmarkView">
+		<div id ="tickmark_holder">
+			<div id = "tickmark"></div>
+		</div>
+	</div>
+
+	<div id="videoInfo" class = "videoInfo" style = "display:none">
 		<p>Player state: <span id="playerState">--</span></p>
 		<p>Current Time: <span id="videoCurrentTime">--:--</span> | Duration: <span id="videoDuration">--:--</span> | Percentage: <span id = "videoPercentage">--:--</span></p>
 		<p>Bytes Total: <span id="bytesTotal">--</span> | Start Bytes: <span id="startBytes">--</span> | Bytes Loaded: <span id="bytesLoaded">--</span></p>

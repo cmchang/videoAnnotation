@@ -3,6 +3,7 @@
  *		1. Youtube Video-Related Code
  *		2. Progressbar-related Code 
  *		3. Commenting-related Code
+ *		4. Tick-related code
  */
 
 /*
@@ -158,6 +159,7 @@ jQuery(document).ready(function(){
       $('#status').html(e.pageX +', '+ e.pageY);
    }); 
 
+   //update progressbar if clicked
    $("#progressbar").click(function(e){
 		var parentOffset = $(this).parent().offset(); 
 		//or $(this).offset(); if you really just want the current element's offset
@@ -166,13 +168,19 @@ jQuery(document).ready(function(){
 		$('#offset').html(relX + ', ' + relY);
 		progressbar_click(relX);
 	});
+	$(function() {
+		$( "#accordion" ).accordion();
+		$("#accordion").accordion({ header: "h3", collapsible: true, active: false });
+	});
+   addTicks();
 })
 
 /*
  * 3. Commenting-related Code
  */
 
-var commentObj = {};
+var commentObj = [];
+var commentNum = 0;
 
 function show_addNewComment(){
 	$(".commentsView_newComment").css("display", "");
@@ -181,3 +189,19 @@ function comment_btn(){
 	ytplayer.pauseVideo();
 	show_addNewComment();
 }
+
+function submitNewComment(){
+	$(".commentsView_newComment").css("display", "none");
+	var text = $(".newCommentTextbox").val().
+	commentObj.push({ "commentID": commentNum,
+						"text" : text });
+
+}
+
+/*
+ *	4. Tick-related code
+ */
+
+ function addTicks(){
+ 	var arrayOfLocs= []
+ }
