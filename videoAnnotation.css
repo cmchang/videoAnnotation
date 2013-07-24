@@ -68,8 +68,13 @@
 }
 
 .commentsView_holder{
-	font-size: 8pt;	
+	font-size: 8pt;
+	overflow: scroll;
+	background: #E6E6E6;
+	height: 429px;
+	border-radius: 5px;
 }
+
 .commentsView_newComment{
 	padding: 5px;
 	background: #E6E6E6;
@@ -83,11 +88,10 @@
 	width: 98%;
 	resize: none;
 }
-.commentsView_holder{
-	overflow: scroll;
-	background: #E6E6E6;
-	height: 429px;
-	border-radius: 5px;
+
+#accordion .ui-accordion-content {
+	max-height: 100px;
+	overflow-y: auto;
 }
 
 .tickmarkView{

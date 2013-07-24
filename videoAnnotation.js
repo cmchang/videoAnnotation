@@ -1,7 +1,7 @@
 /*
  * Table of Contents - Organized by astrixed comment sections
  *		1. Youtube Video-Related Code
- *		2. Progressbar-related Code 
+ *		2. Progressbar-related Code -- currently contains the jQuery document ready function
  *		3. Commenting-related Code
  *		4. Tick-related code
  */
@@ -181,8 +181,10 @@ jQuery(document).ready(function(){
  */
 
 function setupAccordion(){
-	$( "#accordion" ).accordion();
-	$("#accordion").accordion({ header: "h3", collapsible: true, active: false}); //heightStyle:"content"
+	$("#accordion").accordion({ header: "text", 
+								collapsible: true, 
+								active: false, 
+								heightStyle: "content"});
 }
 
 var commentObj = [];
