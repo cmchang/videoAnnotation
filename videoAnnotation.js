@@ -201,8 +201,12 @@ function comment_btn(){
 function submitNewComment(){
 	$(".commentsView_newComment").css("display", "none");
 	var text = $(".newCommentTextbox").val();
-	commentObj.push({ "commentID": commentNum,
-						"text" : text });
+	var type = $('#comment_type').find(":selected").text();
+	var viewer = $('#comment_viewer').find(":selected").text();
+	commentObj.push({ "ID": commentNum,
+						"text" : text,
+						"type" : type,
+						"viewer" : viewer});
 	$(".newCommentTextbox").val("");
 	commentNum+=1;
 	showNewComment();

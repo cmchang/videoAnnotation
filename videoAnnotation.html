@@ -41,20 +41,22 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			<button class = "addNote_btn" onclick="comment_btn()">Comment</button>
 		</div>
 		<div class = "commentsView_newComment" style = "display:none;">
-			<div>
-			<select>
-				<option>Comment</option>
-				<option>Question</option>
-				<option>Note</option>
-			</select>
-			<select>
-				<option>Class</option>
-				<option>Personal</option>
-				<option>Instructor</option>
-			</select>
-			<textarea class = "newCommentTextbox"></textarea>
+			<div class = "commentsView_menu">
+				Type: 
+				<select id = "comment_type">
+					<option>Comment</option>
+					<option>Question</option>
+				</select>
+				
+				<textarea class = "newCommentTextbox"></textarea>
+				Visible to:
+				<select id = "comment_viewer">
+					<option>Class</option>
+					<option>Just me</option>
+					<option>Instructor</option>
+				</select>
+				<button class = "submitComment_btn" onclick="submitNewComment()">Submit</button>
 			</div>
-			<button class = "submitComment_btn" onclick="submitNewComment()">Submit</button>
 		</div>
 		<div class = "commentsView_holder">
 			<div style = "display:none;">
