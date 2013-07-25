@@ -206,6 +206,7 @@ google.setOnLoadCallback(_run);
  * 2. Progressbar-related Code  
  */
 
+//update the time of the ytplayer if the progress bar is clicked
 function progressbar_click(mouseX){
 	var percentage = mouseX/660;
 	$("#progressbar").progressbar("option","value",percentage*100); //updates progressbar location
@@ -213,6 +214,7 @@ function progressbar_click(mouseX){
 	ytplayer.seekTo(currentSec, true); //updates ytplayer location in video
 }
 
+//calculate the position of the mouse relative to the progressbar if clicked
 function updateProgressbar(){
 	//update progressbar if clicked
    $("#progressbar").click(function(e){
@@ -230,6 +232,13 @@ function updateProgressbar(){
  * 3. Commenting-related Code
  */
 
+//the array of objects the stores all the information for every comment
+//ID: number assigned in order of when comment is made (Starting at 0)
+//timeSec: the time in seconds at which the comment refers to
+//timeStr: the time as a string (in minute:second format) at which the comment refers to
+//text: the body text of the comment
+//type: the selected type - either Comment or Question
+//viewer: who the student selected can view the comment (currently no functionality with it)
 var commentObj = [
 					{"ID": 0,
 					"text": "This is my first comment! This is frame is interesting since ...",
@@ -324,7 +333,7 @@ function show_addNewComment(){
 	$(".commentsView_newComment").css("display", "");
 	$("#comment_time").val(calculateTime(ytplayer.getCurrentTime()));
 }
-
+//hodes the add new comment options
 function hide_addNewComment(){
 	$(".commentsView_newComment").css("display", "None");
 	$("#newCommentTime").val("");
@@ -366,6 +375,7 @@ function showNewComment(){
  *	4. Tick-related code
  */
 
+//incomplete
  function addTicks(){
  	var arrayOfLocs= []
  }
