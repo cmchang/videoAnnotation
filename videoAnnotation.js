@@ -1,9 +1,10 @@
 /*
  * Table of Contents - Organized by astrixed comment sections
  *		1. Youtube Video-Related Code
- *		2. Progressbar-related Code -- currently contains the jQuery document ready function
- *		3. Commenting-related Code
+ *		2. Progressbar-related Code
+ *		3. Commenting-related Code (includes accordion)
  *		4. Tick-related code
+ *		5. jQuery(document).ready() 
  */
 
 /*
@@ -57,9 +58,11 @@ function setVideoVolume() {
 	}
 }
 
+//when the div covering the video is clicked; syncs with the play/pause button
 function videoClicked(){
 	playORpause();
 }
+//when the play/pause button is clicked
 function playORpause(){
 	if ($(".playORpause").attr("src") == "images/play.png"){
 		$(".playORpause").attr("src", "images/pause.png")
@@ -70,6 +73,7 @@ function playORpause(){
 	}
 }
 
+//when the mute/unmute button is clicked
 function muteORunmute(){
 	if ($(".muteORunmute").attr("src") == "images/mute.png"){
 		$(".muteORunmute").attr("src", "images/volume_up.png")
@@ -157,12 +161,8 @@ function progressbar_click(mouseX){
 	ytplayer.seekTo(currentSec, true); //updates ytplayer location in video
 }
 
-jQuery(document).ready(function(){
-   $(document).mousemove(function(e){
-      $('#status').html(e.pageX +', '+ e.pageY);
-   }); 
-
-   //update progressbar if clicked
+function updateProgressbar(){
+	//update progressbar if clicked
    $("#progressbar").click(function(e){
 		var parentOffset = $(this).parent().offset(); 
 		//or $(this).offset(); if you really just want the current element's offset
@@ -171,10 +171,8 @@ jQuery(document).ready(function(){
 		$('#offset').html(relX + ', ' + relY);
 		progressbar_click(relX);
 	});
-	setupAccordion();
-   addTicks();
-})
 
+}
 
 /*
  * 3. Commenting-related Code
@@ -187,17 +185,34 @@ function setupAccordion(){
 								heightStyle: "content"});
 }
 
-var commentObj = [];
-var commentNum = 0;
+var commentObj = [
+					{"ID": 0,
+					"text": "Comment number 1!",
+					"type" : "Comment",
+					"viewer" : "Class",},
+					{"ID": 1,
+					"text": "Comment number 2!",
+					"type" : "Comment",
+					"viewer" : "Class",},
+					{"ID": 2,
+					"text": "Question number 1!",
+					"type" : "Question",
+					"viewer" : "Class",}
+					];
+var commentNum = 3;
 
+//shows the add new comment options
 function show_addNewComment(){
 	$(".commentsView_newComment").css("display", "");
 }
+
+//when the comment button is pushed
 function comment_btn(){
 	ytplayer.pauseVideo();
 	show_addNewComment();
 }
 
+//when the submit button is pushed
 function submitNewComment(){
 	$(".commentsView_newComment").css("display", "none");
 	var text = $(".newCommentTextbox").val();
@@ -212,7 +227,8 @@ function submitNewComment(){
 	showNewComment();
 
 }
-
+//adds the new comment into the accordion
+//extracts information from the commentObj
 function showNewComment(){
 	var html = "<text>New Comment</text><div>"+commentObj[commentNum-1].text + "</div>"; //add code here
 	console.log(html);
@@ -227,3 +243,17 @@ function showNewComment(){
  function addTicks(){
  	var arrayOfLocs= []
  }
+
+/*
+ *	5. jQuery(document).ready()
+ */
+
+jQuery(document).ready(function(){
+   $(document).mousemove(function(e){
+      $('#status').html(e.pageX +', '+ e.pageY);
+   }); 
+
+ 	updateProgressbar();
+	setupAccordion();
+	addTicks();
+})
