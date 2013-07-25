@@ -92,6 +92,9 @@ select{
 	margin-bottom: 5px;
 }
 
+#comment_time, #comment_timeEnd{
+	width: 35px;
+}
 .newCommentTextbox{
 	height: 60px;
 	width: 98%;

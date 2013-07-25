@@ -46,6 +46,7 @@ function updatePlayerInfo() {
 	}
 }
 
+//give the time in secodns, show the time as a string with (hours:)minutes:seconds
 function calculateTime(givenTime){
 	var totalSec = parseInt(givenTime);
 	var hours = 0;
@@ -268,8 +269,14 @@ function setupAccordion(){
 //shows the add new comment options
 function show_addNewComment(){
 	$(".commentsView_newComment").css("display", "");
+	$("#comment_time").val(calculateTime(ytplayer.getCurrentTime()));
 }
 
+function hide_addNewComment(){
+	$(".commentsView_newComment").css("display", "None");
+	$("#newCommentTime").val("");
+	$(".newCommentTextbox").val("");
+}
 //when the comment button is pushed
 function comment_btn(){
 	ytplayer.pauseVideo();
@@ -282,14 +289,17 @@ function submitNewComment(){
 	var text = $(".newCommentTextbox").val();
 	var type = $('#comment_type').find(":selected").text();
 	var viewer = $('#comment_viewer').find(":selected").text();
+	var time = $('#comment_time').val();
 	commentObj.push({ "ID": commentObj.length,
 						"text" : text,
 						"type" : type,
-						"viewer" : viewer});
+						"viewer" : viewer,
+						"time" : time});
 	$(".newCommentTextbox").val(""); //empty textbox
 	showNewComment();
 
 }
+
 //adds the new comment into the accordion
 //extracts information from the commentObj
 function showNewComment(){

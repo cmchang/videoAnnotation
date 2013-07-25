@@ -50,7 +50,10 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 					<option>Comment</option>
 					<option>Question</option>
 				</select>
-				
+				Time:
+				<input id = "comment_time"></input>
+				To: 
+				<input id = "comment_timeEnd"></input>
 				<textarea class = "newCommentTextbox"></textarea>
 				Visible to:
 				<select id = "comment_viewer">
@@ -59,6 +62,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 					<option>Instructor</option>
 				</select>
 				<button class = "submitComment_btn" onclick="submitNewComment()">Submit</button>
+				<button class ="cancelComment_btn" onclick = "hide_addNewComment()">Cancel</button>
 			</div>
 		</div>
 		<div class = "commentsView_holder">
