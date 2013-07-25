@@ -44,6 +44,7 @@ function updatePlayerInfo() {
 		updateHTML("videoCurrentTimeMinSec", ytplayer.getCurrentTime());
 		updateHTML("videoTimeDisplay", calculateTime(ytplayer.getCurrentTime())); //seen under progressbar
 		updateHTML("videoTotalTimeDisplay", calculateTime(ytplayer.getDuration()));
+		openCommentSyncVideo(); //syncs opening the comments with the video
 	}
 }
 
@@ -376,6 +377,26 @@ function showNewComment(){
 	$("#accordion").accordion('destroy');
 	$("#accordion").html("");
 	setup_commentDisplay();
+}
+
+//An array to hold all the seconds at which there are comments
+//neede to sync video with opening the corresponding comment if at correct time
+var timeSecArray = [];
+function createTimeSecArray(){
+	timeSecArray = [];
+	for (var i in commentObj){
+		timeSecArray.push(commentObj[i].timeSec);
+	}
+}
+
+//open the comment in accordion if at the correct time at video
+function openCommentSyncVideo(){
+	createTimeSecArray();
+	var currentTime = parseInt(ytplayer.getCurrentTime());
+	var indexOfArr = timeSecArray.indexOf(currentTime);
+	if(indexOfArr>-1){ //executes if currentTime is a time in the array
+		$( "#accordion" ).accordion({ active: indexOfArr });
+	}
 }
 
 /*
