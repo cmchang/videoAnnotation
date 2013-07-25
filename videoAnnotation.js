@@ -283,11 +283,11 @@ function setup_commentDisplay(){
 //This function sorts the commentObj array by the timeSec so we can later display the comments in order
 function sortCommentObj(){
 	function compare(a,b) {
-	  if (a.timeSec < b.timeSec)
-	     return -1;
-	  if (a.timeSec > b.timeSec)
-	    return 1;
-	  return 0;
+		if (a.timeSec < b.timeSec)
+			return -1;
+		if (a.timeSec > b.timeSec)
+			return 1;
+	return 0;
 	}
 
 	commentObj.sort(compare);

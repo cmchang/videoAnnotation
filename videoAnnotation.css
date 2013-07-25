@@ -9,8 +9,12 @@ select{
 	position: absolute;
 	top: 5px;
 }
-.videoView, .videoContainer, .videoInfo{
+.videoView, .videoContainer, .videoInfo, .videoMenu{
 	width: 752px;
+}
+
+.videoContainer{
+	max-height: 423px;
 }
 
 #videoCover{
@@ -23,11 +27,12 @@ select{
 }
 
 .videoMenu{
+	max-width: 742px;
 	padding: 5px;
-	width: 740px;
 	height:35px;
 	background: #E6E6E6;
-	border-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 .playORpause_holder, .progressbar_container, .muteORunmute_holder{
