@@ -101,6 +101,11 @@ select{
 	resize: none;
 }
 
+#commentTimeShow{
+	font-size: 7pt;
+	color: grey;
+}
+
 #accordion .ui-accordion-content {
 	max-height: 100px;
 	overflow-y: auto;

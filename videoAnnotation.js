@@ -295,16 +295,23 @@ function sortCommentObj(){
 
 //Given the array index, this function gets the stored text and wraps it in HTML to be put into accordion
 //called in addAllCommentHTML(), showNewComment()
+//html format:
+//	<text>Header Content</text>
+//	<div>
+//		<span>Time here</span>
+//		<p>Comment Text</p>
+//	</div>
 function extractCommentHTML(num){
 	var typeInitial = commentObj[num].type[0];
 	var text = commentObj[num].text;
 	var commentSnippet = text.substring(0,30);
+	var timeStr = commentObj[num].timeStr;
 
 	var html = "<text>" + typeInitial + ": " + commentSnippet;
 	if(text.length > 30){
 		html += "...";
 	}
-	html +="</text><div>"+ text + "</div>";
+	html +="</text><div><span id = 'commentTimeShow'>Time: " +timeStr +"</span><p>"+ text +"</p>"+ "</div>";
 
 	return html;
 }
