@@ -76,6 +76,24 @@ function calculateTime(givenTime){
 	return display;
 }
 
+//calculate the number of seconds given the time as a string
+function calcualateTime_stringToNum(timeStr){
+	var seconds = parseInt(timeStr.substring(timeStr.length-2, timeStr.length)); //gets seconds
+	timeStr = timeStr.substring(0, timeStr.length-3); //gets rid of the seconds portion of string
+	var minutes, hours = 0;
+	if (timeStr.length == 1 || timeStr.length == 2){
+		minutes = parseInt(timeStr);
+	}else{//if the video has hours
+		minutes = parseInt(timeStr.substring(timeStr.length-2, timeStr.length));
+		timeStr = timeStr.substring(0, timeStr.length-3); //gets rid of the seconds portion of string
+		hours = parseInt(timeStr);
+	}
+
+	var totalSeconds = hours*3600 + minutes*60 + seconds;
+	console.log(totalSeconds);
+	
+}
+
 function updateProgressBar(){
 	var percentage = 100*ytplayer.getCurrentTime()/ytplayer.getDuration();
 	$("#progressbar").progressbar("option","value", percentage);
