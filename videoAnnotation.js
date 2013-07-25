@@ -201,21 +201,27 @@ var commentObj = [
 					"viewer" : "Just Me"}
 					];
 
+//called in addInitialCommentHTML(), showNewComment()
+function extractCommentHTML(num){
+	var typeInitial = commentObj[num].type[0];
+	var text = commentObj[num].text;
+	var commentSnippet = text.substring(0,30);
+
+	var html = "<text>" + typeInitial + ": " + commentSnippet;
+	if(text.length > 30){
+		html += "...";
+	}
+	html +="</text><div>"+ text + "</div>";
+
+	return html;
+}
+
 function addInitialCommentHTML(){
 	var html = "";
 	for(var num = 0; num < commentObj.length; num++){
-		var typeInitial = commentObj[num].type[0];
-		var text = commentObj[num].text;
-		var commentSnippet = text.substring(0,30);
-
-		html += "<text>" + typeInitial + ": " + commentSnippet;
-		if(text.length > 30){
-			html += "...";
-		}
-		html +="</text><div>"+ text + "</div>";
+		var htmlSection = extractCommentHTML(num);
+		html += htmlSection;
 	}
-	
-	console.log(html);
 	$("#accordion").append(html);
 }
 
@@ -255,18 +261,8 @@ function submitNewComment(){
 //extracts information from the commentObj
 function showNewComment(){
 	var num = commentObj.length-1;
-	var typeInitial = commentObj[num].type[0];
-	var text = commentObj[num].text;
-	var commentSnippet = text.substring(0,30);
+	var html = extractCommentHTML(num);
 
-	var html = "<text>" + typeInitial + ": " + commentSnippet;
-	if(text.length > 30){
-		html += "...";
-	}
-	html +="</text><div>"+ text + "</div>";
-
-	//var html = "<text>" + "New " +commentObj[commentNum-1].type + "</text><div>"+commentObj[commentNum-1].text + "</div>"; //add code here
-	console.log(html);
 	$("#accordion").append(html).accordion('destroy');
 	setupAccordion();
 }
