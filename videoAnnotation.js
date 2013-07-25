@@ -40,8 +40,41 @@ function updatePlayerInfo() {
 		updateHTML("startBytes", ytplayer.getVideoStartBytes());
 		updateHTML("bytesLoaded", ytplayer.getVideoBytesLoaded());
 		updateHTML("volume", ytplayer.getVolume());
+		updateHTML("videoCurrentTimeMinSec", ytplayer.getCurrentTime());
+		updateHTML("videoTimeDisplay", calculateTime(ytplayer.getCurrentTime())); //seen under progressbar
+		updateHTML("videoTotalTimeDisplay", calculateTime(ytplayer.getDuration()));
 	}
 }
+
+function calculateTime(givenTime){
+	var totalSec = parseInt(givenTime);
+	var hours = 0;
+	if (totalSec >= 3600){
+		hours = parseInt(totalSec/3600);
+		totalSec -= hours*3600;
+	}
+	var minutes = 0;
+	if(totalSec >= 60){
+		minutes = parseInt(totalSec/60);
+		totalSec -= minutes*60;
+	}
+	var display = "";
+	if(hours > 0){
+		display += hours + ":";
+	}
+	if(hours > 0 && minutes <10){
+		display += "0" + minutes + ":";
+	}else{
+		display += minutes + ":";
+	}
+	if (totalSec < 10){
+		display+= "0" + totalSec;
+	}else{
+		display+= totalSec;
+	}
+	return display;
+}
+
 function updateProgressBar(){
 	var percentage = 100*ytplayer.getCurrentTime()/ytplayer.getDuration();
 	$("#progressbar").progressbar("option","value", percentage);

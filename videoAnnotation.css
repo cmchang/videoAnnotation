@@ -50,10 +50,13 @@ select{
 
 }
 
-#videoTimeDisplay{
+#showTime{
 	text-align: right;	
 	height: 100%;
+}
 
+#videoTimeDisplay, #videoTotalTimeDisplay{
+	display: inline-block;
 }
 
 .commentsView{

@@ -29,7 +29,10 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			<div class = "playORpause_holder"><img class = "playORpause" onclick="playORpause();" src="images/play.png"></div>
 			<div class = "progressbar_container">
 				<div id="progressbar"></div>
-				<div id = "videoTimeDisplay">Time:--:--</div>
+				<div id ="showTime">
+					<div id = "videoTimeDisplay">--:--</div><text> /</text>
+					<div id = "videoTotalTimeDisplay">--:--</div>
+				</div>
 			</div>
 			<div class = "muteORunmute_holder"><img class = "muteORunmute" onclick="muteORunmute()" src = "images/mute.png"></div>
 			
@@ -73,8 +76,9 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		</div>
 	</div>
 
-	<div id="videoInfo" class = "videoInfo" style = "display:none">
+	<div id="videoInfo" class = "videoInfo" style = "display:None">
 		<p>Player state: <span id="playerState">--</span></p>
+		<p> Time in Minutes and Seconds: <span id = "videoCurrentTimeMinSec">--:--</span></p>
 		<p>Current Time: <span id="videoCurrentTime">--:--</span> | Duration: <span id="videoDuration">--:--</span> | Percentage: <span id = "videoPercentage">--:--</span></p>
 		<p>Bytes Total: <span id="bytesTotal">--</span> | Start Bytes: <span id="startBytes">--</span> | Bytes Loaded: <span id="bytesLoaded">--</span></p>
 		<p><input id="volumeSetting" type="text" size="3" />&nbsp;<a href="javascript:void(0)" onclick="setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
