@@ -178,16 +178,9 @@ function updateProgressbar(){
  * 3. Commenting-related Code
  */
 
-function setupAccordion(){
-	$("#accordion").accordion({ header: "text", 
-								collapsible: true, 
-								active: false, 
-								heightStyle: "content"});
-}
-
 var commentObj = [
 					{"ID": 0,
-					"text": "Comment number 1!",
+					"text": "This is my first comment! This is frame is interesting since ...",
 					"type" : "Comment",
 					"viewer" : "Class",},
 					{"ID": 1,
@@ -197,9 +190,41 @@ var commentObj = [
 					{"ID": 2,
 					"text": "Question number 1!",
 					"type" : "Question",
-					"viewer" : "Class",}
+					"viewer" : "Class",},
+					{"ID": 3,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"type" : "Question",
+					"viewer" : "Just Me"},
+					{"ID": 4,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"type" : "Question",
+					"viewer" : "Just Me"}
 					];
-var commentNum = 3;
+
+function addInitialCommentHTML(){
+	var html = "";
+	for(var num = 0; num < commentObj.length; num++){
+		var typeInitial = commentObj[num].type[0];
+		var text = commentObj[num].text;
+		var commentSnippet = text.substring(0,30);
+
+		html += "<text>" + typeInitial + ": " + commentSnippet;
+		if(text.length > 30){
+			html += "...";
+		}
+		html +="</text><div>"+ text + "</div>";
+	}
+	
+	console.log(html);
+	$("#accordion").append(html);
+}
+
+function setupAccordion(){
+	$("#accordion").accordion({ header: "text", 
+								collapsible: true, 
+								active: false, 
+								heightStyle: "content"});
+}
 
 //shows the add new comment options
 function show_addNewComment(){
@@ -214,23 +239,33 @@ function comment_btn(){
 
 //when the submit button is pushed
 function submitNewComment(){
-	$(".commentsView_newComment").css("display", "none");
+	$(".commentsView_newComment").css("display", "none"); //show the div
 	var text = $(".newCommentTextbox").val();
 	var type = $('#comment_type').find(":selected").text();
 	var viewer = $('#comment_viewer').find(":selected").text();
-	commentObj.push({ "ID": commentNum,
+	commentObj.push({ "ID": commentObj.length,
 						"text" : text,
 						"type" : type,
 						"viewer" : viewer});
-	$(".newCommentTextbox").val("");
-	commentNum+=1;
+	$(".newCommentTextbox").val(""); //empty textbox
 	showNewComment();
 
 }
 //adds the new comment into the accordion
 //extracts information from the commentObj
 function showNewComment(){
-	var html = "<text>New Comment</text><div>"+commentObj[commentNum-1].text + "</div>"; //add code here
+	var num = commentObj.length-1;
+	var typeInitial = commentObj[num].type[0];
+	var text = commentObj[num].text;
+	var commentSnippet = text.substring(0,30);
+
+	var html = "<text>" + typeInitial + ": " + commentSnippet;
+	if(text.length > 30){
+		html += "...";
+	}
+	html +="</text><div>"+ text + "</div>";
+
+	//var html = "<text>" + "New " +commentObj[commentNum-1].type + "</text><div>"+commentObj[commentNum-1].text + "</div>"; //add code here
 	console.log(html);
 	$("#accordion").append(html).accordion('destroy');
 	setupAccordion();
@@ -254,6 +289,7 @@ jQuery(document).ready(function(){
    }); 
 
  	updateProgressbar();
+ 	addInitialCommentHTML();
 	setupAccordion();
 	addTicks();
 })
