@@ -5,6 +5,7 @@
  *		3. Commenting-related Code (includes accordion)
  *		4. Tick-related code
  *		5. jQuery(document).ready() 
+ *				-calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks()
  */
 
 /*
@@ -90,8 +91,7 @@ function calcualateTime_stringToNum(timeStr){
 	}
 
 	var totalSeconds = hours*3600 + minutes*60 + seconds;
-	console.log(totalSeconds);
-	
+	return totalSeconds;	
 }
 
 function updateProgressBar(){
@@ -233,27 +233,59 @@ function updateProgressbar(){
 var commentObj = [
 					{"ID": 0,
 					"text": "This is my first comment! This is frame is interesting since ...",
+					"timeSec" : 158, 
+					"timeStr" : "2:38",
 					"type" : "Comment",
 					"viewer" : "Class",},
 					{"ID": 1,
+					"timeSec" : 38, 
+					"timeStr" : "0:38",
 					"text": "Comment number 2!",
 					"type" : "Comment",
 					"viewer" : "Class",},
 					{"ID": 2,
+					"timeSec" : 8, 
+					"timeStr" : "0:08",
 					"text": "Question number 1!",
 					"type" : "Question",
 					"viewer" : "Class",},
 					{"ID": 3,
+					"timeSec" : 191, 
+					"timeStr" : "3:11",
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"type" : "Question",
 					"viewer" : "Just Me"},
 					{"ID": 4,
+					"timeSec" : 214, 
+					"timeStr" : "3:34",
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"type" : "Question",
 					"viewer" : "Just Me"}
 					];
 
-//called in addInitialCommentHTML(), showNewComment()
+//this function does all the work to display the comments:
+//it calls SortsCommentObj, addAllCommentHTML, and setupAccordion
+function setup_commentDisplay(){
+	sortCommentObj();
+	addAllCommentHTML();
+	setupAccordion();
+}
+
+//This function sorts the commentObj array by the timeSec so we can later display the comments in order
+function sortCommentObj(){
+	function compare(a,b) {
+	  if (a.timeSec < b.timeSec)
+	     return -1;
+	  if (a.timeSec > b.timeSec)
+	    return 1;
+	  return 0;
+	}
+
+	commentObj.sort(compare);
+}
+
+//Given the array index, this function gets the stored text and wraps it in HTML to be put into accordion
+//called in addAllCommentHTML(), showNewComment()
 function extractCommentHTML(num){
 	var typeInitial = commentObj[num].type[0];
 	var text = commentObj[num].text;
@@ -268,7 +300,9 @@ function extractCommentHTML(num){
 	return html;
 }
 
-function addInitialCommentHTML(){
+//only called once when page is setting up (document ready function)
+//goes in a for loop to add all of the objects to the accordion section of the html
+function addAllCommentHTML(){
 	var html = "";
 	for(var num = 0; num < commentObj.length; num++){
 		var htmlSection = extractCommentHTML(num);
@@ -277,11 +311,12 @@ function addInitialCommentHTML(){
 	$("#accordion").append(html);
 }
 
+//sets up the accordion
 function setupAccordion(){
-	$("#accordion").accordion({ header: "text", 
-								collapsible: true, 
-								active: false, 
-								heightStyle: "content"});
+	$("#accordion").accordion({ header: "text", //selects type of element to be recognized as the 'header'
+								collapsible: true, //allows all the panels to be collapsesd at the same time
+								active: false, //initially none of the panels are selected- all starts closed
+								heightStyle: "content"}); //each content panel adjusts its height to its own content
 }
 
 //shows the add new comment options
@@ -310,9 +345,10 @@ function submitNewComment(){
 	var time = $('#comment_time').val();
 	commentObj.push({ "ID": commentObj.length,
 						"text" : text,
+						"timeSec" : calcualateTime_stringToNum(time),
+						"timeStr" : time,
 						"type" : type,
-						"viewer" : viewer,
-						"time" : time});
+						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
 	showNewComment();
 
@@ -321,11 +357,9 @@ function submitNewComment(){
 //adds the new comment into the accordion
 //extracts information from the commentObj
 function showNewComment(){
-	var num = commentObj.length-1;
-	var html = extractCommentHTML(num);
-
-	$("#accordion").append(html).accordion('destroy');
-	setupAccordion();
+	$("#accordion").accordion('destroy');
+	$("#accordion").html("");
+	setup_commentDisplay();
 }
 
 /*
@@ -338,6 +372,7 @@ function showNewComment(){
 
 /*
  *	5. jQuery(document).ready()
+ *		calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks()
  */
 
 jQuery(document).ready(function(){
@@ -346,7 +381,6 @@ jQuery(document).ready(function(){
    }); 
 
  	updateProgressbar();
- 	addInitialCommentHTML();
-	setupAccordion();
+ 	setup_commentDisplay();
 	addTicks();
 })
