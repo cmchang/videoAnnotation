@@ -394,9 +394,22 @@ function openCommentSyncVideo(){
 	createTimeSecArray();
 	var currentTime = parseInt(ytplayer.getCurrentTime());
 	var indexOfArr = timeSecArray.indexOf(currentTime);
-	if(indexOfArr>-1){ //executes if currentTime is a time in the array
-		$( "#accordion" ).accordion({ active: indexOfArr });
+	if(!isHoveringOver){
+		if(indexOfArr>-1){ //executes if currentTime is a time in the array
+			$( "#accordion" ).accordion({ active: indexOfArr });
+		}
 	}
+}
+
+//this function sets a boolean depending if the mouse is hovering over the .commentsView_holder div
+var isHoveringOver = false;
+function isHoveringOverComments(){
+	$(".commentsView_holder").mouseenter(function(){
+		isHoveringOver = true;
+	}).mouseleave(function(){
+		isHoveringOver = false;
+	});
+	console.log(isHoveringOver);
 }
 
 /*
@@ -421,4 +434,5 @@ jQuery(document).ready(function(){
  	updateProgressbar();
  	setup_commentDisplay();
 	addTicks();
+	isHoveringOverComments();
 })
