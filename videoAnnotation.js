@@ -27,6 +27,7 @@ function onPlayerStateChange(newState) {
 	updateHTML("playerState", newState);
 }
 
+var createTicks = true;
 // Display information about the current state of the player
 function updatePlayerInfo() {
 	// Also check that at least one function exists since when IE unloads the
@@ -45,6 +46,11 @@ function updatePlayerInfo() {
 		updateHTML("videoTimeDisplay", calculateTime(ytplayer.getCurrentTime())); //seen under progressbar
 		updateHTML("videoTotalTimeDisplay", calculateTime(ytplayer.getDuration()));
 		openCommentSyncVideo(); //syncs opening the comments with the video
+		
+		if(createTicks && ytplayer.getDuration() > 0){
+			createTicks = false;
+			addAllTicks();
+		}
 	}
 }
 
@@ -409,6 +415,7 @@ function submitNewComment(){
 						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
 	showNewComment();
+	addAllTicks();
 
 }
 
@@ -456,9 +463,31 @@ function isHoveringOverComments(){
  *	4. Tick-related code
  */
 
-//incomplete
- function addTicks(){
- 	var arrayOfLocs= []
+//calculate the tick location given the time where the associated comment is given
+function calculateTickLoc(seconds){
+	var ratio = seconds/ytplayer.getDuration();
+	console.log(seconds, ytplayer.getDuration(), ratio);
+	var xLoc = $(".progressbar_container").width()*ratio;
+	return xLoc;
+}
+
+//given the tick location and ID, it creates the string of HTML to create the tick
+function tickHTML(xLoc, ID){
+	var html = "<div class = 'tickmark' id = 'tickmark"+ID + "' style= 'left:"+xLoc+ "px'></div>";
+	return html;
+}
+
+//This function should be called the the page is loading
+ function addAllTicks(){
+ 	$("#tickmark_holder").html("");
+ 	var xLoc, ID, html;
+ 	for(var num = 0; num < commentObj.length; num++){
+ 		xLoc = calculateTickLoc(commentObj[num].timeSec);
+ 		ID = commentObj[num].ID;
+ 		html = tickHTML(xLoc, ID);
+ 		console.log(ID, xLoc, html);
+ 		$(".tickmark_holder").append(html);
+ 	}
  }
 
 /*
@@ -473,6 +502,5 @@ jQuery(document).ready(function(){
 
  	updateProgressbar();
  	setup_commentDisplay();
-	addTicks();
 	isHoveringOverComments();
 })

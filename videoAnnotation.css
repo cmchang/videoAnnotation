@@ -129,7 +129,7 @@ select{
 	margin-top: 15px;
 	top: 470px;
 }
-#tickmark_holder{
+.tickmark_holder{
 	position: absolute;
 	width: 660px;
 	height: 10px;
@@ -138,13 +138,12 @@ select{
 	border: solid 1px #B5AF9F;
 	border-radius: 3px;
 	top: 10px;
-	left: 40px;
+	left: 44px;
 }
 
-#tickmark{
+.tickmark{
 	position: absolute;
-	left: 25px;
-	width: 2px;
+	width: 1px;
 	height: 100%;
 	background: red;
 	opacity: .4;
