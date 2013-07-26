@@ -479,7 +479,7 @@ function tickHTML(xLoc, ID){
 
 //This function should be called the the page is loading
  function addAllTicks(){
- 	$("#tickmark_holder").html("");
+ 	$(".tickmark_holder").html("");
  	var xLoc, ID, html;
  	for(var num = 0; num < commentObj.length; num++){
  		xLoc = calculateTickLoc(commentObj[num].timeSec);
