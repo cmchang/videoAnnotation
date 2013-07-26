@@ -5,7 +5,7 @@
  *		3. Commenting-related Code (includes accordion)
  *		4. Tick-related code
  *		5. jQuery(document).ready() 
- *				-calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks()
+ *				-calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks(), isHoveringOverComments()
  */
 
 /*
@@ -203,6 +203,12 @@ function _run() {
 }
 google.setOnLoadCallback(_run);
 
+//given the time in seconds, goes to corresponding time in the video
+//called when the text "View" in the comment is clicked
+function goToTime(seconds){
+	ytplayer.seekTo(seconds,true);
+}
+
 /*
  * 2. Progressbar-related Code  
  */
@@ -270,6 +276,18 @@ var commentObj = [
 					"timeStr" : "3:34",
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"type" : "Question",
+					"viewer" : "Just Me"},
+					{"ID": 5,
+					"timeSec" : 2, 
+					"timeStr" : "0:02",
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"type" : "Comment",
+					"viewer" : "Just Me"},
+					{"ID": 6,
+					"timeSec" : 5, 
+					"timeStr" : "0:05",
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"type" : "Question",
 					"viewer" : "Just Me"}
 					];
 
@@ -308,11 +326,20 @@ function extractCommentHTML(num){
 	var commentSnippet = text.substring(0,30);
 	var timeStr = commentObj[num].timeStr;
 
-	var html = "<text>" + typeInitial + ": " + commentSnippet;
-	if(text.length > 30){
-		html += "...";
+	
+	var headerHTML = "<text>" + typeInitial + ": " + commentSnippet;
+	if(text.length > 30){ //if the text is too long, only show a portion of it
+		headerHTML += "...";
 	}
-	html +="</text><div><span id = 'commentTimeShow'>Time: " +timeStr +"</span><p>"+ text +"</p>"+ "</div>";
+	headerHTML +="</text>";
+
+	var contentHTML = "<div>";
+	var timeHTML = "<span id = 'commentTimeShow'>Time: " +timeStr +"  </span>";
+	var goToHTML = "<span id = 'commentGoTo' onclick = 'goToTime(" +commentObj[num].timeSec + ")'>view</span>";
+	var textHTML = "<p>"+ text +"</p>";
+	contentHTML += timeHTML + goToHTML + textHTML + "</div>";
+
+	var html = headerHTML + contentHTML;
 
 	return html;
 }
@@ -338,15 +365,28 @@ function setupAccordion(){
 
 //shows the add new comment options
 function show_addNewComment(){
+	shrinkCommentHolder();
 	$(".commentsView_newComment").css("display", "");
 	$("#comment_time").val(calculateTime(ytplayer.getCurrentTime()));
 }
 //hodes the add new comment options
 function hide_addNewComment(){
+	normalSizeCommentHolder();
 	$(".commentsView_newComment").css("display", "None");
 	$("#newCommentTime").val("");
 	$(".newCommentTextbox").val("");
 }
+
+//Called when the showing the new comment
+function shrinkCommentHolder(){
+	$(".commentsView_holder").css("height", "264px");
+}
+
+//Called when the no longer showing the new comment
+function normalSizeCommentHolder(){
+	$(".commentsView_holder").css("height", "429px");
+}
+
 //when the comment button is pushed
 function comment_btn(){
 	ytplayer.pauseVideo();
@@ -355,6 +395,7 @@ function comment_btn(){
 
 //when the submit button is pushed
 function submitNewComment(){
+	normalSizeCommentHolder();
 	$(".commentsView_newComment").css("display", "none"); //show the div
 	var text = $(".newCommentTextbox").val();
 	var type = $('#comment_type').find(":selected").text();
@@ -409,7 +450,6 @@ function isHoveringOverComments(){
 	}).mouseleave(function(){
 		isHoveringOver = false;
 	});
-	console.log(isHoveringOver);
 }
 
 /*
@@ -423,7 +463,7 @@ function isHoveringOverComments(){
 
 /*
  *	5. jQuery(document).ready()
- *		calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks()
+ *		calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks(), isHoveringOverComments()
  */
 
 jQuery(document).ready(function(){

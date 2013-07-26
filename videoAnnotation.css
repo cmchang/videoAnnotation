@@ -111,6 +111,10 @@ select{
 	color: grey;
 }
 
+#commentGoTo:hover{
+	text-decoration:underline;
+}
+
 #accordion .ui-accordion-content {
 	max-height: 100px;
 	overflow-y: auto;
