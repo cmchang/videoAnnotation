@@ -495,6 +495,9 @@ function addAllTicks(){
 var currentHighlightedTick = "none";
 var currentID = "none";
 
+//highlights a tickmark if the mouse is hovering over a comment or if a comment is selected (via keyboard controls)
+//issue: can only call highlightTickControl() one at a time for hover and focus
+//			--without the if statement, the last function called will be the only one that works (it un-does what the first one did)
 function highlightTick(){
 	if($(".ui-state-hover").length>0){
 		highlightTickControl(".ui-state-hover");
@@ -503,6 +506,7 @@ function highlightTick(){
 	}
 }
 
+//An accessory helper for highlightTick()
 function highlightTickControl(className){
 
 	if($(className).length > 0){ //if this then, then has ID
@@ -530,6 +534,7 @@ function highlightTickControl(className){
 	}
 }
 
+//changes the tick css given the necessary information
 function changeTickCSS(tick, color, width, opacity){
 	tick.css("background", color);
 	tick.css("width", width);
