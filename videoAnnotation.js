@@ -46,6 +46,7 @@ function updatePlayerInfo() {
 		updateHTML("videoTimeDisplay", calculateTime(ytplayer.getCurrentTime())); //seen under progressbar
 		updateHTML("videoTotalTimeDisplay", calculateTime(ytplayer.getDuration()));
 		openCommentSyncVideo(); //syncs opening the comments with the video
+		highlightTick();
 		
 		if(createTicks && ytplayer.getDuration() > 0){
 			createTicks = false;
@@ -466,7 +467,7 @@ function isHoveringOverComments(){
 //calculate the tick location given the time where the associated comment is given
 function calculateTickLoc(seconds){
 	var ratio = seconds/ytplayer.getDuration();
-	console.log(seconds, ytplayer.getDuration(), ratio);
+	//console.log(seconds, ytplayer.getDuration(), ratio);
 	var xLoc = $(".progressbar_container").width()*ratio;
 	return xLoc;
 }
@@ -478,18 +479,62 @@ function tickHTML(xLoc, ID){
 }
 
 //This function should be called the the page is loading
- function addAllTicks(){
- 	$(".tickmark_holder").html("");
- 	var xLoc, ID, html;
- 	for(var num = 0; num < commentObj.length; num++){
- 		xLoc = calculateTickLoc(commentObj[num].timeSec);
- 		ID = commentObj[num].ID;
- 		html = tickHTML(xLoc, ID);
- 		console.log(ID, xLoc, html);
- 		$(".tickmark_holder").append(html);
- 	}
- }
+function addAllTicks(){
+	$(".tickmark_holder").html("");
+	var xLoc, ID, html;
+	for(var num = 0; num < commentObj.length; num++){
+		xLoc = calculateTickLoc(commentObj[num].timeSec);
+		ID = commentObj[num].ID;
+		html = tickHTML(xLoc, ID);
+		//console.log(ID, xLoc, html);
+		$(".tickmark_holder").append(html);
+	}
+}
 
+//Highlight the associated tick when hovering over the comment 
+var currentHighlightedTick = "none";
+var currentID = "none";
+
+function highlightTick(){
+	if($(".ui-state-hover").length>0){
+		highlightTickControl(".ui-state-hover");
+	}else{
+		highlightTickControl(".ui-state-focus");
+	}
+}
+
+function highlightTickControl(className){
+
+	if($(className).length > 0){ //if this then, then has ID
+ 		var index = $(className).attr("id").substr(-1,1);
+ 		//index gets the correct element index of the commentObj-- commentObj (array of objs) was rearranged to be in order
+ 		var tickID = commentObj[index].ID;
+ 		if(currentID != tickID){ //if the mouse is not hovering over same comment, continue
+			var tickStr = "#tickmark" + tickID;
+			var tickmark = $(tickStr);
+			changeTickCSS(tickmark, "black", "3px", ".6");
+			//console.log(currentID);
+			if(currentHighlightedTick != "none"){
+				changeTickCSS(currentHighlightedTick, "red", "1px", ".4");
+			}
+			currentHighlightedTick = tickmark;
+			currentID = currentHighlightedTick.attr("ID").substr(-1, 1);
+		}
+	}else{
+		if(currentHighlightedTick != "none"){
+			changeTickCSS(currentHighlightedTick, "red", "1px", ".4");
+			currentHighlightedTick = "none";
+			currentID = "none";
+
+		}
+	}
+}
+
+function changeTickCSS(tick, color, width, opacity){
+	tick.css("background", color);
+	tick.css("width", width);
+	tick.css("opacity", opacity)
+}
 /*
  *	5. jQuery(document).ready()
  *		calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks(), isHoveringOverComments()
@@ -503,4 +548,5 @@ jQuery(document).ready(function(){
  	updateProgressbar();
  	setup_commentDisplay();
 	isHoveringOverComments();
+
 })
