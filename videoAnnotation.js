@@ -461,7 +461,7 @@ function isHoveringOverComments(){
 	});
 }
 
-//given ID, get Index
+//given ID, get Index of placement in commentObj array
 function IDtoIndex(ID){
 	for(var x = 0; x < commentObj.length; x++){
 		if(commentObj[x].ID == ID){
@@ -485,7 +485,7 @@ function calculateTickLoc(seconds){
 
 //given the tick location and ID, it creates the string of HTML to create the tick
 function tickHTML(xLoc, ID){
-	var html = "<div class = 'tickmark' id = 'tickmark"+ID + "' style= 'left:"+xLoc+ "px'></div>"; //onmouseover = 'tickHover(this)'
+	var html = "<div class = 'tickmark' id = 'tickmark"+ID + "' style= 'left:"+xLoc+ "px' onclick = tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
 	return html;
 }
 
@@ -571,6 +571,13 @@ function unTickHover(div){
 	var index = IDtoIndex(ID);
 	var identifier = "#ui-accordion-accordion-header-" + index;
 	$(identifier).attr("class", "ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-corner-all");
+}
+
+function tickClick(div){
+	var ID = div.id.substr(-1,1);
+	var index = IDtoIndex(ID);
+	var identifier = "#ui-accordion-accordion-header-" + index;
+	$(identifier).trigger("click");
 }
 /*
  *	5. jQuery(document).ready()
