@@ -51,6 +51,7 @@ function updatePlayerInfo() {
 		if(createTicks && ytplayer.getDuration() > 0){
 			createTicks = false;
 			addAllTicks();
+
 		}
 	}
 }
@@ -460,6 +461,16 @@ function isHoveringOverComments(){
 	});
 }
 
+//given ID, get Index
+function IDtoIndex(ID){
+	for(var x = 0; x < commentObj.length; x++){
+		if(commentObj[x].ID == ID){
+			return x;
+		}
+	}
+	return false;
+}
+
 /*
  *	4. Tick-related code
  */
@@ -474,7 +485,7 @@ function calculateTickLoc(seconds){
 
 //given the tick location and ID, it creates the string of HTML to create the tick
 function tickHTML(xLoc, ID){
-	var html = "<div class = 'tickmark' id = 'tickmark"+ID + "' style= 'left:"+xLoc+ "px'></div>";
+	var html = "<div class = 'tickmark' id = 'tickmark"+ID + "' style= 'left:"+xLoc+ "px'></div>"; //onmouseover = 'tickHover(this)'
 	return html;
 }
 
@@ -488,6 +499,8 @@ function addAllTicks(){
 		html = tickHTML(xLoc, ID);
 		//console.log(ID, xLoc, html);
 		$(".tickmark_holder").append(html);
+		addTickHover(ID);
+		
 	}
 }
 
@@ -516,7 +529,7 @@ function highlightTickControl(className){
  		if(currentID != tickID){ //if the mouse is not hovering over same comment, continue
 			var tickStr = "#tickmark" + tickID;
 			var tickmark = $(tickStr);
-			changeTickCSS(tickmark, "black", "3px", ".6");
+			changeTickCSS(tickmark, "red", "3px", ".6");
 			//console.log(currentID);
 			if(currentHighlightedTick != "none"){
 				changeTickCSS(currentHighlightedTick, "red", "1px", ".4");
@@ -540,6 +553,25 @@ function changeTickCSS(tick, color, width, opacity){
 	tick.css("width", width);
 	tick.css("opacity", opacity)
 }
+
+function addTickHover(ID){
+	var identifier = "#tickmark" +ID;
+	$(identifier).hover(function(){tickHover(this)}, function(){unTickHover(this)});
+}
+
+function tickHover(div){
+	var ID = div.id.substr(-1,1);
+	var index = IDtoIndex(ID);
+	var identifier = "#ui-accordion-accordion-header-" + index;
+	$(identifier).attr("class", "ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-corner-all ui-state-hover");
+}
+
+function unTickHover(div){
+	var ID = div.id.substr(-1,1);
+	var index = IDtoIndex(ID);
+	var identifier = "#ui-accordion-accordion-header-" + index;
+	$(identifier).attr("class", "ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-corner-all");
+}
 /*
  *	5. jQuery(document).ready()
  *		calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks(), isHoveringOverComments()
@@ -549,9 +581,12 @@ jQuery(document).ready(function(){
    $(document).mousemove(function(e){
       $('#status').html(e.pageX +', '+ e.pageY);
    }); 
-
  	updateProgressbar();
  	setup_commentDisplay();
 	isHoveringOverComments();
 
+
 })
+
+
+
