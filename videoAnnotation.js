@@ -505,12 +505,15 @@ function IDtoIndex(ID){
 
 var timeEndFocused = false;
 function setupTimeEndFocus(){
-	$("#comment_timeEnd").focus(function(){
-											timeEndFocused = true;
-										});
-	$("#comment_time").focus(function(){
-										timeEndFocused = false;
-										});
+	$("#comment_timeEnd").focus(function(){timeEndFocused = true;});
+	$("#comment_time").focus(function(){timeEndFocused = false;});
+}
+
+var textboxFocused = false;
+function setupTextboxFocus(){
+	$(".newCommentTextbox").focus(function(){textboxFocused = true;});
+	$(".newCommentTextbox").focusout(function(){textboxFocused = false;});
+
 }
 
 /*
@@ -657,20 +660,20 @@ jQuery(document).ready(function(){
  	setup_commentDisplay();
 	isHoveringOverComments();
 	setupTimeEndFocus();
+	setupTextboxFocus();
 
 })
 
 $(window).keyup(function(e) {
+	if (!textboxFocused){
 		if (e.which === 32) { //spacebar
-			console.log("spacebar");
 			videoClicked();
 		}else if(e.which === 77){ // m
-			console.log("mute");
 			muteORunmute();
 		}
+	}
 
-
-	});
+});
 
 
 
