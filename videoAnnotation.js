@@ -257,44 +257,58 @@ function updateProgressbar(){
 var commentObj = [
 					{"ID": 0,
 					"text": "This is my first comment! This is frame is interesting since ...",
+					"timeEndSec": 164,
+					"timeEndStr": "2:44",
 					"timeSec" : 158, 
 					"timeStr" : "2:38",
 					"type" : "Comment",
 					"viewer" : "Class",},
 					{"ID": 1,
+					"text": "Comment number 2!",
+					"timeEndSec": 42,
+					"timeEndStr": "2:48",
 					"timeSec" : 38, 
 					"timeStr" : "0:38",
-					"text": "Comment number 2!",
 					"type" : "Comment",
 					"viewer" : "Class",},
 					{"ID": 2,
+					"text": "Question number 1!",
+					"timeEndSec": "None",
+					"timeEndStr": "None",
 					"timeSec" : 8, 
 					"timeStr" : "0:08",
-					"text": "Question number 1!",
 					"type" : "Question",
 					"viewer" : "Class",},
 					{"ID": 3,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": 192,
+					"timeEndStr": "3:12",
 					"timeSec" : 191, 
 					"timeStr" : "3:11",
-					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"type" : "Question",
 					"viewer" : "Just Me"},
 					{"ID": 4,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": 218,
+					"timeEndStr": "3:38",
 					"timeSec" : 214, 
 					"timeStr" : "3:34",
-					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"type" : "Question",
 					"viewer" : "Just Me"},
 					{"ID": 5,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": "None",
+					"timeEndStr": "None",
 					"timeSec" : 2, 
 					"timeStr" : "0:02",
-					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"type" : "Comment",
 					"viewer" : "Just Me"},
 					{"ID": 6,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": 15,
+					"timeEndStr": "0:20",
 					"timeSec" : 5, 
 					"timeStr" : "0:05",
-					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"type" : "Question",
 					"viewer" : "Just Me"}
 					];
@@ -409,8 +423,18 @@ function submitNewComment(){
 	var type = $('#comment_type').find(":selected").text();
 	var viewer = $('#comment_viewer').find(":selected").text();
 	var time = $('#comment_time').val();
+	var timeEndStr = $('#comment_timeEnd').val();
+	var timeEnd;
+	if(timeEndStr == ""){
+		timeEnd = "None";
+		timeEndStr = "None";
+	}else{
+		timeEnd = calcualateTime_stringToNum(timeEndStr);
+	}
 	commentObj.push({ "ID": commentObj.length,
 						"text" : text,
+						"timeEndSec": timeEnd,
+						"timeEndStr": timeEndStr,
 						"timeSec" : calcualateTime_stringToNum(time),
 						"timeStr" : time,
 						"type" : type,
@@ -483,21 +507,36 @@ function calculateTickLoc(seconds){
 	return xLoc;
 }
 
+//calculate the tick location given the starting and end time associated with the comment
+function calculateTickWidth(startTime, endTime){
+	if (endTime != "None"){
+		var leftLoc = calculateTickLoc(startTime);
+		var rightLoc = calculateTickLoc(endTime);
+		var width = rightLoc - leftLoc;
+		//console.log(startTime, endTime, width);
+		return width;
+	}else{
+		return "1"
+	}
+}
+
 //given the tick location and ID, it creates the string of HTML to create the tick
-function tickHTML(xLoc, ID){
-	var html = "<div class = 'tickmark' id = 'tickmark"+ID + "' style= 'left:"+xLoc+ "px' onclick = tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
+function tickHTML(xLoc, width, ID){
+	var style = "'left:" + xLoc + "px; width:"+width + "px'";
+	var html = "<div class = 'tickmark' id = 'tickmark"+ID + "' style="+style+" onclick = tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
 	return html;
 }
 
 //This function should be called the the page is loading
 function addAllTicks(){
 	$(".tickmark_holder").html("");
-	var xLoc, ID, html;
+	var xLoc, ID, width, html;
 	for(var num = 0; num < commentObj.length; num++){
 		xLoc = calculateTickLoc(commentObj[num].timeSec);
 		ID = commentObj[num].ID;
-		html = tickHTML(xLoc, ID);
-		//console.log(ID, xLoc, html);
+		width =calculateTickWidth(commentObj[num].timeSec, commentObj[num].timeEndSec);
+		html = tickHTML(xLoc, width, ID);
+		//console.log(ID, xLoc, width, html);
 		$(".tickmark_holder").append(html);
 		addTickHover(ID);
 		
@@ -523,19 +562,19 @@ function highlightTick(){
 function highlightTickControl(className){
 
 	if($(className).length > 0){ //if this then, then has ID
- 		var index = $(className).attr("id").substr(-1,1);
+ 		var index = $(className).attr("id").substr(30, $(className).attr("id").length);
  		//index gets the correct element index of the commentObj-- commentObj (array of objs) was rearranged to be in order
  		var tickID = commentObj[index].ID;
  		if(currentID != tickID){ //if the mouse is not hovering over same comment, continue
 			var tickStr = "#tickmark" + tickID;
 			var tickmark = $(tickStr);
-			changeTickCSS(tickmark, "red", "3px", ".6");
+			changeTickCSS(tickmark, "red", "No Change", ".9");
 			//console.log(currentID);
 			if(currentHighlightedTick != "none"){
-				changeTickCSS(currentHighlightedTick, "red", "1px", ".4");
+				changeTickCSS(currentHighlightedTick, "red", "No Change", ".4");
 			}
 			currentHighlightedTick = tickmark;
-			currentID = currentHighlightedTick.attr("ID").substr(-1, 1);
+			currentID = currentHighlightedTick.attr("ID").substr(8, currentHighlightedTick.attr("ID").length-1);
 		}
 	}else{
 		if(currentHighlightedTick != "none"){
@@ -549,9 +588,15 @@ function highlightTickControl(className){
 
 //changes the tick css given the necessary information
 function changeTickCSS(tick, color, width, opacity){
-	tick.css("background", color);
-	tick.css("width", width);
-	tick.css("opacity", opacity)
+	if(color !="No Change"){
+		tick.css("background", color);
+	}
+	if(width !="No Change"){
+		tick.css("width", width);
+	}
+	if(opacity !="No Change"){
+		tick.css("opacity", opacity)
+	}
 }
 
 function addTickHover(ID){

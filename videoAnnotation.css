@@ -143,7 +143,6 @@ select{
 
 .tickmark{
 	position: absolute;
-	width: 1px;
 	height: 100%;
 	background: red;
 	opacity: .4;
