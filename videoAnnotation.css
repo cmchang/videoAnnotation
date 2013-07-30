@@ -153,4 +153,6 @@ select{
 	top: 470px;
 }
 
-
+.tickmark, #progressbar, #commentGoTo{
+	cursor: pointer;
+}

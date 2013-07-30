@@ -226,7 +226,11 @@ function progressbar_click(mouseX){
 	var percentage = mouseX/660;
 	$("#progressbar").progressbar("option","value",percentage*100); //updates progressbar location
 	var currentSec = percentage*ytplayer.getDuration();
-	ytplayer.seekTo(currentSec, true); //updates ytplayer location in video
+	if (timeEndFocused){
+		//
+	}else{
+		ytplayer.seekTo(currentSec, true); //updates ytplayer location in video
+	}
 }
 
 //calculate the position of the mouse relative to the progressbar if clicked
@@ -495,9 +499,14 @@ function IDtoIndex(ID){
 	return false;
 }
 
+var timeEndFocused = false;
 function setupTimeEndFocus(){
-	$("#comment_timeEnd").focus(function(){console.log("focus!")});
-	$("#comment_timeEnd").focusout(function(){console.log("not focused!")});
+	$("#comment_timeEnd").focus(function(){console.log("focused!");
+											timeEndFocused = true;
+											});
+	$("#comment_timeEnd").focusout(function(){console.log("not focused!");
+											timeEndFocused = false;
+											});
 }
 
 /*
@@ -628,6 +637,8 @@ function tickClick(div){
 	var index = IDtoIndex(ID);
 	var identifier = "#ui-accordion-accordion-header-" + index;
 	$(identifier).trigger("click");
+	pauseVideo();
+	goToTime(commentObj[index].timeSec);
 }
 /*
  *	5. jQuery(document).ready()
