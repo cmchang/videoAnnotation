@@ -29,7 +29,7 @@ select{
 .videoMenu{
 	max-width: 742px;
 	padding: 5px;
-	height:60px;
+	height:50px;
 	background: #E6E6E6;
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
@@ -46,23 +46,32 @@ select{
 	width: 660px;
 	height: 10px;
 	margin-bottom: 13px;
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
 }
 
 #progressbar{
 	position: relative;
 	width:100%; 
 	height: 15px;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
 
 }
 
 .tickmark_holder{
 	position: relative;
 	width: 660px;
-	height: 10px;
+	height: 4px;
 	margin-bottom: 6px;
 	background: white;
 	border: solid 1px #B5AF9F;
-	border-radius: 3px;
+	border-top: none;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+
 }
 
 .tickmark{
