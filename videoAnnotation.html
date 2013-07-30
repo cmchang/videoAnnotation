@@ -28,14 +28,17 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		<div class = "videoMenu">
 			<div class = "playORpause_holder"><img class = "playORpause" onclick="playORpause();" src="images/play.png"></div>
 			<div class = "progressbar_container">
-				<div id="progressbar"></div>
+				
+					<div id="progressbar"></div>
+					<div class = "tickmark_holder"></div>	
+				
+				
 				<div id ="showTime">
 					<div id = "videoTimeDisplay">--:--</div><text> /</text>
 					<div id = "videoTotalTimeDisplay">--:--</div>
 				</div>
 			</div>
 			<div class = "muteORunmute_holder"><img class = "muteORunmute" onclick="muteORunmute()" src = "images/mute.png"></div>
-			
 		</div>
 	</div>
 
@@ -72,11 +75,6 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			</div>
 			<div id="accordion"></div> 
 		</div>
-	</div>
-
-	<div class = "tickmarkView">
-		<span>Annotations</span>
-		<div class ="tickmark_holder"></div>
 	</div>
 
 	<div id="videoInfo" class = "videoInfo" style = "display:None">
