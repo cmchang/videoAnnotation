@@ -401,7 +401,10 @@ function hide_addNewComment(){
 	normalSizeCommentHolder();
 	$(".commentsView_newComment").css("display", "None");
 	$("#newCommentTime").val("");
+	$("#comment_timeEnd").val("");
 	$(".newCommentTextbox").val("");
+	timeEndFocused = false;
+
 }
 
 //Called when the showing the new comment
