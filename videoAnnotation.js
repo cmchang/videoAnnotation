@@ -409,12 +409,12 @@ function hide_addNewComment(){
 
 //Called when the showing the new comment
 function shrinkCommentHolder(){
-	$(".commentsView_holder").css("height", "264px");
+	$(".commentsView_holder").css("height", "279px");
 }
 
 //Called when the no longer showing the new comment
 function normalSizeCommentHolder(){
-	$(".commentsView_holder").css("height", "429px");
+	$(".commentsView_holder").css("height", "444px");
 }
 
 //when the comment button is pushed
@@ -664,12 +664,21 @@ jQuery(document).ready(function(){
 
 })
 
+var commentOrCancel = true;  // true - next click is comment, false - next click cancels
 $(window).keyup(function(e) {
 	if (!textboxFocused){
 		if (e.which === 32) { //spacebar
 			videoClicked();
 		}else if(e.which === 77){ // m
 			muteORunmute();
+		}else if (e.which === 67){ // c
+			if (commentOrCancel){
+				comment_btn();
+				commentOrCancel = false;
+			}else{
+				hide_addNewComment();
+				commentOrCancel = true;
+			}
 		}
 	}
 
