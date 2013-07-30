@@ -655,8 +655,19 @@ jQuery(document).ready(function(){
 	isHoveringOverComments();
 	setupTimeEndFocus();
 
-
 })
+
+$(window).keyup(function(e) {
+		if (e.which === 32) { //spacebar
+			console.log("spacebar");
+			videoClicked();
+		}else if(e.which === 77){ // m
+			console.log("mute");
+			muteORunmute();
+		}
+
+
+	});
 
 
 
