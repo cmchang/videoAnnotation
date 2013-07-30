@@ -395,6 +395,7 @@ function show_addNewComment(){
 	shrinkCommentHolder();
 	$(".commentsView_newComment").css("display", "");
 	$("#comment_time").val(calculateTime(ytplayer.getCurrentTime()));
+	$(".newCommentTextbox").focus();
 }
 //hodes the add new comment options
 function hide_addNewComment(){
@@ -404,6 +405,7 @@ function hide_addNewComment(){
 	$("#comment_timeEnd").val("");
 	$(".newCommentTextbox").val("");
 	timeEndFocused = false;
+	$(".newCommentTextbox").focusout();
 
 }
 
@@ -679,8 +681,16 @@ $(window).keyup(function(e) {
 				hide_addNewComment();
 				commentOrCancel = true;
 			}
+		} else if(e.which == 27){ //esc
+			hide_addNewComment();
+			commentOrCancel = true;
 		}
 	}
+
+	if(e.which == 27){ //esc
+		hide_addNewComment();
+		commentOrCancel = true;
+		}
 
 });
 
