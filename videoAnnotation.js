@@ -495,6 +495,11 @@ function IDtoIndex(ID){
 	return false;
 }
 
+function setupTimeEndFocus(){
+	$("#comment_timeEnd").focus(function(){console.log("focus!")});
+	$("#comment_timeEnd").focusout(function(){console.log("not focused!")});
+}
+
 /*
  *	4. Tick-related code
  */
@@ -578,7 +583,7 @@ function highlightTickControl(className){
 		}
 	}else{
 		if(currentHighlightedTick != "none"){
-			changeTickCSS(currentHighlightedTick, "red", "1px", ".4");
+			changeTickCSS(currentHighlightedTick, "red", "No Change", ".4");
 			currentHighlightedTick = "none";
 			currentID = "none";
 
@@ -636,6 +641,7 @@ jQuery(document).ready(function(){
  	updateProgressbar();
  	setup_commentDisplay();
 	isHoveringOverComments();
+	setupTimeEndFocus();
 
 
 })
