@@ -227,10 +227,11 @@ function progressbar_click(mouseX){
 	$("#progressbar").progressbar("option","value",percentage*100); //updates progressbar location
 	var currentSec = percentage*ytplayer.getDuration();
 	if (timeEndFocused){
-		//
+		$("#comment_timeEnd").val(calculateTime(currentSec));
 	}else{
-		ytplayer.seekTo(currentSec, true); //updates ytplayer location in video
+		$("#comment_time").val(calculateTime(currentSec));
 	}
+	ytplayer.seekTo(currentSec, true); //updates ytplayer location in video
 }
 
 //calculate the position of the mouse relative to the progressbar if clicked
@@ -501,12 +502,12 @@ function IDtoIndex(ID){
 
 var timeEndFocused = false;
 function setupTimeEndFocus(){
-	$("#comment_timeEnd").focus(function(){console.log("focused!");
+	$("#comment_timeEnd").focus(function(){
 											timeEndFocused = true;
-											});
-	$("#comment_timeEnd").focusout(function(){console.log("not focused!");
-											timeEndFocused = false;
-											});
+										});
+	$("#comment_time").focus(function(){
+										timeEndFocused = false;
+										});
 }
 
 /*
