@@ -416,6 +416,7 @@ function hide_addNewComment(){
 	$(".newCommentTextbox").focusout();
 	timeEndFocused = false;
 	turnDrag_off();
+	hideRangeTick();
 }
 
 //Called when the showing the new comment
@@ -583,6 +584,12 @@ function dragRangeOn(){
 		}
 	});
 }
+
+function hideRangeTick(){
+	$("#rangeTick").hide();
+	$("#rangeTick").css("width", "2px")	
+}
+
 /*
  *	5. Tick-related code
  */
