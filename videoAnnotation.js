@@ -3,8 +3,9 @@
  *		1. Youtube Video-Related Code
  *		2. Progressbar-related Code
  *		3. Commenting-related Code (includes accordion)
- *		4. Tick-related code
- *		5. jQuery(document).ready() 
+ *		4. Drag Range-related Code
+ *		5. Tick-related code
+ *		6. jQuery(document).ready() 
  *				-calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks(), isHoveringOverComments()
  */
 
@@ -36,7 +37,6 @@ function updatePlayerInfo() {
 		updateHTML("videoDuration", ytplayer.getDuration());
 		updateHTML("videoCurrentTime", ytplayer.getCurrentTime());
 		var percentage = 100*ytplayer.getCurrentTime()/ytplayer.getDuration();
-		//$("#progressbar").progressbar("option","value", percentage);
 		updateHTML("videoPercentage", percentage);
 		updateHTML("bytesTotal", ytplayer.getVideoBytesTotal());
 		updateHTML("startBytes", ytplayer.getVideoStartBytes());
@@ -223,15 +223,21 @@ function goToTime(seconds){
 
 //update the time of the ytplayer if the progress bar is clicked
 function progressbar_click(mouseX){
-	var percentage = mouseX/660;
+	var percentage = mouseX/660;  // 660 because the progressbar container is 660px
 	$("#progressbar").progressbar("option","value",percentage*100); //updates progressbar location
 	var currentSec = percentage*ytplayer.getDuration();
-	if (timeEndFocused){
-		$("#comment_timeEnd").val(calculateTime(currentSec));
-	}else{
-		$("#comment_time").val(calculateTime(currentSec));
+
+	if(!drag_on){
+		//deals with boolean associated whether or not the "time" or "to" input box is focused in the new comment section
+		if (timeEndFocused){
+			$("#comment_timeEnd").val(calculateTime(currentSec));
+		}else{
+			$("#comment_time").val(calculateTime(currentSec));
+		}
 	}
-	ytplayer.seekTo(currentSec, true); //updates ytplayer location in video
+
+	//updates ytplayer location in video
+	ytplayer.seekTo(currentSec, true); 
 }
 
 //calculate the position of the mouse relative to the progressbar if clicked
@@ -246,6 +252,7 @@ function updateProgressbar(){
 		progressbar_click(relX);
 	});
 
+	dragRangeOn();
 }
 
 /*
@@ -404,9 +411,9 @@ function hide_addNewComment(){
 	$("#newCommentTime").val("");
 	$("#comment_timeEnd").val("");
 	$(".newCommentTextbox").val("");
-	timeEndFocused = false;
 	$(".newCommentTextbox").focusout();
-
+	timeEndFocused = false;
+	drag_on = false;
 }
 
 //Called when the showing the new comment
@@ -428,7 +435,7 @@ function comment_btn(){
 //when the submit button is pushed
 function submitNewComment(){
 	normalSizeCommentHolder();
-	$(".commentsView_newComment").css("display", "none"); //show the div
+	//$(".commentsView_newComment").css("display", "none");
 	var text = $(".newCommentTextbox").val();
 	var type = $('#comment_type').find(":selected").text();
 	var viewer = $('#comment_viewer').find(":selected").text();
@@ -452,6 +459,7 @@ function submitNewComment(){
 	$(".newCommentTextbox").val(""); //empty textbox
 	showNewComment();
 	addAllTicks();
+	hide_addNewComment();
 
 }
 
@@ -519,7 +527,40 @@ function setupTextboxFocus(){
 }
 
 /*
- *	4. Tick-related code
+ *	4. Drag Range-related code
+ */
+
+var drag_on = false;
+function dragRange(){
+	drag_on = true;
+}
+
+//given "this", the function will calculate the mouse position and then convert it to seconds relative to the progress bar
+function mouseXtoSec(This, e){
+	var parentOffset = $(This).parent().offset(); 
+	var relX = e.pageX - parentOffset.left;
+	var percentage = relX/660;  // 660 because the progressbar container is 660px
+	return percentage*ytplayer.getDuration();
+}
+
+function dragRangeOn(){
+	$("#progressbar").mousedown(function(e){
+		
+		if (drag_on){
+			var currentSec = mouseXtoSec(this, e);
+			comment_btn();
+			$("#comment_time").val(calculateTime(currentSec));		
+		}
+	});
+	$("#progressbar").mouseup(function(e){
+		if(drag_on){
+			var currentSec = mouseXtoSec(this, e);
+			$("#comment_timeEnd").val(calculateTime(currentSec));
+		}
+	});
+}
+/*
+ *	5. Tick-related code
  */
 
 //calculate the tick location given the time where the associated comment is given
@@ -591,7 +632,7 @@ function highlightTickControl(className){
  		if(currentID != tickID){ //if the mouse is not hovering over same comment, continue
 			var tickStr = "#tickmark" + tickID;
 			var tickmark = $(tickStr);
-			changeTickCSS(tickmark, "red", "No Change", ".9");
+			changeTickCSS(tickmark, "red", "No Change", "1");
 			//console.log(currentID);
 			if(currentHighlightedTick != "none"){
 				changeTickCSS(currentHighlightedTick, "red", "No Change", ".4");
@@ -650,7 +691,7 @@ function tickClick(div){
 	goToTime(commentObj[index].timeSec);
 }
 /*
- *	5. jQuery(document).ready()
+ *	6. jQuery(document).ready()
  *		calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks(), isHoveringOverComments()
  */
 
