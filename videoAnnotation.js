@@ -438,7 +438,6 @@ function comment_btn(){
 //when the submit button is pushed
 function submitNewComment(){
 	normalSizeCommentHolder();
-	//$(".commentsView_newComment").css("display", "none");
 	var text = $(".newCommentTextbox").val();
 	var type = $('#comment_type').find(":selected").text();
 	var viewer = $('#comment_viewer').find(":selected").text();
@@ -460,10 +459,10 @@ function submitNewComment(){
 						"type" : type,
 						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
+	goToTime(calcualateTime_stringToNum(time)); //this so when the comment is submitted, it will open the comment
 	showNewComment();
 	addAllTicks();
 	hide_addNewComment();
-
 }
 
 //adds the new comment into the accordion
