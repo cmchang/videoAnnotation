@@ -753,10 +753,8 @@ var commentOrCancel = true;  // true - next click is comment, false - next click
 
 $(window).keyup(function(e) {
 	if (!textboxFocused){
-		if (e.which === 32) { //spacebar
+		if(e.which == 32){ //spacebar
 			videoClicked();
-		}else if(e.which === 77){ // m
-			muteORunmute();
 		}else if (e.which === 67){ // c
 			if (commentOrCancel){
 				comment_btn();
@@ -765,12 +763,13 @@ $(window).keyup(function(e) {
 				hide_addNewComment();
 				commentOrCancel = true;
 			}
-		} else if(e.which == 27){ //esc
-			hide_addNewComment();
-			commentOrCancel = true;
+		}else if(e.which ===68){ //d
+			dragRange();
+		}else if(e.which === 77){ // m
+			muteORunmute();
 		}
 	}
-
+	//here so that unaffected if textbox becomes focused
 	if(e.which == 27){ //esc
 		hide_addNewComment();
 		commentOrCancel = true;
