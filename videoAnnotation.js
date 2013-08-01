@@ -6,7 +6,8 @@
  *		4. Drag Range-related Code
  *		5. Tick-related code
  *		6. jQuery(document).ready() 
- *				-calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks(), isHoveringOverComments()
+ *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks(), isHoveringOverComments()
+ *		7. Keyboard Shortcuts
  */
 
 /*
@@ -413,7 +414,7 @@ function hide_addNewComment(){
 	$(".newCommentTextbox").val("");
 	$(".newCommentTextbox").focusout();
 	timeEndFocused = false;
-	drag_on = false;
+	turnDrag_off();
 }
 
 //Called when the showing the new comment
@@ -531,10 +532,18 @@ function setupTextboxFocus(){
  */
 
 var drag_on = false;
+
+//Called when drag range button is pushed
 function dragRange(){
+	$(".dragRange_btn").attr("disabled", "disabled");
 	drag_on = true;
 }
 
+//turns off the drag boolean
+function turnDrag_off(){
+	drag_on = false;
+	$(".dragRange_btn").removeAttr("disabled");
+}
 //given "this", the function will calculate the mouse position and then convert it to seconds relative to the progress bar
 function mouseXtoSec(This, e){
 	var parentOffset = $(This).parent().offset(); 
@@ -692,7 +701,6 @@ function tickClick(div){
 }
 /*
  *	6. jQuery(document).ready()
- *		calls: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks(), isHoveringOverComments()
  */
 
 jQuery(document).ready(function(){
@@ -708,6 +716,11 @@ jQuery(document).ready(function(){
 })
 
 var commentOrCancel = true;  // true - next click is comment, false - next click cancels
+
+/*
+ *	7. Keyboard Shortcuts
+ */
+
 $(window).keyup(function(e) {
 	if (!textboxFocused){
 		if (e.which === 32) { //spacebar
