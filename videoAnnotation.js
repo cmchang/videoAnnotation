@@ -6,7 +6,7 @@
  *		4. Drag Range-related Code
  *		5. Tick-related code
  *		6. jQuery(document).ready() 
- *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), addTicks(), isHoveringOverComments()
+ *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), isHoveringOverComments()
  *		7. Keyboard Shortcuts
  */
 
@@ -49,6 +49,7 @@ function updatePlayerInfo() {
 		openCommentSyncVideo(); //syncs opening the comments with the video
 		highlightTick();
 		
+		//this makes sure the ticks are only created AFTER ytplayer is created so we can use .getDuration()
 		if(createTicks && ytplayer.getDuration() > 0){
 			createTicks = false;
 			addAllTicks();
@@ -552,17 +553,31 @@ function mouseXtoSec(This, e){
 	return percentage*ytplayer.getDuration();
 }
 
+
+//this function controls when the mouse is clicked in unclicked over the progressbar IF drag_on is true (the drag button is pushed)
+//this function creates the the tick under the progressbar and gives it the left position
+//the width of the tick is controlled under document.ready() in the mousemove function
+var startDragX;
+var drag_mouseup = true; //important when calculating the width of the dragtick
 function dragRangeOn(){
 	$("#progressbar").mousedown(function(e){
-		
 		if (drag_on){
+			startDragX = mouseX;
+			drag_mouseup = false; 
+			console.log(startDragX);
 			var currentSec = mouseXtoSec(this, e);
 			comment_btn();
-			$("#comment_time").val(calculateTime(currentSec));		
+			$("#comment_time").val(calculateTime(currentSec));
+			var tickLoc = calculateTickLoc(currentSec);
+			var tickLocStr = tickLoc.toString() + "px";
+			$("#rangeTick").css("left", tickLocStr);
+			$("#rangeTick").css("width", "2px")
+			$("#rangeTick").show();	
 		}
 	});
 	$("#progressbar").mouseup(function(e){
 		if(drag_on){
+			drag_mouseup = true;
 			var currentSec = mouseXtoSec(this, e);
 			$("#comment_timeEnd").val(calculateTime(currentSec));
 		}
@@ -703,10 +718,19 @@ function tickClick(div){
  *	6. jQuery(document).ready()
  */
 
+var mouseX, mouseY;
 jQuery(document).ready(function(){
-   $(document).mousemove(function(e){
-      $('#status').html(e.pageX +', '+ e.pageY);
-   }); 
+	$(document).mousemove(function(e){
+		$('#status').html(e.pageX +', '+ e.pageY);
+		mouseX = e.pageX;
+		mouseY = e.pageY;
+		if(drag_on && startDragX > 0 && !drag_mouseup){
+			//console.log("here");
+			var width = mouseX-startDragX;
+			var widthStr = width.toString() + "px";
+			$("#rangeTick").css("width", widthStr);
+		}
+	}); 
  	updateProgressbar();
  	setup_commentDisplay();
 	isHoveringOverComments();

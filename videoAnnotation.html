@@ -28,10 +28,11 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		<div class = "videoMenu">
 			<div class = "playORpause_holder"><img class = "playORpause" onclick="playORpause();" src="images/play.png"></div>
 			<div class = "progressbar_container">
-				
-					<div id="progressbar"></div>
-					<div class = "tickmark_holder"></div>	
-				
+				<div id= "dragRangeContainer">
+					<div id="rangeTick"></div>
+				</div>
+				<div id= "progressbar"></div>
+				<div class = "tickmark_holder"></div>	
 				
 				<div id ="showTime">
 					<div id = "videoTimeDisplay">--:--</div><text> /</text>
@@ -70,7 +71,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			</div>
 		</div>
 		<div class = "commentsView_holder">
-			<div style = "display:none;">
+			<div class = "offsetInfo"style = "display:none;">
 				<div>Mouse Postion: <text id="status">0, 0</text></div>
 				<div>Relative Mouse Postion in Progressbar:<text id = "offset">0, 0</text> </div>
 			</div>

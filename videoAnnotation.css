@@ -43,6 +43,7 @@ select{
 }
 
 .progressbar_container{
+	position:relative;
 	width: 660px;
 	height: 10px;
 	margin-bottom: 13px;
@@ -58,9 +59,28 @@ select{
 	border-top-left-radius: 5px;
 	border-bottom-right-radius: 0px;
 	border-bottom-left-radius: 0px;
+	opacity: .7;
 
 }
 
+#dragRangeContainer{
+	position: absolute;
+	width: 660px;
+	height:16px;
+	background: white;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+	top: 0px;
+	border: solid 1px #B5AF9F;
+	border-bottom: none;
+}
+#rangeTick{
+	position: absolute;
+	height: 100%;
+	display: none;
+	width: 2px;
+	background: red;
+}
 .tickmark_holder{
 	position: relative;
 	width: 660px;
