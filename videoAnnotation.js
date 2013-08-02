@@ -507,10 +507,17 @@ function IDtoIndex(ID){
 	return false;
 }
 
+var timeStartFocused = false;
 var timeEndFocused = false;
 function setupTimeEndFocus(){
-	$("#comment_timeEnd").focus(function(){timeEndFocused = true;});
-	$("#comment_time").focus(function(){timeEndFocused = false;});
+	$("#comment_timeEnd").focus(function(){
+									timeEndFocused = true;
+									timeStartFocused = false;
+									});
+	$("#comment_time").focus(function(){
+									timeEndFocused = false;
+									timeStartFocused = true;	
+									});
 }
 
 var textboxFocused = false;
@@ -526,12 +533,17 @@ function setupTextboxFocus(){
 
 var drag_on = true;
 
-//given "this", the function will calculate the mouse position and then convert it to seconds relative to the progress bar
+//given "this" (i.e. the progressbar), the function will calculate the mouse position and then convert it to seconds relative to the progress bar
 function mouseXtoSec(This, e){
-	var parentOffset = $(This).parent().offset(); 
-	var relX = e.pageX - parentOffset.left;
+	var relX = getRelMouseX(This,e);
 	var percentage = relX/660;  // 660 because the progressbar container is 660px
 	return percentage*ytplayer.getDuration();
+}
+
+function getRelMouseX(This, e){
+	var parentOffset = $(This).parent().offset(); 
+	var relX = e.pageX - parentOffset.left;
+	return relX;
 }
 
 
@@ -542,15 +554,13 @@ var startDragX;
 var drag_mouseup = true; //important when calculating the width of the dragtick
 function dragRangeOn(){
 	$("#progressbar").mousedown(function(e){
-		if (drag_on){
-			startDragX = mouseX;
-			drag_mouseup = false; 
-			var currentSec = mouseXtoSec(this, e);
-			comment_btn();
+		if(!timeStartFocused){
+			if (drag_on && !timeEndFocused){
+				startDragX = mouseX;
+				drag_mouseup = false; 
+				var currentSec = mouseXtoSec(this, e);
+				comment_btn();
 
-			if (timeEndFocused){
-				$("#comment_timeEnd").val(calculateTime(currentSec));
-			}else{
 				$("#comment_time").val(calculateTime(currentSec));
 				var tickLoc = calculateTickLoc(currentSec);
 				var tickLocStr = tickLoc.toString() + "px";
@@ -559,20 +569,34 @@ function dragRangeOn(){
 				$("#rangeTick").show();	
 			}
 		}
+
 	});
 	$("#progressbar").mouseup(function(e){
 		if(drag_on){
 			drag_mouseup = true;
 			var currentSec = mouseXtoSec(this, e);
-			if(!timeEndFocused){
-				if($("#comment_time").val() == calculateTime(currentSec)){
-					$("#comment_timeEnd").val("");
+			if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
+				$("#comment_timeEnd").val(calculateTime(currentSec));
+				timeEndFocused_adjustTickWidth();
+			}else if(timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
+				timeStartFocused_adjustTick(this, e);
+				
+				// var tickLocStr = currentX.toString() + "px"; 
+				// $("#rangeTick").css("left", tickLocStr);
+
+			}else{
+				if($("#comment_time").val() == calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
+					if (!timeStartFocused){//only the clear it if dragging - if user just wants to change the starting time don't clear
+						$("#comment_timeEnd").val("");
+					}
 				}else{
 					$("#comment_timeEnd").val(calculateTime(currentSec));
 				}
 			}
 
 		}
+		timeStartFocused = false;
+		timeEndFocused = false;
 	});
 }
 
@@ -580,6 +604,34 @@ function dragRangeOn(){
 function hideRangeTick(){
 	$("#rangeTick").hide();
 	$("#rangeTick").css("width", "2px")	
+}
+
+//if the timeEnd is focused, when the progressbar is clicked, this function is called
+//the function readjusts the width of the tick depending on where the click occurs
+function timeEndFocused_adjustTickWidth(){
+	dragWidth = mouseX-startDragX;
+	var widthStr = dragWidth.toString() + "px";
+	$("#rangeTick").css("width", widthStr);
+}
+
+function timeStartFocused_adjustTick(This, e){
+	var currentSec = mouseXtoSec(This, e);
+	startDragX = calculateTickLoc(currentSec);
+	var currentTickX = parseInt($("#rangeTick").css("left").substr(0, $("#rangeTick").css("left").length-2));
+	var xDiff = startDragX - currentTickX;
+
+	if(xDiff < 0){ //new X location is left of original, width increases 
+		dragWidth += Math.abs(xDiff);
+	}else{//new X location is left of original, width increases  
+		dragWidth -= Math.abs(xDiff);
+	}
+	var widthStr = dragWidth.toString() + "px";
+	$("#rangeTick").css("width", widthStr);
+	//startDragX -= Math.abs(moveX);
+	$("#comment_time").val(calculateTime(currentSec));
+	var tickLocStr = startDragX.toString() + "px";
+	$("#rangeTick").css("left", tickLocStr);
+	
 }
 
 /*
