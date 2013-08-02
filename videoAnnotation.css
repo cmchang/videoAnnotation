@@ -76,7 +76,7 @@ select{
 	overflow: hidden;
 }
 #rangeTick{
-	position: absolute;
+	position: relative;
 	height: 100%;
 	display: none;
 	width: 2px;

@@ -58,7 +58,7 @@ function updatePlayerInfo() {
 	}
 }
 
-//give the time in secodns, show the time as a string with (hours:)minutes:seconds
+//give the time in seconds, show the time as a string with (hours:)minutes:seconds
 function calculateTime(givenTime){
 	var totalSec = parseInt(givenTime);
 	var hours = 0;
@@ -246,6 +246,10 @@ function updateProgressbar(){
 	});
 
 	dragRangeOn();
+}
+
+function progressbarOffsetX(){
+	return $("#progressbar").parent().offset().left; //progressbar x offset
 }
 
 /*
@@ -550,13 +554,13 @@ function getRelMouseX(This, e){
 //this function controls when the mouse is clicked in unclicked over the progressbar IF drag_on is true (the drag button is pushed)
 //this function creates the the tick under the progressbar and gives it the left position
 //the width of the tick is controlled under document.ready() in the mousemove function
-var startDragX;
+var startDragX; //relative to the page
 var drag_mouseup = true; //important when calculating the width of the dragtick
 function dragRangeOn(){
 	$("#progressbar").mousedown(function(e){
 		if(!timeStartFocused){
 			if (drag_on && !timeEndFocused){
-				startDragX = mouseX;
+				startDragX = mouseX - progressbarOffsetX();
 				drag_mouseup = false; 
 				var currentSec = mouseXtoSec(this, e);
 				comment_btn();
@@ -577,7 +581,7 @@ function dragRangeOn(){
 			var currentSec = mouseXtoSec(this, e);
 			if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
 				$("#comment_timeEnd").val(calculateTime(currentSec));
-				timeEndFocused_adjustTickWidth();
+				timeEndFocused_adjustTickWidth(this,e);
 			}else if(timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
 				timeStartFocused_adjustTick(this, e);
 				
@@ -606,10 +610,25 @@ function hideRangeTick(){
 	$("#rangeTick").css("width", "2px")	
 }
 
+function dragWidthCalc(){
+	$(document).mousemove(function(e){
+		$('#status').html(e.pageX +', '+ e.pageY);
+		mouseX = e.pageX;
+		mouseY = e.pageY;
+		if(startDragX > 0 && !drag_mouseup){
+			drag_on = true;
+			dragWidth = mouseX-startDragX - progressbarOffsetX();
+			var widthStr = dragWidth.toString() + "px";
+			$("#rangeTick").css("width", widthStr);
+		}
+	}); 
+}
 //if the timeEnd is focused, when the progressbar is clicked, this function is called
 //the function readjusts the width of the tick depending on where the click occurs
-function timeEndFocused_adjustTickWidth(){
-	dragWidth = mouseX-startDragX;
+function timeEndFocused_adjustTickWidth(This, e){
+	var currentSec = mouseXtoSec(This, e);
+	var currentX = calculateTickLoc(currentSec);
+	dragWidth = currentX-startDragX;
 	var widthStr = dragWidth.toString() + "px";
 	$("#rangeTick").css("width", widthStr);
 }
@@ -772,17 +791,7 @@ function tickClick(div){
 var mouseX, mouseY;
 var dragWidth;
 jQuery(document).ready(function(){
-	$(document).mousemove(function(e){
-		$('#status').html(e.pageX +', '+ e.pageY);
-		mouseX = e.pageX;
-		mouseY = e.pageY;
-		if(startDragX > 0 && !drag_mouseup){
-			drag_on = true;
-			dragWidth = mouseX-startDragX;
-			var widthStr = dragWidth.toString() + "px";
-			$("#rangeTick").css("width", widthStr);
-		}
-	}); 
+	dragWidthCalc();
  	updateProgressbar();
  	setup_commentDisplay();
 	isHoveringOverComments();
