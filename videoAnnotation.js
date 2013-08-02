@@ -229,15 +229,6 @@ function progressbar_click(mouseX){
 	$("#progressbar").progressbar("option","value",percentage*100); //updates progressbar location
 	var currentSec = percentage*ytplayer.getDuration();
 
-	if(!drag_on){
-		//deals with boolean associated whether or not the "time" or "to" input box is focused in the new comment section
-		if (timeEndFocused){
-			$("#comment_timeEnd").val(calculateTime(currentSec));
-		}else{
-			$("#comment_time").val(calculateTime(currentSec));
-		}
-	}
-
 	//updates ytplayer location in video
 	ytplayer.seekTo(currentSec, true); 
 }
@@ -403,7 +394,9 @@ function setupAccordion(){
 function show_addNewComment(){
 	shrinkCommentHolder();
 	$(".commentsView_newComment").css("display", "");
-	$("#comment_time").val(calculateTime(ytplayer.getCurrentTime()));
+	if(!timeEndFocused){
+		$("#comment_time").val(calculateTime(ytplayer.getCurrentTime()));
+	}
 	$(".newCommentTextbox").focus();
 }
 //hodes the add new comment options
@@ -415,7 +408,6 @@ function hide_addNewComment(){
 	$(".newCommentTextbox").val("");
 	$(".newCommentTextbox").focusout();
 	timeEndFocused = false;
-	turnDrag_off();
 	hideRangeTick();
 }
 
@@ -532,19 +524,8 @@ function setupTextboxFocus(){
  *	4. Drag Range-related code
  */
 
-var drag_on = false;
+var drag_on = true;
 
-//Called when drag range button is pushed
-function dragRange(){
-	$(".dragRange_btn").attr("disabled", "disabled");
-	drag_on = true;
-}
-
-//turns off the drag boolean
-function turnDrag_off(){
-	drag_on = false;
-	$(".dragRange_btn").removeAttr("disabled");
-}
 //given "this", the function will calculate the mouse position and then convert it to seconds relative to the progress bar
 function mouseXtoSec(This, e){
 	var parentOffset = $(This).parent().offset(); 
@@ -564,25 +545,37 @@ function dragRangeOn(){
 		if (drag_on){
 			startDragX = mouseX;
 			drag_mouseup = false; 
-			console.log(startDragX);
 			var currentSec = mouseXtoSec(this, e);
 			comment_btn();
-			$("#comment_time").val(calculateTime(currentSec));
-			var tickLoc = calculateTickLoc(currentSec);
-			var tickLocStr = tickLoc.toString() + "px";
-			$("#rangeTick").css("left", tickLocStr);
-			$("#rangeTick").css("width", "2px")
-			$("#rangeTick").show();	
+
+			if (timeEndFocused){
+				$("#comment_timeEnd").val(calculateTime(currentSec));
+			}else{
+				$("#comment_time").val(calculateTime(currentSec));
+				var tickLoc = calculateTickLoc(currentSec);
+				var tickLocStr = tickLoc.toString() + "px";
+				$("#rangeTick").css("left", tickLocStr);
+				$("#rangeTick").css("width", "2px")
+				$("#rangeTick").show();	
+			}
 		}
 	});
 	$("#progressbar").mouseup(function(e){
 		if(drag_on){
 			drag_mouseup = true;
 			var currentSec = mouseXtoSec(this, e);
-			$("#comment_timeEnd").val(calculateTime(currentSec));
+			if(!timeEndFocused){
+				if($("#comment_time").val() == calculateTime(currentSec)){
+					$("#comment_timeEnd").val("");
+				}else{
+					$("#comment_timeEnd").val(calculateTime(currentSec));
+				}
+			}
+
 		}
 	});
 }
+
 
 function hideRangeTick(){
 	$("#rangeTick").hide();
@@ -725,15 +718,16 @@ function tickClick(div){
  */
 
 var mouseX, mouseY;
+var dragWidth;
 jQuery(document).ready(function(){
 	$(document).mousemove(function(e){
 		$('#status').html(e.pageX +', '+ e.pageY);
 		mouseX = e.pageX;
 		mouseY = e.pageY;
-		if(drag_on && startDragX > 0 && !drag_mouseup){
-			//console.log("here");
-			var width = mouseX-startDragX;
-			var widthStr = width.toString() + "px";
+		if(startDragX > 0 && !drag_mouseup){
+			drag_on = true;
+			dragWidth = mouseX-startDragX;
+			var widthStr = dragWidth.toString() + "px";
 			$("#rangeTick").css("width", widthStr);
 		}
 	}); 
