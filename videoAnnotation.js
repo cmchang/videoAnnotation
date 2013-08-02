@@ -236,7 +236,7 @@ function progressbar_click(mouseX){
 //calculate the position of the mouse relative to the progressbar if clicked
 function updateProgressbar(){
 	//update progressbar if clicked
-   $("#progressbar").click(function(e){
+   $("#progressbar").mouseup(function(e){
 		var parentOffset = $(this).parent().offset(); 
 		//or $(this).offset(); if you really just want the current element's offset
 		var relX = e.pageX - parentOffset.left;
@@ -413,6 +413,8 @@ function hide_addNewComment(){
 	$(".newCommentTextbox").focusout();
 	timeEndFocused = false;
 	hideRangeTick();
+	dragWidth = 2;
+
 }
 
 //Called when the showing the new comment
