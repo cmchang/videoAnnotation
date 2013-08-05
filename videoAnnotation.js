@@ -226,7 +226,8 @@ function goToTime(seconds){
 //update the time of the ytplayer if the progress bar is clicked
 function progressbar_click(mouseX){
 	var percentage = mouseX/660;  // 660 because the progressbar container is 660px
-	$("#progressbar").progressbar("option","value",percentage*100); //updates progressbar location
+	console.log(percentage);
+	$("#progressbar").progressbar("value",percentage*100); //updates progressbar location
 	var currentSec = percentage*ytplayer.getDuration();
 
 	//updates ytplayer location in video
