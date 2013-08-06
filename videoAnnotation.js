@@ -817,8 +817,6 @@ $(window).keyup(function(e) {
 				hide_addNewComment();
 				commentOrCancel = true;
 			}
-		}else if(e.which ===68){ //d
-			dragRange();
 		}else if(e.which === 77){ // m
 			muteORunmute();
 		}
