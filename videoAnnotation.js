@@ -138,11 +138,11 @@ function playORpause(){
 
 //when the mute/unmute button is clicked
 function muteORunmute(){
-	if ($(".muteORunmute").attr("src") == "images/mute.png"){
-		$(".muteORunmute").attr("src", "images/volume_up.png")
+	if ($(".muteORunmute").attr("src") == "images/volume_up.png"){
+		$(".muteORunmute").attr("src", "images/mute.png")
 		muteVideo();
 	}else{
-		$(".muteORunmute").attr("src", "images/mute.png")
+		$(".muteORunmute").attr("src", "images/volume_up.png")
 		unMuteVideo();
 	}
 }
