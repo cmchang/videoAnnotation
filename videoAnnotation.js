@@ -212,7 +212,6 @@ function _run() {
 google.setOnLoadCallback(_run);
 
 //given the time in seconds, goes to corresponding time in the video
-//called when the text "View" in the comment is clicked
 function goToTime(seconds){
 	ytplayer.seekTo(seconds,true);
 }
@@ -364,10 +363,9 @@ function extractCommentHTML(num){
 	headerHTML +="</text>";
 
 	var contentHTML = "<div>";
-	var timeHTML = "<span id = 'commentTimeShow'>Time: " +timeStr +"  </span>";
-	var goToHTML = "<span id = 'commentGoTo' onclick = 'goToTime(" +commentObj[num].timeSec + ")'>view</span>";
+	var timeHTML = "<span id = 'commentTimeShow' onclick = 'goToTime(" +commentObj[num].timeSec + ")' >Time: " +timeStr +"  </span>";
 	var textHTML = "<p>"+ text +"</p>";
-	contentHTML += timeHTML + goToHTML + textHTML + "</div>";
+	contentHTML += timeHTML + textHTML + "</div>";
 
 	var html = headerHTML + contentHTML;
 
@@ -791,7 +789,7 @@ function tickClick(div){
 
 var mouseX, mouseY;
 var dragWidth;
-jQuery(document).ready(function(){
+$(function(){
 	dragWidthCalc();
  	updateProgressbar();
  	setup_commentDisplay();
