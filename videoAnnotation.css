@@ -180,6 +180,6 @@ select{
 	top: 470px;
 }
 
-.tickmark, #progressbar, #commentGoTo{
+.tickmark, #progressbar, #commentTimeShow{
 	cursor: pointer;
 }
