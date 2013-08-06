@@ -393,12 +393,14 @@ function setupAccordion(){
 
 //shows the add new comment options
 function show_addNewComment(){
+	var currentSec = ytplayer.getCurrentTime();
 	shrinkCommentHolder();
 	$(".commentsView_newComment").css("display", "");
 	if(!timeEndFocused){
-		$("#comment_time").val(calculateTime(ytplayer.getCurrentTime()));
+		$("#comment_time").val(calculateTime(currentSec));
 	}
 	$(".newCommentTextbox").focus();
+	showRangeTick(currentSec);
 }
 //hodes the add new comment options
 function hide_addNewComment(){
@@ -554,6 +556,7 @@ function getRelMouseX(This, e){
 //this function creates the the tick under the progressbar and gives it the left position
 //the width of the tick is controlled under document.ready() in the mousemove function
 var startDragX; //relative to the page
+var dragWidth;
 var drag_mouseup = true; //important when calculating the width of the dragtick
 function dragRangeOn(){
 	$("#progressbar").mousedown(function(e){
@@ -563,21 +566,15 @@ function dragRangeOn(){
 				drag_mouseup = false; 
 				var currentSec = mouseXtoSec(this, e);
 				comment_btn();
-
-				$("#comment_time").val(calculateTime(currentSec));
-				var tickLoc = calculateTickLoc(currentSec);
-				var tickLocStr = tickLoc.toString() + "px";
-				$("#rangeTick").css("left", tickLocStr);
-				$("#rangeTick").css("width", "2px")
-				$("#rangeTick").show();	
+				showRangeTick(currentSec);
 			}
 		}
 
 	});
-	$("#progressbar").mouseup(function(e){
+	$(document).mouseup(function(e){
 		if(drag_on){
 			drag_mouseup = true;
-			var currentSec = mouseXtoSec(this, e);
+			var currentSec = mouseXtoSec($("#progressbar"), e);
 			if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
 				$("#comment_timeEnd").val(calculateTime(currentSec));
 				timeEndFocused_adjustTickWidth(this,e);
@@ -603,6 +600,53 @@ function dragRangeOn(){
 	});
 }
 
+function time_updateTickRange(){
+	$("#comment_time").change(function(){
+		var timeStart = calcualateTime_stringToNum($("#comment_time").val());
+		startDragX = calculateTickLoc(timeStart);
+		if($("#comment_time").val() != ""){
+			$("#rangeTick").css("left", startDragX);
+			goToTime(timeStart);
+		}
+		if($("#comment_timeEnd").val() != ""){
+			var timeEnd = calcualateTime_stringToNum($("#comment_timeEnd").val());
+			var endDragX = calculateTickLoc(timeEnd);
+			dragWidth = endDragX - startDragX;
+			var widthStr = dragWidth.toString() + "px";
+			$("#rangeTick").css("width", widthStr);
+		}
+
+	})
+}
+
+function timeEnd_updateTickRange(){
+	$("#comment_timeEnd").change(function(){
+		if($("#comment_timeEnd").val() != ""){
+			var timeStart = calcualateTime_stringToNum($("#comment_time").val());
+			var timeEnd = calcualateTime_stringToNum($("#comment_timeEnd").val());
+			var timeDiff = timeEnd - timeStart;
+			var ratio = timeDiff/ytplayer.getDuration();
+			dragWidth = ratio*$("#progressbar").width();
+			var widthStr = dragWidth.toString() + "px";
+			$("#rangeTick").css("width", widthStr);
+			goToTime(timeEnd);
+
+		}
+		
+
+	})
+}
+
+//initializes the tick in the progressbar area give the currentSeconds (number, not string)
+function showRangeTick(currentSec){
+	$("#comment_time").val(calculateTime(currentSec));
+	var tickLoc = calculateTickLoc(currentSec);
+	startDragX = tickLoc;
+	var tickLocStr = tickLoc.toString() + "px";
+	$("#rangeTick").css("left", tickLocStr);
+	$("#rangeTick").css("width", "2px")
+	$("#rangeTick").show();	
+}
 
 function hideRangeTick(){
 	$("#rangeTick").hide();
@@ -788,14 +832,15 @@ function tickClick(div){
  */
 
 var mouseX, mouseY;
-var dragWidth;
-$(function(){
+$(function(){ 
 	dragWidthCalc();
  	updateProgressbar();
  	setup_commentDisplay();
 	isHoveringOverComments();
 	setupTimeEndFocus();
 	setupTextboxFocus();
+	time_updateTickRange();
+	timeEnd_updateTickRange();
 
 })
 
@@ -823,9 +868,11 @@ $(window).keyup(function(e) {
 	}
 	//here so that unaffected if textbox becomes focused
 	if(e.which == 27){ //esc
-		hide_addNewComment();
-		commentOrCancel = true;
-		}
+		if($(".newCommentTextbox").val() == ""){
+			hide_addNewComment();
+			commentOrCancel = true;
+		}	
+	}
 
 });
 
