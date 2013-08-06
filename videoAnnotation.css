@@ -75,17 +75,36 @@ select{
 	border-bottom: none;
 	overflow: hidden;
 }
-#rangeTick{
+#dragRangeContainer2{
+	position: absolute;
+	width: 660px;
+	height:8px;
+	background: white;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+	top: 16px;
+	border: solid 1px #B5AF9F;
+	border-bottom: none;
+	overflow: hidden;
+}
+#rangeTick1{
 	position: relative;
 	height: 100%;
 	display: none;
 	width: 2px;
 	background: red;
 }
+#rangeTick2{
+	position: absolute;
+	height: 100%;
+	display: none;
+	width: 2px;
+	background-color: rgba(0, 0, 255, 0.3);
+}
 .tickmark_holder{
 	position: relative;
 	width: 660px;
-	height: 4px;
+	height: 8px;
 	margin-bottom: 6px;
 	background: white;
 	border: solid 1px #B5AF9F;
@@ -189,4 +208,8 @@ select{
 	max-height: 25px;
 	font-size: 10pt;
 	overflow: hidden;
+}
+.rightTooltipDiv{
+	float: right;
+	display: none;
 }
