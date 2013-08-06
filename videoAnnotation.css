@@ -57,18 +57,10 @@ select{
 	height: 15px;
 	border-top-right-radius: 5px;
 	border-top-left-radius: 5px;
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
 	opacity: .7;
-	border: solid 1px #B5AF9F;
-	overflow: hidden;
 
-}
-
-#progressbar_filler{
-	position: relative;
-	width: 0%;
-	height: 100%;
-	background: #D1D1D1;
-	border-right: solid 1px #B5AF9F;
 }
 
 #dragRangeContainer{
@@ -83,17 +75,36 @@ select{
 	border-bottom: none;
 	overflow: hidden;
 }
-#rangeTick{
+#dragRangeContainer2{
+	position: absolute;
+	width: 660px;
+	height:8px;
+	background: white;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+	top: 16px;
+	border: solid 1px #B5AF9F;
+	border-bottom: none;
+	overflow: hidden;
+}
+#rangeTick1{
 	position: relative;
 	height: 100%;
 	display: none;
 	width: 2px;
 	background: red;
 }
+#rangeTick2{
+	position: absolute;
+	height: 100%;
+	display: none;
+	width: 2px;
+	background-color: rgba(0, 0, 255, 0.3);
+}
 .tickmark_holder{
 	position: relative;
 	width: 660px;
-	height: 4px;
+	height: 8px;
 	margin-bottom: 6px;
 	background: white;
 	border: solid 1px #B5AF9F;
@@ -126,7 +137,6 @@ select{
 	margin-top:2px; 
 	border-radius: 5px;
 	overflow: hidden;
-	border-bottom: solid 1px #E6E6E6;
 }
 
 .commentsView_menu{
@@ -139,7 +149,7 @@ select{
 
 .commentsView_holder{
 	font-size: 8pt;
-	overflow: auto;
+	overflow: scroll;
 	background: #E6E6E6;
 	height: 444px;
 	border-radius: 5px;
@@ -151,6 +161,7 @@ select{
 	height: 150px;
 	border-radius: 5px;
 	margin-bottom: 5px;
+	overflow: auto;
 }
 
 #comment_time, #comment_timeEnd{
@@ -167,7 +178,7 @@ select{
 	color: grey;
 }
 
-#commentTimeShow:hover{
+#commentGoTo:hover{
 	text-decoration:underline;
 }
 
@@ -180,6 +191,25 @@ select{
 	top: 470px;
 }
 
-.tickmark, #progressbar, #commentTimeShow{
+.tickmark, #progressbar, #commentGoTo{
 	cursor: pointer;
+}
+.popover{
+	/*max-width: 200px;
+	max-height: 105px; */
+	font-size: 10pt;
+
+}
+.popover-content{
+	max-height: 50px;
+	overflow: hidden;
+}
+.popover-title{
+	max-height: 25px;
+	font-size: 10pt;
+	overflow: hidden;
+}
+.rightTooltipDiv{
+	float: right;
+	display: none;
 }
