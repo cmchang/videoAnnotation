@@ -107,8 +107,8 @@ function calcualateTime_stringToNum(timeStr){
 
 function updateProgressBar(){
 	var percentage = 100*ytplayer.getCurrentTime()/ytplayer.getDuration();
-	$("#progressbar").progressbar("option","value", percentage);
-}
+	$("#progressbar_filler").css("width", percentage+"%");
+} 
 
 // Allow the user to set the volume from 0-100
 function setVideoVolume() {
@@ -208,8 +208,6 @@ function loadPlayer() {
 }
 function _run() {
 	loadPlayer();
-	$("#progressbar").progressbar();
-	$("#progressbar").progressbar("option","value",0);
 }
 google.setOnLoadCallback(_run);
 
@@ -226,8 +224,8 @@ function goToTime(seconds){
 //update the time of the ytplayer if the progress bar is clicked
 function progressbar_click(mouseX){
 	var percentage = mouseX/660;  // 660 because the progressbar container is 660px
-	console.log(percentage);
-	$("#progressbar").progressbar("value",percentage*100); //updates progressbar location
+	//console.log(percentage);
+	$("#progressbar_filler").css("width", percentage*100 + "%"); //updates progressbar location
 	var currentSec = percentage*ytplayer.getDuration();
 
 	//updates ytplayer location in video

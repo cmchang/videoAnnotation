@@ -57,10 +57,18 @@ select{
 	height: 15px;
 	border-top-right-radius: 5px;
 	border-top-left-radius: 5px;
-	border-bottom-right-radius: 0px;
-	border-bottom-left-radius: 0px;
 	opacity: .7;
+	border: solid 1px #B5AF9F;
+	overflow: hidden;
 
+}
+
+#progressbar_filler{
+	position: relative;
+	width: 0%;
+	height: 100%;
+	background: #D1D1D1;
+	border-right: solid 1px #B5AF9F;
 }
 
 #dragRangeContainer{
