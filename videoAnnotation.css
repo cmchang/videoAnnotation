@@ -82,7 +82,7 @@ select{
 	top: 0px;
 	border: solid 1px #B5AF9F;
 	border-bottom: none;
-	overflow: hidden;
+	
 }
 #rangeTick{
 	position: relative;
@@ -183,4 +183,20 @@ select{
 
 .tickmark, #progressbar, #commentTimeShow{
 	cursor: pointer;
+}
+
+.popover{
+	/*max-width: 200px;
+	max-height: 105px; */
+	font-size: 10pt;
+
+}
+.popover-content{
+	max-height: 50px;
+	overflow: hidden;
+}
+.popover-title{
+	max-height: 25px;
+	font-size: 10pt;
+	overflow: hidden;
 }

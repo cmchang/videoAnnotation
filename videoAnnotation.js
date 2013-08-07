@@ -269,6 +269,7 @@ var commentObj = [
 					"timeSec" : 158, 
 					"timeStr" : "2:38",
 					"type" : "Comment",
+					"userName": "User1",
 					"viewer" : "Class",},
 					{"ID": 1,
 					"text": "Comment number 2!",
@@ -277,6 +278,7 @@ var commentObj = [
 					"timeSec" : 38, 
 					"timeStr" : "0:38",
 					"type" : "Comment",
+					"userName": "User2",
 					"viewer" : "Class",},
 					{"ID": 2,
 					"text": "Question number 1!",
@@ -285,6 +287,7 @@ var commentObj = [
 					"timeSec" : 8, 
 					"timeStr" : "0:08",
 					"type" : "Question",
+					"userName": "User3",
 					"viewer" : "Class",},
 					{"ID": 3,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
@@ -293,6 +296,7 @@ var commentObj = [
 					"timeSec" : 191, 
 					"timeStr" : "3:11",
 					"type" : "Question",
+					"userName": "User4",
 					"viewer" : "Just Me"},
 					{"ID": 4,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
@@ -301,6 +305,7 @@ var commentObj = [
 					"timeSec" : 214, 
 					"timeStr" : "3:34",
 					"type" : "Question",
+					"userName": "User5",
 					"viewer" : "Just Me"},
 					{"ID": 5,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
@@ -309,6 +314,7 @@ var commentObj = [
 					"timeSec" : 2, 
 					"timeStr" : "0:02",
 					"type" : "Comment",
+					"userName": "User6",
 					"viewer" : "Just Me"},
 					{"ID": 6,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
@@ -317,8 +323,9 @@ var commentObj = [
 					"timeSec" : 5, 
 					"timeStr" : "0:05",
 					"type" : "Question",
+					"userName": "User7",
 					"viewer" : "Just Me"}
-					];
+];
 
 //this function does all the work to display the comments:
 //it calls SortsCommentObj, addAllCommentHTML, and setupAccordion
@@ -454,6 +461,7 @@ function submitNewComment(){
 						"timeSec" : calcualateTime_stringToNum(time),
 						"timeStr" : time,
 						"type" : type,
+						"userName": "YourUserName",
 						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
 	goToTime(calcualateTime_stringToNum(time)); //this so when the comment is submitted, it will open the comment
@@ -567,21 +575,35 @@ function dragRangeOn(){
 				var currentSec = mouseXtoSec(this, e);
 				comment_btn();
 				showRangeTick(currentSec);
+
+				//new
+				$("#rangeTick .rightTooltipDiv").show();
+				$("#rangeTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});	
+				$("#rangeTick .rightTooltipDiv").tooltip('show');	
 			}
 		}
 
 	});
-	$("#progressbar").mouseup(function(e){
+	$(document).mouseup(function(e){
 		if(drag_on){
 			drag_mouseup = true;
-			var currentSec = mouseXtoSec(this, e);
+			var currentSec = mouseXtoSec($("#progressbar"), e);
+
+
+			//new
+			function hideToolTip(){
+				$("#rangeTick .tooltip").animate({"opacity": 0}, 250, function(){
+					$("#rangeTick .rightTooltipDiv").tooltip('destroy');
+				});
+			}
+			
+			window.setTimeout(hideToolTip, 250);
+
 			if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
 				$("#comment_timeEnd").val(calculateTime(currentSec));
 				timeEndFocused_adjustTickWidth(this,e);
-				
 			}else if(timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
 				timeStartFocused_adjustTick(this, e);
-				
 				
 				// var tickLocStr = currentX.toString() + "px"; 
 				// $("#rangeTick").css("left", tickLocStr);
@@ -600,13 +622,10 @@ function dragRangeOn(){
 		timeStartFocused = false;
 		timeEndFocused = false;
 	});
-
 }
 
-//if the text is changed in the time input box, update the tick to the corresponding position
 function time_updateTickRange(){
 	$("#comment_time").change(function(){
-		console.log("here");
 		var timeStart = calcualateTime_stringToNum($("#comment_time").val());
 		startDragX = calculateTickLoc(timeStart);
 		if($("#comment_time").val() != ""){
@@ -620,11 +639,10 @@ function time_updateTickRange(){
 			var widthStr = dragWidth.toString() + "px";
 			$("#rangeTick").css("width", widthStr);
 		}
-		timeStartFocused = false;
+
 	})
 }
 
-//if the text is changed in the time input box, update the tick to the corresponding position
 function timeEnd_updateTickRange(){
 	$("#comment_timeEnd").change(function(){
 		if($("#comment_timeEnd").val() != ""){
@@ -638,7 +656,7 @@ function timeEnd_updateTickRange(){
 			goToTime(timeEnd);
 
 		}
-		timeEndFocused = false;
+		
 
 	})
 }
@@ -669,6 +687,12 @@ function dragWidthCalc(){
 			dragWidth = mouseX-startDragX - progressbarOffsetX();
 			var widthStr = dragWidth.toString() + "px";
 			$("#rangeTick").css("width", widthStr);
+
+			//new
+			var currentSec = mouseXtoSec("#dragRangeContainer", e);
+			$("#rangeTick .rightTooltipDiv").tooltip("destroy");
+			$("#rangeTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});
+			$("#rangeTick .rightTooltipDiv").tooltip('show');
 		}
 	}); 
 }
@@ -682,8 +706,6 @@ function timeEndFocused_adjustTickWidth(This, e){
 	$("#rangeTick").css("width", widthStr);
 }
 
-//if the timeStart is focused, when the progressbar is clicked, this function is called
-//the function readjusts the width and the left position of the tick depending on where the click occurs
 function timeStartFocused_adjustTick(This, e){
 	var currentSec = mouseXtoSec(This, e);
 	startDragX = calculateTickLoc(currentSec);
@@ -736,6 +758,17 @@ function tickHTML(xLoc, width, ID){
 	return html;
 }
 
+//
+function createTickPopover(ID){
+	for (var i = 0; i <= commentObj.length - 1; i++){
+        if (commentObj[i].ID == ID){
+          	var tickContent = commentObj[i].text;
+          	var tickTitle = commentObj[i].userName;
+          	$("#tickmark" + ID).popover({trigger: "hover", placement: "bottom",title: tickTitle, content: tickContent});
+        }
+    }
+}
+
 //This function should be called the the page is loading
 function addAllTicks(){
 	$(".tickmark_holder").html("");
@@ -747,6 +780,7 @@ function addAllTicks(){
 		html = tickHTML(xLoc, width, ID);
 		//console.log(ID, xLoc, width, html);
 		$(".tickmark_holder").append(html);
+		createTickPopover(ID);
 		addTickHover(ID);
 		
 	}
