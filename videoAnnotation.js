@@ -571,15 +571,17 @@ function dragRangeOn(){
 		}
 
 	});
-	$(document).mouseup(function(e){
+	$("#progressbar").mouseup(function(e){
 		if(drag_on){
 			drag_mouseup = true;
-			var currentSec = mouseXtoSec($("#progressbar"), e);
+			var currentSec = mouseXtoSec(this, e);
 			if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
 				$("#comment_timeEnd").val(calculateTime(currentSec));
 				timeEndFocused_adjustTickWidth(this,e);
+				
 			}else if(timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
 				timeStartFocused_adjustTick(this, e);
+				
 				
 				// var tickLocStr = currentX.toString() + "px"; 
 				// $("#rangeTick").css("left", tickLocStr);
@@ -598,10 +600,13 @@ function dragRangeOn(){
 		timeStartFocused = false;
 		timeEndFocused = false;
 	});
+
 }
 
+//if the text is changed in the time input box, update the tick to the corresponding position
 function time_updateTickRange(){
 	$("#comment_time").change(function(){
+		console.log("here");
 		var timeStart = calcualateTime_stringToNum($("#comment_time").val());
 		startDragX = calculateTickLoc(timeStart);
 		if($("#comment_time").val() != ""){
@@ -615,10 +620,11 @@ function time_updateTickRange(){
 			var widthStr = dragWidth.toString() + "px";
 			$("#rangeTick").css("width", widthStr);
 		}
-
+		timeStartFocused = false;
 	})
 }
 
+//if the text is changed in the time input box, update the tick to the corresponding position
 function timeEnd_updateTickRange(){
 	$("#comment_timeEnd").change(function(){
 		if($("#comment_timeEnd").val() != ""){
@@ -632,7 +638,7 @@ function timeEnd_updateTickRange(){
 			goToTime(timeEnd);
 
 		}
-		
+		timeEndFocused = false;
 
 	})
 }
@@ -676,6 +682,8 @@ function timeEndFocused_adjustTickWidth(This, e){
 	$("#rangeTick").css("width", widthStr);
 }
 
+//if the timeStart is focused, when the progressbar is clicked, this function is called
+//the function readjusts the width and the left position of the tick depending on where the click occurs
 function timeStartFocused_adjustTick(This, e){
 	var currentSec = mouseXtoSec(This, e);
 	startDragX = calculateTickLoc(currentSec);
