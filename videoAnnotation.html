@@ -18,22 +18,21 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 
 	<script src = "videoAnnotation.js" type="text/javascript"></script>
 	<link rel="stylesheet" type="text/css" href="videoAnnotation.css">
-	<script src = "js/bootstrap.js"></script>
-	<link rel = "stylesheet" href = "css/bootstrap.css"></link>
+
 </head>
 <body>
 	<div class = "videoView">
 		<div class = "videoContainer">
 			<div id="videoDiv">Loading...</div>
-			<div id = "videoCover" onclick="videoClicked()"></div>
+			<div id = "videoCover">
+				<div id = "drawnRect" style = "display: none"></div>
+			</div>
 		</div>
 		<div class = "videoMenu">
 			<div class = "playORpause_holder"><img class = "playORpause" onclick="playORpause();" src="images/play.png"></div>
 			<div class = "progressbar_container">
 				<div id= "dragRangeContainer">
-					<div id="rangeTick">
-						<div class = "rightTooltipDiv" style = "float: right"></div>
-					</div>
+					<div id="rangeTick"></div>
 				</div>
 				<div id= "progressbar">
 					<div id = "progressbar_filler"></div>

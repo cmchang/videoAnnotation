@@ -4,10 +4,11 @@
  *		2. Progressbar-related Code
  *		3. Commenting-related Code (includes accordion)
  *		4. Drag Range-related Code
- *		5. Tick-related code
- *		6. jQuery(document).ready() 
+ *		5. Draw Rectangle-related Code
+ *		6. Tick-related code
+ *		7. jQuery(document).ready() 
  *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), isHoveringOverComments()
- *		7. Keyboard Shortcuts
+ *		8. Keyboard Shortcuts
  */
 
 /*
@@ -192,7 +193,7 @@ function onYouTubePlayerReady(playerId) {
 	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
 	ytplayer.addEventListener("onError", "onPlayerError");
 	//Load an initial video into the player
-	ytplayer.cueVideoById("BCkfTCjF8SM");
+	ytplayer.cueVideoById("HtSuA80QTyo");
 }
 
 // The "main method" of this sample. Called when someone clicks "Run".
@@ -269,7 +270,6 @@ var commentObj = [
 					"timeSec" : 158, 
 					"timeStr" : "2:38",
 					"type" : "Comment",
-					"userName": "User1",
 					"viewer" : "Class",},
 					{"ID": 1,
 					"text": "Comment number 2!",
@@ -278,7 +278,6 @@ var commentObj = [
 					"timeSec" : 38, 
 					"timeStr" : "0:38",
 					"type" : "Comment",
-					"userName": "User2",
 					"viewer" : "Class",},
 					{"ID": 2,
 					"text": "Question number 1!",
@@ -287,7 +286,6 @@ var commentObj = [
 					"timeSec" : 8, 
 					"timeStr" : "0:08",
 					"type" : "Question",
-					"userName": "User3",
 					"viewer" : "Class",},
 					{"ID": 3,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
@@ -296,7 +294,6 @@ var commentObj = [
 					"timeSec" : 191, 
 					"timeStr" : "3:11",
 					"type" : "Question",
-					"userName": "User4",
 					"viewer" : "Just Me"},
 					{"ID": 4,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
@@ -305,7 +302,6 @@ var commentObj = [
 					"timeSec" : 214, 
 					"timeStr" : "3:34",
 					"type" : "Question",
-					"userName": "User5",
 					"viewer" : "Just Me"},
 					{"ID": 5,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
@@ -314,7 +310,6 @@ var commentObj = [
 					"timeSec" : 2, 
 					"timeStr" : "0:02",
 					"type" : "Comment",
-					"userName": "User6",
 					"viewer" : "Just Me"},
 					{"ID": 6,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
@@ -323,9 +318,8 @@ var commentObj = [
 					"timeSec" : 5, 
 					"timeStr" : "0:05",
 					"type" : "Question",
-					"userName": "User7",
 					"viewer" : "Just Me"}
-];
+					];
 
 //this function does all the work to display the comments:
 //it calls SortsCommentObj, addAllCommentHTML, and setupAccordion
@@ -419,8 +413,7 @@ function hide_addNewComment(){
 	$(".newCommentTextbox").focusout();
 	timeEndFocused = false;
 	hideRangeTick();
-	dragWidth = 2;
-
+	hideDrawnRect();
 }
 
 //Called when the showing the new comment
@@ -461,7 +454,6 @@ function submitNewComment(){
 						"timeSec" : calcualateTime_stringToNum(time),
 						"timeStr" : time,
 						"type" : type,
-						"userName": "YourUserName",
 						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
 	goToTime(calcualateTime_stringToNum(time)); //this so when the comment is submitted, it will open the comment
@@ -563,7 +555,7 @@ function getRelMouseX(This, e){
 //this function controls when the mouse is clicked in unclicked over the progressbar IF drag_on is true (the drag button is pushed)
 //this function creates the the tick under the progressbar and gives it the left position
 //the width of the tick is controlled under document.ready() in the mousemove function
-var startDragX; //relative to the page
+var startDragX; //relative to the page!
 var dragWidth;
 var drag_mouseup = true; //important when calculating the width of the dragtick
 function dragRangeOn(){
@@ -575,35 +567,21 @@ function dragRangeOn(){
 				var currentSec = mouseXtoSec(this, e);
 				comment_btn();
 				showRangeTick(currentSec);
-
-				//new
-				$("#rangeTick .rightTooltipDiv").show();
-				$("#rangeTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});	
-				$("#rangeTick .rightTooltipDiv").tooltip('show');	
 			}
 		}
 
 	});
-	$(document).mouseup(function(e){
+	$("#progressbar").mouseup(function(e){
 		if(drag_on){
 			drag_mouseup = true;
-			var currentSec = mouseXtoSec($("#progressbar"), e);
-
-
-			//new
-			function hideToolTip(){
-				$("#rangeTick .tooltip").animate({"opacity": 0}, 250, function(){
-					$("#rangeTick .rightTooltipDiv").tooltip('destroy');
-				});
-			}
-			
-			window.setTimeout(hideToolTip, 250);
-
+			var currentSec = mouseXtoSec(this, e);
 			if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
 				$("#comment_timeEnd").val(calculateTime(currentSec));
 				timeEndFocused_adjustTickWidth(this,e);
+				
 			}else if(timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
 				timeStartFocused_adjustTick(this, e);
+				
 				
 				// var tickLocStr = currentX.toString() + "px"; 
 				// $("#rangeTick").css("left", tickLocStr);
@@ -622,10 +600,13 @@ function dragRangeOn(){
 		timeStartFocused = false;
 		timeEndFocused = false;
 	});
+
 }
 
+//if the text is changed in the time input box, update the tick to the corresponding position
 function time_updateTickRange(){
 	$("#comment_time").change(function(){
+		console.log("here");
 		var timeStart = calcualateTime_stringToNum($("#comment_time").val());
 		startDragX = calculateTickLoc(timeStart);
 		if($("#comment_time").val() != ""){
@@ -639,10 +620,11 @@ function time_updateTickRange(){
 			var widthStr = dragWidth.toString() + "px";
 			$("#rangeTick").css("width", widthStr);
 		}
-
+		timeStartFocused = false;
 	})
 }
 
+//if the text is changed in the time input box, update the tick to the corresponding position
 function timeEnd_updateTickRange(){
 	$("#comment_timeEnd").change(function(){
 		if($("#comment_timeEnd").val() != ""){
@@ -656,7 +638,7 @@ function timeEnd_updateTickRange(){
 			goToTime(timeEnd);
 
 		}
-		
+		timeEndFocused = false;
 
 	})
 }
@@ -675,27 +657,18 @@ function showRangeTick(currentSec){
 function hideRangeTick(){
 	$("#rangeTick").hide();
 	$("#rangeTick").css("width", "2px")	
+	dragWidth = 2;
 }
 
 function dragWidthCalc(){
-	$(document).mousemove(function(e){
-		$('#status').html(e.pageX +', '+ e.pageY);
-		mouseX = e.pageX;
-		mouseY = e.pageY;
-		if(startDragX > 0 && !drag_mouseup){
-			drag_on = true;
-			dragWidth = mouseX-startDragX - progressbarOffsetX();
-			var widthStr = dragWidth.toString() + "px";
-			$("#rangeTick").css("width", widthStr);
-
-			//new
-			var currentSec = mouseXtoSec("#dragRangeContainer", e);
-			$("#rangeTick .rightTooltipDiv").tooltip("destroy");
-			$("#rangeTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});
-			$("#rangeTick .rightTooltipDiv").tooltip('show');
-		}
-	}); 
+	if(startDragX > 0 && !drag_mouseup){
+		drag_on = true;
+		dragWidth = mouseX-startDragX - progressbarOffsetX();
+		var widthStr = dragWidth.toString() + "px";
+		$("#rangeTick").css("width", widthStr);
+	}
 }
+
 //if the timeEnd is focused, when the progressbar is clicked, this function is called
 //the function readjusts the width of the tick depending on where the click occurs
 function timeEndFocused_adjustTickWidth(This, e){
@@ -706,6 +679,8 @@ function timeEndFocused_adjustTickWidth(This, e){
 	$("#rangeTick").css("width", widthStr);
 }
 
+//if the timeStart is focused, when the progressbar is clicked, this function is called
+//the function readjusts the width and the left position of the tick depending on where the click occurs
 function timeStartFocused_adjustTick(This, e){
 	var currentSec = mouseXtoSec(This, e);
 	startDragX = calculateTickLoc(currentSec);
@@ -727,7 +702,75 @@ function timeStartFocused_adjustTick(This, e){
 }
 
 /*
- *	5. Tick-related code
+ *	5. Draw Rectangle-related code
+ */
+
+function showRect(){
+	ytplayer.pauseVideo();
+	show_addNewComment();
+
+	var leftStr = startDrawX.toString() + "px";
+	var topStr = startDrawY.toString() + "px";
+	console.log(leftStr, topStr);
+	$("#drawnRect").show();
+	$("#drawnRect").css("left", leftStr);
+	$("#drawnRect").css("top", topStr);
+}
+var startDrawX, startDrawY; //relative to the videoCover
+var drawWidth,drawHeight;
+var draw_mouseup = true;
+function drawRectOn(){
+	$("#videoCover").mousedown(function(e){
+		draw_mouseup = false;
+		resetRectCSS();
+		startDrawX = mouseX - videoCoverOffsetX();
+		startDrawY = mouseY - videoCoverOffsetY();
+		
+	});
+	$("#videoCover").mouseup(function(e){
+		if($("#drawnRect").width()==0){ //when not drawing, a click will play/pause video (width is automatically set to 0 when not seen)
+			videoClicked();
+		}
+		draw_mouseup = true;
+		
+	});
+
+}
+
+function drawAreaCalc(){
+	if(!draw_mouseup){
+		drawWidth = mouseX - startDrawX - videoCoverOffsetX();
+		drawHeight = mouseY - startDrawY - videoCoverOffsetY();
+
+		if(drawWidth > 2 || drawHeight > 2){
+			showRect();
+			var widthStr = drawWidth.toString() + "px";
+			var heightStr = drawHeight.toString() + "px";
+			$("#drawnRect").css("width", widthStr);
+			$("#drawnRect").css("height", heightStr);
+			console.log("width", drawWidth, "height", drawHeight);
+		}
+	}	
+}
+
+function resetRectCSS(){
+	$("#drawnRect").css("width", "0px");
+	$("#drawnRect").css("height", "0px");
+}
+
+function hideDrawnRect(){
+	$("#drawnRect").hide();
+	resetRectCSS();
+}
+function videoCoverOffsetX(){
+	return $("#videoCover").parent().offset().left; //progressbar x offset
+}
+
+function videoCoverOffsetY(){
+	return $("#videoCover").parent().offset().top; //progressbar x offset
+}
+/*
+ *	6. Tick-related code
  */
 
 //calculate the tick location given the time where the associated comment is given
@@ -758,17 +801,6 @@ function tickHTML(xLoc, width, ID){
 	return html;
 }
 
-//
-function createTickPopover(ID){
-	for (var i = 0; i <= commentObj.length - 1; i++){
-        if (commentObj[i].ID == ID){
-          	var tickContent = commentObj[i].text;
-          	var tickTitle = commentObj[i].userName;
-          	$("#tickmark" + ID).popover({trigger: "hover", placement: "bottom",title: tickTitle, content: tickContent});
-        }
-    }
-}
-
 //This function should be called the the page is loading
 function addAllTicks(){
 	$(".tickmark_holder").html("");
@@ -780,7 +812,6 @@ function addAllTicks(){
 		html = tickHTML(xLoc, width, ID);
 		//console.log(ID, xLoc, width, html);
 		$(".tickmark_holder").append(html);
-		createTickPopover(ID);
 		addTickHover(ID);
 		
 	}
@@ -870,12 +901,18 @@ function tickClick(div){
 	goToTime(commentObj[index].timeSec);
 }
 /*
- *	6. jQuery(document).ready()
+ *	7. jQuery(document).ready()
  */
 
 var mouseX, mouseY;
-$(function(){ 
-	dragWidthCalc();
+	$(function(){ 
+		$(document).mousemove(function(e){
+		$('#status').html(e.pageX +', '+ e.pageY);
+		mouseX = e.pageX;
+		mouseY = e.pageY;
+		dragWidthCalc();
+		drawAreaCalc();
+	}); 
  	updateProgressbar();
  	setup_commentDisplay();
 	isHoveringOverComments();
@@ -883,13 +920,15 @@ $(function(){
 	setupTextboxFocus();
 	time_updateTickRange();
 	timeEnd_updateTickRange();
+	drawRectOn();
+
 
 })
 
 var commentOrCancel = true;  // true - next click is comment, false - next click cancels
 
 /*
- *	7. Keyboard Shortcuts
+ *	8. Keyboard Shortcuts
  */
 
 $(window).keyup(function(e) {
@@ -904,6 +943,9 @@ $(window).keyup(function(e) {
 				hide_addNewComment();
 				commentOrCancel = true;
 			}
+		}else if(e.which === 68){ //d
+			drawRect_btn();
+
 		}else if(e.which === 77){ // m
 			muteORunmute();
 		}

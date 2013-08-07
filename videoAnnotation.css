@@ -21,11 +21,18 @@ select{
 	position: absolute;
 	width: 100%;
 	height: 423px;
-	background: black;
-	opacity: .1;
 	top: 0px;
+	overflow: hidden;
 }
 
+#drawnRect{
+	position: relative;
+	width: 0px;
+	height: 0px;
+	background: yellow;
+	opacity: .3;
+	top: 0px;
+}
 .videoMenu{
 	max-width: 742px;
 	padding: 5px;
@@ -82,7 +89,7 @@ select{
 	top: 0px;
 	border: solid 1px #B5AF9F;
 	border-bottom: none;
-	
+	overflow: hidden;
 }
 #rangeTick{
 	position: relative;
@@ -183,20 +190,4 @@ select{
 
 .tickmark, #progressbar, #commentTimeShow{
 	cursor: pointer;
-}
-
-.popover{
-	/*max-width: 200px;
-	max-height: 105px; */
-	font-size: 10pt;
-
-}
-.popover-content{
-	max-height: 50px;
-	overflow: hidden;
-}
-.popover-title{
-	max-height: 25px;
-	font-size: 10pt;
-	overflow: hidden;
 }
