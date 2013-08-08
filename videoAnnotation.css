@@ -88,6 +88,7 @@
 	top: 0px;
 	border: solid 1px #B5AF9F;
 	border-bottom: none;
+
 }
 #rangeTick{
 	position: relative;
@@ -160,7 +161,7 @@
 	height: 150px;
 	border-radius: 5px;
 	margin-bottom: 5px;
-	overflow: scroll;
+	overflow: auto;
 }
 
 #comment_time, #comment_timeEnd{
@@ -192,6 +193,7 @@
 .tickmark, #progressbar, #commentTimeShow{
 	cursor: pointer;
 }
+
 how{
 	cursor: pointer;
 }
