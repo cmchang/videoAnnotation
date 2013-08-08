@@ -492,14 +492,16 @@ function submitNewComment(){
 						"type" : type,
 						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
-	goToTime(calcualateTime_stringToNum(time)); //this so when the comment is submitted, it will open the comment
+	//goToTime(calcualateTime_stringToNum(time)); //this so when the comment is submitted, it will open the comment
 	showNewComment();
 	addAllTicks();
 	hide_addNewComment();
+	goToComment(commentObj.length-1);
 }
 
-//adds the new comment into the accordion
+//gets rid of accordion and gets rid of the html
 //extracts information from the commentObj
+//calls setup_commentDisplay to inject new HTML and setup new accordion
 function showNewComment(){
 	$("#accordion").accordion('destroy');
 	$("#accordion").html("");
@@ -786,7 +788,6 @@ function drawAreaCalc(){
 			var heightStr = drawHeight.toString() + "px";
 			$("#drawnRect").css("width", widthStr);
 			$("#drawnRect").css("height", heightStr);
-			console.log("width", drawWidth, "height", drawHeight);
 		}
 	}	
 }
