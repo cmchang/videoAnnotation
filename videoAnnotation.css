@@ -1,3 +1,6 @@
+.nav{
+	font-size: 12pt;
+}
 .videoView, .commentsView, .videoInfo, .tickmarkView{
 	position: absolute;
 	top: 50px;
@@ -189,8 +192,6 @@
 .tickmark, #progressbar, #commentTimeShow{
 	cursor: pointer;
 }
-cursor: pointer;
-}
-ntTimeShow{
+how{
 	cursor: pointer;
 }
