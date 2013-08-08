@@ -26,8 +26,42 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 	<div class = "navbar">
 		<div class = "navbar-inner">
 			<a class = "brand" id = "title">Video Annotation</a>
-			
+			<ul class = "nav">
+				<li class = "nav-collapse collapse">
+					<a class = "brand navbar_btn" href="#rulesModal" data-toggle = "modal">Instructions</a>
+				</li>
+			</ul>
 		</div>
+	</div>
+
+	<div id="rulesModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Instructions</h3>
+		</div>
+		<div class="modal-body">
+			<h5>Ways to comment</h5>
+			<p>Will put instructions here</p>
+
+			<h5>Icons</h5>
+			<p>
+				<i class = "icon-comment"></i> : A comment <br>
+				<i class = "icon-question-sign"></i> : A question <br>
+				<i class = "icon-picture"></i> : There is a highlighted section associated with the video.  If you click the comment time, it will appear<br>
+			</p>
+
+			<h5>Keyboard Shortcuts</h5>
+			<p>
+				spacebar: plays/pauses video <br>
+				c: opens up comment editor and adds current video time in starting time input box <br>
+				esc: closes out of comment editor <br>
+			</p>
+
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
 
 
 	<div class = "videoView">
