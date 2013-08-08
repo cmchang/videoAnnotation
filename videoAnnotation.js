@@ -225,7 +225,7 @@ function goToTime(seconds){
 
 //update the time of the ytplayer if the progress bar is clicked
 function progressbar_click(mouseX){
-	var percentage = mouseX/660;  // 660 because the progressbar container is 660px
+	var percentage = mouseX/$("#progressbar").width();  
 	//console.log(percentage);
 	$("#progressbar_filler").css("width", percentage*100 + "%"); //updates progressbar location
 	var currentSec = percentage*ytplayer.getDuration();
@@ -580,7 +580,7 @@ var drag_on = true;
 //given "this" (i.e. the progressbar), the function will calculate the mouse position and then convert it to seconds relative to the progress bar
 function mouseXtoSec(This, e){
 	var relX = getRelMouseX(This,e);
-	var percentage = relX/660;  // 660 because the progressbar container is 660px
+	var percentage = relX/$("#progressbar").width();
 	return percentage*ytplayer.getDuration();
 }
 
@@ -606,6 +606,7 @@ function dragRangeOn(){
 				drag_mouseup = false; 
 				dragCurrentSec = mouseXtoSec(this, e);
 				if($(".commentsView_newComment").css("display") != "none"){
+					showToolTip(dragCurrentSec);
 					comment_btn();
 					showRangeTick(dragCurrentSec);
 				}
@@ -617,6 +618,7 @@ function dragRangeOn(){
 		if(drag_on){
 			drag_mouseup = true;
 			var currentSec = mouseXtoSec(this, e);
+			hideToolTipDelay();
 			if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
 				$("#comment_timeEnd").val(calculateTime(currentSec));
 				timeEndFocused_adjustTickWidth(this,e);
@@ -697,13 +699,16 @@ function hideRangeTick(){
 	dragWidth = 2;
 }
 
-function dragWidthCalc(){
+function dragWidthCalc(e){
 	if(startDragX > 0 && !drag_mouseup){
 		showRangeTick(dragCurrentSec);
 		drag_on = true;
 		dragWidth = mouseX-startDragX - progressbarOffsetX();
 		var widthStr = dragWidth.toString() + "px";
 		$("#rangeTick").css("width", widthStr);
+
+		var currentSec = mouseXtoSec("#dragRangeContainer", e);
+		showToolTip(currentSec);
 
 		if($(".commentsView_newComment").css("display") == "none"){
 			comment_btn();
@@ -741,6 +746,25 @@ function timeStartFocused_adjustTick(This, e){
 	var tickLocStr = startDragX.toString() + "px";
 	$("#rangeTick").css("left", tickLocStr);
 	
+}
+
+//Shows the tooltip given the current seconds
+function showToolTip(currentSec){
+	// $("#rangeTick .rightTooltipDiv").show();
+	$("#rangeTick .rightTooltipDiv").tooltip("destroy");
+	$("#rangeTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});	
+	$("#rangeTick .rightTooltipDiv").tooltip('show');
+}
+
+//hides the tooltip 
+function hideToolTip(){
+	$("#rangeTick .tooltip").animate({"opacity": 0}, 250, function(){
+		$("#rangeTick .rightTooltipDiv").tooltip('destroy');
+	});
+}
+
+function hideToolTipDelay(){
+	window.setTimeout(hideToolTip, 250);
 }
 
 /*
@@ -989,7 +1013,7 @@ var mouseX, mouseY;
 		$('#status').html(e.pageX +', '+ e.pageY);
 		mouseX = e.pageX;
 		mouseY = e.pageY;
-		dragWidthCalc();
+		dragWidthCalc(e);
 		drawAreaCalc();
 	}); 
  	updateProgressbar();

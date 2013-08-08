@@ -85,7 +85,6 @@
 	top: 0px;
 	border: solid 1px #B5AF9F;
 	border-bottom: none;
-	overflow: hidden;
 }
 #rangeTick{
 	position: relative;
@@ -189,6 +188,8 @@
 
 .tickmark, #progressbar, #commentTimeShow{
 	cursor: pointer;
+}
+cursor: pointer;
 }
 ntTimeShow{
 	cursor: pointer;
