@@ -371,9 +371,13 @@ function extractCommentHTML(num){
 	var text = commentObj[num].text;
 	var commentSnippet = text.substring(0,30);
 	var timeStr = commentObj[num].timeStr;
-
-	
-	var headerHTML = "<text>" + typeInitial + ": " + commentSnippet;
+	var iconHTML = "";
+	if(typeInitial == "C"){
+		iconHTML = "<i class='icon-comment'></i>";
+	}else if(typeInitial == "Q"){
+		iconHTML = "<i class='icon-question-sign'></i>";
+	}
+	var headerHTML = "<text>" + iconHTML + ": " + commentSnippet;
 	if(text.length > 30){ //if the text is too long, only show a portion of it
 		headerHTML += "...";
 	}

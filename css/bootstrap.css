@@ -2285,6 +2285,7 @@ table th[class*="span"],
   background-image: url("../img/glyphicons-halflings.png");
   background-position: 14px 14px;
   background-repeat: no-repeat;
+  opacity: .6;
 }
 
 /* White icons with optional class, or on hover/focus/active states of certain elements */
