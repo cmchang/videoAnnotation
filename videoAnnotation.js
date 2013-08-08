@@ -32,6 +32,7 @@ function onPlayerStateChange(newState) {
 }
 
 // Display information about the current state of the player
+// It’s called every 250 milliseconds in onYoutubePlayerReady()
 function updatePlayerInfo() {
 	// Also check that at least one function exists since when IE unloads the
 	// page, it will destroy the SWF before clearing the interval.
@@ -54,7 +55,7 @@ function updatePlayerInfo() {
 	}
 }
 
-//give the time in seconds, show the time as a string with (hours:)minutes:seconds
+//give the time in seconds, return the time as a string with (hours:)minutes:seconds
 function calculateTime(givenTime){
 	var totalSec = parseInt(givenTime);
 	var hours = 0;
@@ -84,8 +85,7 @@ function calculateTime(givenTime){
 	return display;
 }
 
-//calculate the number of seconds given the time as a string
-function calcualateTime_stringToNum(timeStr){
+// Given the time as a string, return the time as a number of secondsfunction calcualateTime_stringToNum(timeStr){
 	var seconds = parseInt(timeStr.substring(timeStr.length-2, timeStr.length)); //gets seconds
 	timeStr = timeStr.substring(0, timeStr.length-3); //gets rid of the seconds portion of string
 	var minutes, hours = 0;
@@ -230,7 +230,7 @@ function progressbar_click(mouseX){
 }
 
 //calculate the position of the mouse relative to the progressbar if clicked
-function updateProgressbar(){
+function updateProgressbarClick(){
 	//update progressbar if clicked
    $("#progressbar").mouseup(function(e){
 		var parentOffset = $(this).parent().offset(); 
@@ -1021,7 +1021,7 @@ $(function(){
 		dragWidthCalc(e);
 		drawAreaCalc();
 	}); 
- 	updateProgressbar();
+ 	updateProgressbarClick();
  	setup_commentDisplay();
 	isHoveringOverComments();
 	setupTimeFocus();
@@ -1076,19 +1076,7 @@ function closeCommentAlert()
 alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
 }
 
-);
-}
-
-ntAlert();
-		}
-	}
-
-});
-
-/*
- *	9. Alert-related code
- */
-function closeCommentAlert()
+rt()
 {
 alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
 }
