@@ -377,6 +377,9 @@ function extractCommentHTML(num){
 	}else if(typeInitial == "Q"){
 		iconHTML = "<i class='icon-question-sign'></i>";
 	}
+	if(commentObj[num].drawArr != "None"){
+		iconHTML += "<i class='icon-picture'></i>";
+	}
 	var headerHTML = "<text>" + iconHTML + ": " + commentSnippet;
 	if(text.length > 30){ //if the text is too long, only show a portion of it
 		headerHTML += "...";
