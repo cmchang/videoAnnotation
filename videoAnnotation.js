@@ -1033,14 +1033,13 @@ $(function(){
 
 
 
-})
+});
 
-var commentOrCancel = true;  // true - next click is comment, false - next click cancels
 
 /*
  *	8. Keyboard Shortcuts
  */
-
+var commentOrCancel = true;  // true - next click is comment, false - next click cancels
 $(window).keyup(function(e) {
 	if (!textboxFocused){
 		if(e.which == 32){ //spacebar
