@@ -491,6 +491,7 @@ function submitNewComment(){
 						"timeSec" : calcualateTime_stringToNum(timeStr),
 						"timeStr" : timeStr,
 						"type" : type,
+						"userName": "You",
 						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
 	//order matters for the next few functions!
@@ -915,6 +916,7 @@ function addAllTicks(){
 		html = tickHTML(xLoc, width, ID);
 		//console.log(ID, xLoc, width, html);
 		$(".tickmark_holder").append(html);
+		createTickPopover(ID);
 		addTickHover(ID);
 		
 	}
@@ -1002,6 +1004,16 @@ function tickClick(div){
 	$(identifier).trigger("click");
 	pauseVideo();
 	goToTime(commentObj[index].timeSec);
+}
+
+function createTickPopover(ID){
+	for (var i = 0; i <= commentObj.length - 1; i++){
+		if (commentObj[i].ID == ID){
+			var tickContent = commentObj[i].text;
+			var tickTitle = commentObj[i].userName;
+			$("#tickmark" + ID).popover({trigger: "hover", placement: "bottom",title: tickTitle, content: tickContent});
+		}
+	}
 }
 /*
  *	7. jQuery(document).ready()
