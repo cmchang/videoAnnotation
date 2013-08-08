@@ -21,6 +21,10 @@ function updateHTML(elmId, value) {
 	document.getElementById(elmId).innerHTML = value;
 }
 
+function updateHTML(elmId, value) {
+	document.getElementById(elmId).innerHTML = value;
+	console.log("test");
+}
 // This function is called when an error is thrown by the player
 function onPlayerError(errorCode) {
 	alert("An error occured of type:" + errorCode);
