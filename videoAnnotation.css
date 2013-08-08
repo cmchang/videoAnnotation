@@ -32,6 +32,7 @@ select{
 	background: yellow;
 	opacity: .3;
 	top: 0px;
+	border-radius: 5px;
 }
 .videoMenu{
 	max-width: 742px;

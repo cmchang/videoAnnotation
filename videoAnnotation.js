@@ -256,70 +256,86 @@ function progressbarOffsetX(){
  */
 
 //the array of objects the stores all the information for every comment
+//drawArr: an array with the information of the drawn rect [leftPos, rightPos, width, height]; or "None" if no rect drawn
 //ID: number assigned in order of when comment is made (Starting at 0)
 //timeSec: the time in seconds at which the comment refers to
 //timeStr: the time as a string (in minute:second format) at which the comment refers to
 //text: the body text of the comment
 //type: the selected type - either Comment or Question
+//userName: the ID of the student or person commenting
 //viewer: who the student selected can view the comment (currently no functionality with it)
 var commentObj = [
-					{"ID": 0,
+					{"drawArr": "None",
+					"ID": 0,
 					"text": "This is my first comment! This is frame is interesting since ...",
 					"timeEndSec": 164,
 					"timeEndStr": "2:44",
 					"timeSec" : 158, 
 					"timeStr" : "2:38",
 					"type" : "Comment",
+					"userName": "User1",
 					"viewer" : "Class",},
-					{"ID": 1,
+					{"drawArr": "None",
+					"ID": 1,
 					"text": "Comment number 2!",
 					"timeEndSec": 42,
 					"timeEndStr": "2:48",
 					"timeSec" : 38, 
 					"timeStr" : "0:38",
 					"type" : "Comment",
+					"userName": "User2",
 					"viewer" : "Class",},
-					{"ID": 2,
+					{"drawArr": "None",
+					"ID": 2,
 					"text": "Question number 1!",
 					"timeEndSec": "None",
 					"timeEndStr": "None",
 					"timeSec" : 8, 
 					"timeStr" : "0:08",
 					"type" : "Question",
+					"userName": "User3",
 					"viewer" : "Class",},
-					{"ID": 3,
+					{"drawArr": "None",
+					"ID": 3,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"timeEndSec": 192,
 					"timeEndStr": "3:12",
 					"timeSec" : 191, 
 					"timeStr" : "3:11",
 					"type" : "Question",
+					"userName": "User4",
 					"viewer" : "Just Me"},
-					{"ID": 4,
+					{"drawArr": "None",
+					"ID": 4,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"timeEndSec": 218,
 					"timeEndStr": "3:38",
 					"timeSec" : 214, 
 					"timeStr" : "3:34",
 					"type" : "Question",
+					"userName": "User5",
 					"viewer" : "Just Me"},
-					{"ID": 5,
+					{"drawArr": "None",
+					"ID": 5,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"timeEndSec": "None",
 					"timeEndStr": "None",
 					"timeSec" : 2, 
 					"timeStr" : "0:02",
 					"type" : "Comment",
+					"userName": "User6",
 					"viewer" : "Just Me"},
-					{"ID": 6,
+					{"drawArr": "None",
+					"ID": 6,
 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
 					"timeEndSec": 15,
 					"timeEndStr": "0:20",
 					"timeSec" : 5, 
 					"timeStr" : "0:05",
 					"type" : "Question",
+					"userName": "User7",
 					"viewer" : "Just Me"}
-					];
+];
 
 //this function does all the work to display the comments:
 //it calls SortsCommentObj, addAllCommentHTML, and setupAccordion
@@ -364,7 +380,7 @@ function extractCommentHTML(num){
 	headerHTML +="</text>";
 
 	var contentHTML = "<div>";
-	var timeHTML = "<span id = 'commentTimeShow' onclick = 'goToTime(" +commentObj[num].timeSec + ")' >Time: " +timeStr +"  </span>";
+	var timeHTML = "<span id = 'commentTimeShow' onclick = 'goToComment(" + num + ")' >Time: " +timeStr +"  </span>";
 	var textHTML = "<p>"+ text +"</p>";
 	contentHTML += timeHTML + textHTML + "</div>";
 
@@ -382,6 +398,33 @@ function addAllCommentHTML(){
 		html += htmlSection;
 	}
 	$("#accordion").append(html);
+}
+
+//go to the comment in the video and show rectangle if exists
+function goToComment(index){
+	goToTime(commentObj[index].timeSec);
+	changeRectCSS(commentObj[index].drawArr.posX, commentObj[index].drawArr.posY, commentObj[index].drawArr.width, commentObj[index].drawArr.height);
+	$("#drawnRect").show();
+	console.log(commentObj[index].drawArr.posX);
+}
+
+function changeRectCSS(left, top, width, height){
+	if (left != "None"){
+		var leftStr = left.toString() + "px";
+		$("#drawnRect").css("left", leftStr);
+	}
+	if (top != "None"){
+		var topStr = top.toString() + "px";
+		$("#drawnRect").css("top", topStr);
+	}
+	if (width != "None"){
+		var widthStr = width.toString() + "px";
+		$("#drawnRect").css("width", widthStr);
+	}
+	if (height != "None"){
+		var heightStr = height.toString() + "px";
+		$("#drawnRect").css("height", heightStr);
+	}
 }
 
 //sets up the accordion
@@ -428,7 +471,8 @@ function normalSizeCommentHolder(){
 
 //when the comment button is pushed
 function comment_btn(){
-	ytplayer.pauseVideo();
+	$(".playORpause").attr("src", "images/play.png");
+	pauseVideo();
 	show_addNewComment();
 }
 
@@ -447,7 +491,8 @@ function submitNewComment(){
 	}else{
 		timeEnd = calcualateTime_stringToNum(timeEndStr);
 	}
-	commentObj.push({ "ID": commentObj.length,
+	commentObj.push({ "drawArr": extractRectInfo(),
+						"ID": commentObj.length,
 						"text" : text,
 						"timeEndSec": timeEnd,
 						"timeEndStr": timeEndStr,
@@ -705,6 +750,7 @@ function timeStartFocused_adjustTick(This, e){
  *	5. Draw Rectangle-related code
  */
 
+//make the rectangle visible
 function showRect(){
 	ytplayer.pauseVideo();
 	show_addNewComment();
@@ -719,6 +765,8 @@ function showRect(){
 var startDrawX, startDrawY; //relative to the videoCover
 var drawWidth,drawHeight;
 var draw_mouseup = true;
+
+//this function is the mousehandler for drawing the rectangle
 function drawRectOn(){
 	$("#videoCover").mousedown(function(e){
 		draw_mouseup = false;
@@ -737,6 +785,7 @@ function drawRectOn(){
 
 }
 
+//this calculates the width and height of the rectangle when dragging the mouse over the videoCover
 function drawAreaCalc(){
 	if(!draw_mouseup){
 		drawWidth = mouseX - startDrawX - videoCoverOffsetX();
@@ -753,9 +802,13 @@ function drawAreaCalc(){
 	}	
 }
 
+//Returns to the default width and height of 0 px
+//When you drag a new rectangle, you won't see a flash of the previous width and height
 function resetRectCSS(){
 	$("#drawnRect").css("width", "0px");
 	$("#drawnRect").css("height", "0px");
+	drawWidth = 0;
+	drawHeight = 0;
 }
 
 function hideDrawnRect(){
@@ -768,6 +821,15 @@ function videoCoverOffsetX(){
 
 function videoCoverOffsetY(){
 	return $("#videoCover").parent().offset().top; //progressbar x offset
+}
+
+//This functions gets all the informatino from the rectangle that needs to be stored in the commentObj
+function extractRectInfo(){
+	if (drawWidth > 0){
+		return {"posX": startDrawX, "posY":startDrawY,"width": drawWidth, "height": drawHeight};
+	}else{
+		return "None";
+	}
 }
 /*
  *	6. Tick-related code
