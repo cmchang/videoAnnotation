@@ -3663,7 +3663,7 @@ input[type="submit"].btn.btn-mini {
 .btn-group > .btn,
 .btn-group > .dropdown-menu,
 .btn-group > .popover {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .btn-group > .btn-mini {

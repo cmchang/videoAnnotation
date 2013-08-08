@@ -55,6 +55,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 				spacebar: plays/pauses video <br>
 				c: opens up comment editor and adds current video time in starting time input box <br>
 				esc: closes out of comment editor <br>
+				m: mutes/unmutes the video <br>
 			</p>
 
 		</div>
@@ -94,6 +95,18 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 	<div class = "commentsView">
 		<div class = "commentsView_menu">
 			<button class = "btn btn-small" onclick="comment_btn()">Comment</button>
+			<div class="btn-group">
+				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+					Filter Comments
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a>View All</a></li>
+					<li><a>Comments</a></li>
+					<li><a>Questions</a></li>
+					<li><a>Your notes</a></li>
+				</ul>
+			</div>
 		</div>
 		<div class = "commentsView_newComment" style = "display:none;">
 			<div class = "commentsView_menu">
@@ -115,6 +128,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 				</select>
 				<button class = "btn btn-small" id = "submit_btn" onclick="submitNewComment()">Submit</button>
 				<button class ="btn btn-small" id = "cancel_btn" onclick = "hide_addNewComment()">Cancel</button>
+
 			</div>
 		</div>
 		<div class = "commentsView_holder">
