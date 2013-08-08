@@ -47,6 +47,7 @@
 	position:relative;
 	width: 660px;
 	height: 10px;
+	top: 8px;
 	margin-bottom: 13px;
 	border-bottom-right-radius: 0px;
 	border-bottom-left-radius: 0px;
@@ -188,6 +189,6 @@
 .tickmark, #progressbar, #commentTimeShow{
 	cursor: pointer;
 }
-.tickmark, #progressbar, #commentTimeShow{
+#progressbar, #commentTimeShow{
 	cursor: pointer;
 }

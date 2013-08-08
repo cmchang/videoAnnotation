@@ -492,11 +492,11 @@ function submitNewComment(){
 						"type" : type,
 						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
-	//goToTime(calcualateTime_stringToNum(time)); //this so when the comment is submitted, it will open the comment
-	showNewComment();
+	//order matters for the next few functions!
 	addAllTicks();
 	hide_addNewComment();
 	goToComment(commentObj.length-1);
+	showNewComment();
 }
 
 //gets rid of accordion and gets rid of the html
@@ -1024,6 +1024,15 @@ $(window).keyup(function(e) {
 	//here so that unaffected if textbox becomes focused
 	if(e.which == 27){ //esc
 		if($(".newCommentTextbox").val() == ""){
+			hide_addNewComment();
+			commentOrCancel = true;
+		}	
+	}
+
+});
+
+
+
 			hide_addNewComment();
 			commentOrCancel = true;
 		}	
