@@ -35,7 +35,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 	</div>
 
 	<div id="rulesModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-header"> style = "font-size:14px"
+		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3 id="myModalLabel">Instructions</h3>
 		</div>
@@ -61,7 +61,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			<p>
 				<b>spacebar</b>: plays/pauses video <br>
 				<b>c</b>: opens up comment editor and adds current video time in starting time input box (it will also close the comment editor if the textbox is not focused) <br>
-				<b>esc</b>: closes out of comment editor <br>
+				<b>esc</b>: closes out of comment editor and hides a drawn rectangle over the video if it exists<br>
 				<b>m</b>: mutes/unmutes the video <br>
 				<br>
 				If you are navigating through the comments, you can use the <b>up/down arrows</b> with the <b>spacebar/return</b> to select a different comment
@@ -158,9 +158,6 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		<p>Bytes Total: <span id="bytesTotal">--</span> | Start Bytes: <span id="startBytes">--</span> | Bytes Loaded: <span id="bytesLoaded">--</span></p>
 		<p><input id="volumeSetting" type="text" size="3" />&nbsp;<a href="javascript:void(0)" onclick="setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
 	</div>				
-</body>
-</html>
-​				
 </body>
 </html>
 ​
