@@ -285,7 +285,7 @@ var commentObj = [
 					"type" : "Comment",
 					"userName": "User2",
 					"viewer" : "Class",},
-					{"drawArr": "None",
+					{"drawArr": {posX: 78.00284099578857, posY: 157, width: 522, height: 47},
 					"ID": 2,
 					"text": "Question number 1!",
 					"timeEndSec": "None",
@@ -403,27 +403,11 @@ function addAllCommentHTML(){
 //go to the comment in the video and show rectangle if exists
 function goToComment(index){
 	goToTime(commentObj[index].timeSec);
-	changeRectCSS(commentObj[index].drawArr.posX, commentObj[index].drawArr.posY, commentObj[index].drawArr.width, commentObj[index].drawArr.height);
-	$("#drawnRect").show();
-	console.log(commentObj[index].drawArr.posX);
-}
-
-function changeRectCSS(left, top, width, height){
-	if (left != "None"){
-		var leftStr = left.toString() + "px";
-		$("#drawnRect").css("left", leftStr);
-	}
-	if (top != "None"){
-		var topStr = top.toString() + "px";
-		$("#drawnRect").css("top", topStr);
-	}
-	if (width != "None"){
-		var widthStr = width.toString() + "px";
-		$("#drawnRect").css("width", widthStr);
-	}
-	if (height != "None"){
-		var heightStr = height.toString() + "px";
-		$("#drawnRect").css("height", heightStr);
+	if(commentObj[index].drawArr != "None"){
+		changeRectCSS(commentObj[index].drawArr.posX, commentObj[index].drawArr.posY, commentObj[index].drawArr.width, commentObj[index].drawArr.height);
+		$("#drawnRect").show();
+	}else{
+		hideDrawnRect();
 	}
 }
 
@@ -651,7 +635,6 @@ function dragRangeOn(){
 //if the text is changed in the time input box, update the tick to the corresponding position
 function time_updateTickRange(){
 	$("#comment_time").change(function(){
-		console.log("here");
 		var timeStart = calcualateTime_stringToNum($("#comment_time").val());
 		startDragX = calculateTickLoc(timeStart);
 		if($("#comment_time").val() != ""){
@@ -757,7 +740,6 @@ function showRect(){
 
 	var leftStr = startDrawX.toString() + "px";
 	var topStr = startDrawY.toString() + "px";
-	console.log(leftStr, topStr);
 	$("#drawnRect").show();
 	$("#drawnRect").css("left", leftStr);
 	$("#drawnRect").css("top", topStr);
@@ -809,6 +791,25 @@ function resetRectCSS(){
 	$("#drawnRect").css("height", "0px");
 	drawWidth = 0;
 	drawHeight = 0;
+}
+
+function changeRectCSS(left, top, width, height){
+	if (left != "None"){
+		var leftStr = left.toString() + "px";
+		$("#drawnRect").css("left", leftStr);
+	}
+	if (top != "None"){
+		var topStr = top.toString() + "px";
+		$("#drawnRect").css("top", topStr);
+	}
+	if (width != "None"){
+		var widthStr = width.toString() + "px";
+		$("#drawnRect").css("width", widthStr);
+	}
+	if (height != "None"){
+		var heightStr = height.toString() + "px";
+		$("#drawnRect").css("height", heightStr);
+	}
 }
 
 function hideDrawnRect(){
