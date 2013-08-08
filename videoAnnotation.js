@@ -596,15 +596,18 @@ function getRelMouseX(This, e){
 var startDragX; //relative to the page!
 var dragWidth;
 var drag_mouseup = true; //important when calculating the width of the dragtick
+var dragCurrentSec;
 function dragRangeOn(){
 	$("#progressbar").mousedown(function(e){
 		if(!timeStartFocused){
 			if (drag_on && !timeEndFocused){
 				startDragX = mouseX - progressbarOffsetX();
 				drag_mouseup = false; 
-				var currentSec = mouseXtoSec(this, e);
-				comment_btn();
-				showRangeTick(currentSec);
+				dragCurrentSec = mouseXtoSec(this, e);
+				if($(".commentsView_newComment").css("display") != "none"){
+					comment_btn();
+					showRangeTick(dragCurrentSec);
+				}
 			}
 		}
 
@@ -619,10 +622,6 @@ function dragRangeOn(){
 				
 			}else if(timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
 				timeStartFocused_adjustTick(this, e);
-				
-				
-				// var tickLocStr = currentX.toString() + "px"; 
-				// $("#rangeTick").css("left", tickLocStr);
 
 			}else{
 				if($("#comment_time").val() == calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
@@ -699,10 +698,15 @@ function hideRangeTick(){
 
 function dragWidthCalc(){
 	if(startDragX > 0 && !drag_mouseup){
+		showRangeTick(dragCurrentSec);
 		drag_on = true;
 		dragWidth = mouseX-startDragX - progressbarOffsetX();
 		var widthStr = dragWidth.toString() + "px";
 		$("#rangeTick").css("width", widthStr);
+
+		if($(".commentsView_newComment").css("display") == "none"){
+			comment_btn();
+		}
 	}
 }
 
@@ -1024,15 +1028,6 @@ $(window).keyup(function(e) {
 	//here so that unaffected if textbox becomes focused
 	if(e.which == 27){ //esc
 		if($(".newCommentTextbox").val() == ""){
-			hide_addNewComment();
-			commentOrCancel = true;
-		}	
-	}
-
-});
-
-
-
 			hide_addNewComment();
 			commentOrCancel = true;
 		}	
