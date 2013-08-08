@@ -9,6 +9,7 @@
  *		7. jQuery(document).ready() 
  *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), isHoveringOverComments()
  *		8. Keyboard Shortcuts
+ *		9. Alert-related code
  */
 
 /*
@@ -1027,19 +1028,18 @@ $(window).keyup(function(e) {
 		if($(".newCommentTextbox").val() == ""){
 			hide_addNewComment();
 			commentOrCancel = true;
-		}	
+		}else{
+			closeCommentAlert();
+		}
 	}
 
 });
 
-
-
-mment();
-			commentOrCancel = true;
-		}	
-	}
-
-});
-
-
+/*
+ *	9. Alert-related code
+ */
+function closeCommentAlert()
+{
+alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
+}
 
