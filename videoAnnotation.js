@@ -1018,9 +1018,6 @@ $(window).keyup(function(e) {
 				hide_addNewComment();
 				commentOrCancel = true;
 			}
-		}else if(e.which === 68){ //d
-			drawRect_btn();
-
 		}else if(e.which === 77){ // m
 			muteORunmute();
 		}
@@ -1029,6 +1026,15 @@ $(window).keyup(function(e) {
 	if(e.which == 27){ //esc
 		if($(".newCommentTextbox").val() == ""){
 			hide_addNewComment();
+			commentOrCancel = true;
+		}	
+	}
+
+});
+
+
+
+mment();
 			commentOrCancel = true;
 		}	
 	}
