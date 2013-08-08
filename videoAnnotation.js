@@ -157,6 +157,7 @@ function playVideo() {
 
 function pauseVideo() {
 	if (ytplayer) {
+		$(".playORpause").attr("src", "images/play.png");
 		ytplayer.pauseVideo();
 	}
 }
@@ -463,7 +464,6 @@ function normalSizeCommentHolder(){
 
 //when the comment button is pushed
 function comment_btn(){
-	$(".playORpause").attr("src", "images/play.png");
 	pauseVideo();
 	show_addNewComment();
 }
@@ -749,8 +749,11 @@ function timeStartFocused_adjustTick(This, e){
 
 //make the rectangle visible
 function showRect(){
-	ytplayer.pauseVideo();
-	show_addNewComment();
+	pauseVideo();
+
+	if($(".commentsView_newComment").css("display") == "none"){
+		show_addNewComment();
+	}
 
 	var leftStr = startDrawX.toString() + "px";
 	var topStr = startDrawY.toString() + "px";
