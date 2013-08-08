@@ -547,7 +547,7 @@ function IDtoIndex(ID){
 
 var timeStartFocused = false;
 var timeEndFocused = false;
-function setupTimeEndFocus(){
+function setupTimeFocus(){
 	$("#comment_timeEnd").focus(function(){
 									timeEndFocused = true;
 									timeStartFocused = false;
@@ -1024,7 +1024,7 @@ $(function(){
  	updateProgressbar();
  	setup_commentDisplay();
 	isHoveringOverComments();
-	setupTimeEndFocus();
+	setupTimeFocus();
 	setupTextboxFocus();
 	time_updateTickRange();
 	timeEnd_updateTickRange();
@@ -1075,6 +1075,9 @@ $(window).keyup(function(e) {
 function closeCommentAlert()
 {
 alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
+}
+
+);
 }
 
 ntAlert();
