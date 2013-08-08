@@ -1,6 +1,7 @@
 .videoView, .commentsView, .videoInfo, .tickmarkView{
 	position: absolute;
 	top: 5px;
+	margin-left: 5px;
 }
 .videoView, .videoContainer, .videoInfo, .videoMenu{
 	width: 752px;
@@ -123,7 +124,7 @@
 }
 
 .commentsView{
-	left: 765px;
+	left: 760px;
 	width: 300px;
 	height: 480px;
 	margin-top:2px; 
@@ -189,6 +190,6 @@
 .tickmark, #progressbar, #commentTimeShow{
 	cursor: pointer;
 }
-#progressbar, #commentTimeShow{
+entTimeShow{
 	cursor: pointer;
 }
