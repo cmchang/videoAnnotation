@@ -17,9 +17,6 @@
  */
 
 // Update a particular HTML element with a new value
-function updateHTML(elmId, value) {
-	document.getElementById(elmId).innerHTML = value;
-}
 
 function updateHTML(elmId, value) {
 	document.getElementById(elmId).innerHTML = value;
