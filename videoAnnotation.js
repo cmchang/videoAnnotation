@@ -4,12 +4,13 @@
  *		2. Progressbar-related Code
  *		3. Commenting-related Code (includes accordion)
  *		4. Drag Range-related Code
- *		5. Draw Rectangle-related Code
- *		6. Tick-related code
- *		7. jQuery(document).ready() 
+ *		5. Zoom on ticks-related Code
+ *		6. Draw Rectangle-related Code
+ *		7. Tick-related code
+ *		8. jQuery(document).ready() 
  *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), isHoveringOverComments()
- *		8. Keyboard Shortcuts
- *		9. Alert-related code
+ *		9. Keyboard Shortcuts
+ *		10. Alert-related code
  */
 
 /*
@@ -17,10 +18,10 @@
  */
 
 // Update a particular HTML element with a new value
-
 function updateHTML(elmId, value) {
 	document.getElementById(elmId).innerHTML = value;
 }
+
 // This function is called when an error is thrown by the player
 function onPlayerError(errorCode) {
 	alert("An error occured of type:" + errorCode);
@@ -762,7 +763,11 @@ function hideToolTipDelay(){
 }
 
 /*
- *	5. Draw Rectangle-related code
+ *	5. Zoom on ticks-related Code
+ */
+
+/*
+ *	6. Draw Rectangle-related Code
  */
 
 //make the rectangle visible
@@ -867,7 +872,7 @@ function extractRectInfo(){
 	}
 }
 /*
- *	6. Tick-related code
+ *	7. Tick-related code
  */
 
 //calculate the tick location given the time where the associated comment is given
@@ -1009,7 +1014,7 @@ function createTickPopover(ID){
 	}
 }
 /*
- *	7. jQuery(document).ready()
+ *	8. jQuery(document).ready()
  */
 
 var mouseX, mouseY;
@@ -1037,7 +1042,7 @@ $(function(){
 
 
 /*
- *	8. Keyboard Shortcuts
+ *	9. Keyboard Shortcuts
  */
 var commentOrCancel = true;  // true - next click is comment, false - next click cancels
 $(window).keyup(function(e) {
@@ -1069,15 +1074,13 @@ $(window).keyup(function(e) {
 });
 
 /*
- *	9. Alert-related code
+ *	10. Alert-related code
  */
 function closeCommentAlert()
 {
 alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
 }
 
-rt()
-{
-alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
+f you are sure you want to lose your data.");
 }
 
