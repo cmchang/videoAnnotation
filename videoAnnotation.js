@@ -474,10 +474,10 @@ function submitNewComment(){
 	var text = $(".newCommentTextbox").val();
 	var type = $('#comment_type').find(":selected").text();
 	var viewer = $('#comment_viewer').find(":selected").text();
-	var time = $('#comment_time').val();
+	var timeStr = $('#comment_time').val();
 	var timeEndStr = $('#comment_timeEnd').val();
 	var timeEnd;
-	if(timeEndStr == ""){
+	if(timeEndStr == "" || timeStr == timeEndStr){
 		timeEnd = "None";
 		timeEndStr = "None";
 	}else{
@@ -488,8 +488,8 @@ function submitNewComment(){
 						"text" : text,
 						"timeEndSec": timeEnd,
 						"timeEndStr": timeEndStr,
-						"timeSec" : calcualateTime_stringToNum(time),
-						"timeStr" : time,
+						"timeSec" : calcualateTime_stringToNum(timeStr),
+						"timeStr" : timeStr,
 						"type" : type,
 						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
