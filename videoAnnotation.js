@@ -31,7 +31,6 @@ function onPlayerStateChange(newState) {
 	updateHTML("playerState", newState);
 }
 
-var createTicks = true;
 // Display information about the current state of the player
 function updatePlayerInfo() {
 	// Also check that at least one function exists since when IE unloads the
@@ -50,11 +49,6 @@ function updatePlayerInfo() {
 		updateHTML("videoTotalTimeDisplay", calculateTime(ytplayer.getDuration()));
 		openCommentSyncVideo(); //syncs opening the comments with the video
 		highlightTick();
-		
-		//this makes sure the ticks are only created AFTER ytplayer is created so we can use .getDuration()
-		if(createTicks && ytplayer.getDuration() > 0){
-			createTicks = false;
-			addAllTicks();
 
 		}
 	}
@@ -192,6 +186,7 @@ function onYouTubePlayerReady(playerId) {
 	setInterval(updateProgressBar, 1000);
 	setInterval(updatePlayerInfo, 250);
 	updatePlayerInfo();
+	addAllTicks();
 	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
 	ytplayer.addEventListener("onError", "onPlayerError");
 	//Load an initial video into the player
@@ -245,8 +240,6 @@ function updateProgressbar(){
 		$('#offset').html(relX + ', ' + relY);
 		progressbar_click(relX);
 	});
-
-	dragRangeOn();
 }
 
 function progressbarOffsetX(){
@@ -1020,8 +1013,8 @@ function createTickPopover(ID){
  */
 
 var mouseX, mouseY;
-	$(function(){ 
-		$(document).mousemove(function(e){
+$(function(){ 
+	$(document).mousemove(function(e){
 		$('#status').html(e.pageX +', '+ e.pageY);
 		mouseX = e.pageX;
 		mouseY = e.pageY;
@@ -1036,6 +1029,8 @@ var mouseX, mouseY;
 	time_updateTickRange();
 	timeEnd_updateTickRange();
 	drawRectOn();
+	dragRangeOn();
+
 
 
 })
@@ -1069,6 +1064,20 @@ $(window).keyup(function(e) {
 			commentOrCancel = true;
 		}else{
 			closeCommentAlert();
+		}
+	}
+
+});
+
+/*
+ *	9. Alert-related code
+ */
+function closeCommentAlert()
+{
+alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
+}
+
+ntAlert();
 		}
 	}
 
