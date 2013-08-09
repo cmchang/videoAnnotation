@@ -65,7 +65,7 @@
 	border-top-left-radius: 5px;
 	opacity: .7;
 	border: solid 1px #B5AF9F;
-	overflow: hidden;
+	/*overflow: hidden;*/
 
 }
 
@@ -97,10 +97,17 @@
 	width: 2px;
 	background: red;
 }
+#zoomTick{
+	position: absolute;
+	height: 100%;
+	display: none;
+	width: 2px;
+	background-color: rgba(0, 0, 255, 0.3);
+}
 .tickmark_holder{
 	position: relative;
 	width: 660px;
-	height: 4px;
+	height: 8px;
 	margin-bottom: 6px;
 	background: white;
 	border: solid 1px #B5AF9F;
@@ -197,3 +204,62 @@
 how{
 	cursor: pointer;
 }
+.popover{
+	/*max-width: 200px;
+	max-height: 105px; */
+	font-size: 10pt;
+
+}
+.popover-content{
+	max-height: 50px;
+	overflow: hidden;
+}
+.popover-title{
+	max-height: 25px;
+	font-size: 10pt;
+	overflow: hidden;
+}
+.rightTooltipDiv{
+	float: right;
+	/*display: none;*/
+}
+.enlargedTickContainer{
+	margin-top: 5px;
+	height: 40px;
+	border-radius: 5px;
+	background: #E6E6E6; 
+}
+.enlargedTickBar{
+	position: absolute;
+	width: 660px;
+	margin-top: 10px;
+	height: 15px;
+	border-radius: 5px;
+	background: white;
+	border: 1px solid grey;
+	vertical-align: middle;
+	display: inline-block;
+	/*overflow: hidden;*/
+}
+.enlargedTickStart{
+	width: 45px;
+	text-align: center;
+	display: inline-block;
+	margin-top: 8px;
+}
+.enlargedTickEnd{
+	width: 45px;
+	display: inline-block;
+	float: right;
+	vertical-align: middle;
+	text-align: center;
+	margin-top: 8px;
+}
+.enlargedTickmark{
+	position: absolute;
+	height: 100%;
+	background: red;
+	opacity: .4;
+	cursor: pointer;
+}
+
