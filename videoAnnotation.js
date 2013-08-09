@@ -762,11 +762,13 @@ function dragRangeOn(){
 
 }
 
+var zoomDragging = false;
+
 function zoomRangeOn(){ //Dsan
 	$(".tickmark_holder").mousedown(function(e){
-		console.log("mousedown");
+		console.log("tickmar_holder mousedown");
 		if(!timeStartFocused){
-			if (drag_on && !timeEndFocused){
+			if (drag_on && !timeEndFocused && !zoomDragging ){
 				console.log("zoomTick should show")
 				startZoomX = mouseX - progressbarOffsetX();
 				zoom_mouseup = false; 
@@ -801,55 +803,12 @@ function zoomRangeOn(){ //Dsan
 				});
 			}
 
-			function enlargedTickHTML(xLoc, width, ID){
-				var style = "'left:" + xLoc + "px; width:"+width + "px'";
-				var html = "<div class = 'enlargedTickmark' id = 'enlargedTickmark"+ID + "' style="+style+" onclick = tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
-				return html;
-			}
-
-			function createEnlargedTickPopover(ID){
-				for (var i = 0; i <= commentObj.length - 1; i++){
-			        if (commentObj[i].ID == ID){
-			          	var tickContent = commentObj[i].text;
-			          	var tickTitle = commentObj[i].userName;
-			          	$("#enlargedTickmark" + ID).popover({trigger: "hover", placement: "bottom",title: tickTitle, content: tickContent});
-			        }
-			    }
-			}
+			$("#zoomTick").draggable({axis: "x", containment: "parent"});
 			
 			window.setTimeout(hideToolTip, 1500);
 
 			// appends ticks to the enlarged tick bar
-			for (var i = 0; i <= commentObj.length - 1; i++){
-				if (commentObj[i].timeEndSec == "None"){
-					if(commentObj[i].timeSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd){
-						console.log("found a singular tick")
-						var startToTickDiff = commentObj[i].timeSec - enlargedTimeStart;
-						var totalDiff = enlargedTimeEnd - enlargedTimeStart;
-						var tickRatio = startToTickDiff/totalDiff;
-						var tickPxLeft = tickRatio*$(".enlargedTickBar").width();
-						var html = enlargedTickHTML(tickPxLeft, 1, commentObj[i].ID);
-						$(".enlargedTickBar").append(html);
-						createEnlargedTickPopover(commentObj[i].ID);
-					}
-				}else{
-					if((commentObj[i].timeSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd) || (commentObj[i].timeEndSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd)){
-						console.log("found tick ranges");
-						var startToTickStartDiff = commentObj[i].timeSec - enlargedTimeStart;
-						var startToTickEndDiff = commentObj[i].timeEndSec - enlargedTimeStart;
-						var totalDiff = enlargedTimeEnd - enlargedTimeStart;
-						var tickStartRatio = startToTickStartDiff/totalDiff;
-						var tickEndRatio = startToTickEndDiff/totalDiff;
-						if (commentObj[i].timeEndSec > enlargedTimeEnd){var tickEndRatio = 1;}
-						if (commentObj[i].timeSec < enlargedTimeStart){var tickStartRatio = 0;}
-						var tickPxLeft = tickStartRatio*$(".enlargedTickBar").width();
-						var tickWidth = (tickEndRatio-tickStartRatio)*$(".enlargedTickBar").width();
-						var html = enlargedTickHTML(tickPxLeft, tickWidth, commentObj[i].ID);
-						$(".enlargedTickBar").append(html);
-						createEnlargedTickPopover(commentObj[i].ID);
-					}
-				}
-			}
+			addEnlargedTicks();
 		}
 	});
 }
@@ -903,24 +862,13 @@ function showRangeTick(currentSec){
 	$("#rangeTick").css("width", "2px")
 	$("#rangeTick").show();	
 }
-function showZoomTick(currentSec){ //Dsan
-	var tickLoc = calculateTickLoc(currentSec);
-	startDragX = tickLoc;
-	var tickLocStr = tickLoc.toString() + "px";
-	$("#zoomTick").css("left", tickLocStr);
-	$("#zoomTick").css("width", "2px")
-	$("#zoomTick").show();	
-}
+
 function hideRangeTick(){
 	$("#rangeTick").hide();
 	$("#rangeTick").css("width", "2px")	
 	dragWidth = 2;
 }
-function hideZoomTick(){ //Dsan
-	$("#zoomTick").hide();
-	$("#zoomTick").css("width", "2px")	
-	dragWidth = 2;
-}
+
 function dragWidthCalc(e){
 	// console.log("startDragX: " + startDragX + ", startZoomX: " + startZoomX);
 	if(startDragX > 0 && !drag_mouseup){
@@ -1004,7 +952,92 @@ function hideToolTipDelay(){
 /*
  *	5. Zoom on ticks-related Code
  */
+function showZoomTick(currentSec){ //Dsan
+	var tickLoc = calculateTickLoc(currentSec);
+	startDragX = tickLoc;
+	var tickLocStr = tickLoc.toString() + "px";
+	$("#zoomTick").css("left", tickLocStr);
+	$("#zoomTick").css("width", "2px")
+	$("#zoomTick").show();	
+}
+function hideZoomTick(){ //Dsan
+	$("#zoomTick").hide();
+	$("#zoomTick").css("width", "2px")	
+	dragWidth = 2;
+}
+function enlargedTickHTML(xLoc, width, ID){
+	var style = "'left:" + xLoc + "px; width:"+width + "px'";
+	var html = "<div class = 'enlargedTickmark' id = 'enlargedTickmark"+ID + "' style="+style+" onclick = tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
+	return html;
+}
 
+function createEnlargedTickPopover(ID){
+	for (var i = 0; i <= commentObj.length - 1; i++){
+        if (commentObj[i].ID == ID){
+          	var tickContent = commentObj[i].text;
+          	var tickTitle = commentObj[i].userName;
+          	$("#enlargedTickmark" + ID).popover({trigger: "hover", placement: "bottom",title: tickTitle, content: tickContent});
+        }
+    }
+}
+function zoomRecalc(e){
+	if (zoomDragging){
+		var zoomTickLeft = parseFloat($("#zoomTick").css("left"));
+		var zoomTickRight = zoomTickLeft + $("#zoomTick").width();
+		var startRatio = zoomTickLeft/$(".tickmark_holder").width();
+		var endRatio = zoomTickRight/$(".tickmark_holder").width();
+		enlargedTimeStart = startRatio*ytplayer.getDuration();
+		enlargedTimeEnd = endRatio*ytplayer.getDuration();
+		$(".enlargedTickStart").html(calculateTime(enlargedTimeStart));
+		$(".enlargedTickEnd").html(calculateTime(enlargedTimeEnd));
+		addEnlargedTicks();
+	}
+}
+function addEnlargedTicks(){
+	console.log("addEnlargedTicks called");
+	console.log("enlargedTimeStart: " + enlargedTimeStart);
+	console.log("enlargedTimeEnd: " + enlargedTimeEnd);
+	$(".enlargedTickBar").html("");
+	for (var i = 0; i <= commentObj.length - 1; i++){
+		if (commentObj[i].timeEndSec == "None"){
+			if(commentObj[i].timeSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd){
+				console.log("found a singular tick")
+				var startToTickDiff = commentObj[i].timeSec - enlargedTimeStart;
+				var totalDiff = enlargedTimeEnd - enlargedTimeStart;
+				var tickRatio = startToTickDiff/totalDiff;
+				var tickPxLeft = tickRatio*$(".enlargedTickBar").width();
+				var html = enlargedTickHTML(tickPxLeft, 1, commentObj[i].ID);
+				$(".enlargedTickBar").append(html);
+				createEnlargedTickPopover(commentObj[i].ID);
+			}
+		}else{
+			if((commentObj[i].timeSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd) || (commentObj[i].timeEndSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd)){
+				console.log("found tick ranges");
+				var startToTickStartDiff = commentObj[i].timeSec - enlargedTimeStart;
+				var startToTickEndDiff = commentObj[i].timeEndSec - enlargedTimeStart;
+				var totalDiff = enlargedTimeEnd - enlargedTimeStart;
+				var tickStartRatio = startToTickStartDiff/totalDiff;
+				var tickEndRatio = startToTickEndDiff/totalDiff;
+				if (commentObj[i].timeEndSec > enlargedTimeEnd){var tickEndRatio = 1;}
+				if (commentObj[i].timeSec < enlargedTimeStart){var tickStartRatio = 0;}
+				var tickPxLeft = tickStartRatio*$(".enlargedTickBar").width();
+				var tickWidth = (tickEndRatio-tickStartRatio)*$(".enlargedTickBar").width();
+				var html = enlargedTickHTML(tickPxLeft, tickWidth, commentObj[i].ID);
+				$(".enlargedTickBar").append(html);
+				createEnlargedTickPopover(commentObj[i].ID);
+			}
+		}
+	}
+}
+
+function zoomDrag(){
+	$("#zoomTick").mousedown(function(e){
+		zoomDragging = true;
+	});
+	$("#zoomTick").mouseup(function(e){
+		zoomDragging = false;
+	})
+}
 /*
  *	6. Draw Rectangle-related Code
  */
@@ -1276,6 +1309,7 @@ $(function(){
 		mouseY = e.pageY;
 		dragWidthCalc(e);
 		drawAreaCalc();
+		zoomRecalc(e);
 	}); 
  	updateProgressbarClick();
  	setup_commentDisplay();
@@ -1285,6 +1319,7 @@ $(function(){
 	time_updateTickRange();
 	timeEnd_updateTickRange();
 	drawRectOn();
+	zoomDrag(); //Dsan
 	dragRangeOn();
 	zoomRangeOn(); //Dsan
 
