@@ -32,6 +32,7 @@ function onPlayerStateChange(newState) {
 	updateHTML("playerState", newState);
 }
 
+var createTicks = true; //Dsan
 // Display information about the current state of the player
 // It’s called every 250 milliseconds in onYoutubePlayerReady()
 function updatePlayerInfo() {
@@ -50,8 +51,15 @@ function updatePlayerInfo() {
 		updateHTML("videoTimeDisplay", calculateTime(ytplayer.getCurrentTime())); //seen under progressbar
 		updateHTML("videoTotalTimeDisplay", calculateTime(ytplayer.getDuration()));
 		openCommentSyncVideo(); //syncs opening the comments with the video
+		commentAutoScroll(); //Automatically scrolls to correct comment
 		highlightTick();
 
+		//this makes sure the ticks are only created AFTER ytplayer is created so we can use .getDuration()
+		if(createTicks && ytplayer.getDuration() > 0){ //Dsan
+			createTicks = false;
+			addAllTicks();
+
+		}
 	}
 }
 
@@ -190,8 +198,7 @@ function onYouTubePlayerReady(playerId) {
 	// get fresh data from the player
 	setInterval(updateProgressbar, 1000);
 	setInterval(updatePlayerInfo, 250);
-	updatePlayerInfo();
-	addAllTicks();
+	updatePlayerInfo();		
 	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
 	ytplayer.addEventListener("onError", "onPlayerError");
 	//Load an initial video into the player
@@ -337,6 +344,86 @@ var commentObj = [
 					"timeStr" : "0:05",
 					"type" : "Question",
 					"userName": "User7",
+					"viewer" : "Just Me"},
+					{"drawArr": "None",
+					"ID": 7,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": "None",
+					"timeEndStr": "None",
+					"timeSec" : 25, 
+					"timeStr" : "0:25",
+					"type" : "Comment",
+					"userName": "User8",
+					"viewer" : "Just Me"},
+					{"drawArr": "None",
+					"ID": 8,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": "None",
+					"timeEndStr": "None",
+					"timeSec" : 30, 
+					"timeStr" : "0:30",
+					"type" : "Comment",
+					"userName": "User9",
+					"viewer" : "Just Me"},
+					{"drawArr": "None",
+					"ID": 9,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": "None",
+					"timeEndStr": "None",
+					"timeSec" : 35, 
+					"timeStr" : "0:35",
+					"type" : "Comment",
+					"userName": "User10",
+					"viewer" : "Just Me"},
+					{"drawArr": "None",
+					"ID": 10,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": "None",
+					"timeEndStr": "None",
+					"timeSec" : 40, 
+					"timeStr" : "0:40",
+					"type" : "Comment",
+					"userName": "User11",
+					"viewer" : "Just Me"},
+					{"drawArr": "None",
+					"ID": 11,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": "None",
+					"timeEndStr": "None",
+					"timeSec" : 45, 
+					"timeStr" : "0:45",
+					"type" : "Comment",
+					"userName": "User12",
+					"viewer" : "Just Me"},
+					{"drawArr": "None",
+					"ID": 12,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": "None",
+					"timeEndStr": "None",
+					"timeSec" : 50, 
+					"timeStr" : "0:50",
+					"type" : "Comment",
+					"userName": "User13",
+					"viewer" : "Just Me"},
+					{"drawArr": "None",
+					"ID": 13,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": "None",
+					"timeEndStr": "None",
+					"timeSec" :55, 
+					"timeStr" : "0:55",
+					"type" : "Comment",
+					"userName": "User14",
+					"viewer" : "Just Me"},
+					{"drawArr": "None",
+					"ID": 14,
+					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+					"timeEndSec": "None",
+					"timeEndStr": "None",
+					"timeSec" : 60, 
+					"timeStr" : "1:00",
+					"type" : "Comment",
+					"userName": "User15",
 					"viewer" : "Just Me"}
 ];
 
@@ -451,6 +538,7 @@ function hide_addNewComment(){
 	timeEndFocused = false;
 	hideRangeTick();
 	hideDrawnRect();
+
 }
 
 //Called when the showing the comment editor to adjust the div height
@@ -533,6 +621,40 @@ function openCommentSyncVideo(){
 	}
 }
 
+// Automatically keeps the current comment in view wihin the comment container
+function commentAutoScroll(){ //Dsan
+	createTimeSecArray();
+	var currentTime = parseInt(ytplayer.getCurrentTime());
+	var indexOfArr = timeSecArray.indexOf(currentTime);
+	var commentID = "#ui-accordion-accordion-header-" + indexOfArr;
+
+	var container = $('.commentsView_holder'),
+    scrollTo = $(commentID);
+
+	if (indexOfArr > -1){
+		container.animate({"opacity": 1}, 500, function(){
+			/*container.scrollTop(
+			    scrollTo.offset().top - container.offset().top + container.scrollTop()
+			);*/
+
+			// Or you can animate the scrolling:
+
+			container.animate({
+			    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop()
+			}, 500);
+		})
+		
+	
+		// Or you can animate the scrolling:
+
+		/*container.animate({
+		    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop()
+		}, 1000);*/
+
+	}
+}
+
+
 //this function sets a boolean depending if the mouse is hovering over the .commentsView_holder div
 var isHoveringOver = false;
 function isHoveringOverComments(){
@@ -605,6 +727,12 @@ var dragCurrentSec; //the time when the drag initially starts
 //this function controls when the mouse is clicked in unclicked over the progressbar
 //this function creates the the tick under the progressbar and gives it the left position
 //the width of the tick is controlled under document.ready() in the mousemove function
+var startDragX; //relative to the page!
+var startZoomX;	//Dsan
+var dragWidth;
+var drag_mouseup = true; //important when calculating the width of the dragtick
+var zoom_mouseup = true; //Dsan
+var dragCurrentSec;
 function dragRangeOn(){
 	$("#progressbar").mousedown(function(e){
 		if(!timeStartFocused){
@@ -646,6 +774,57 @@ function dragRangeOn(){
 		timeEndFocused = false;
 	});
 
+}
+
+var zoomDragging = false;
+
+function zoomRangeOn(){ //Dsan
+	$(".tickmark_holder").mousedown(function(e){
+		console.log("tickmar_holder mousedown");
+		if(!timeStartFocused){
+			if (drag_on && !timeEndFocused && !zoomDragging ){
+				console.log("zoomTick should show")
+				startZoomX = mouseX - progressbarOffsetX();
+				zoom_mouseup = false; 
+				var currentSec = mouseXtoSec(this, e);
+				comment_btn();
+
+				// $("#comment_time").val(calculateTime(currentSec));
+				enlargedTimeStart = currentSec;
+				$(".enlargedTickStart").html(calculateTime(enlargedTimeStart));
+				var tickLoc = calculateTickLoc(currentSec);
+				var tickLocStr = tickLoc.toString() + "px";
+				
+				$("#zoomTick").css("left", tickLocStr);
+				$("#zoomTick").css("width", "2px")
+				$("#zoomTick").show();
+				$("#zoomTick .rightTooltipDiv").show();
+				$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});	
+				$("#zoomTick .rightTooltipDiv").tooltip('show');
+			}
+		}
+	});
+	$(".tickmark_holder").mouseup(function(e){
+		if(drag_on){
+			zoom_mouseup = true;
+			var currentSec = mouseXtoSec(this, e);
+			enlargedTimeEnd = currentSec;
+			$(".enlargedTickEnd").html(calculateTime(enlargedTimeEnd));
+			$(".enlargedTickBar").html("");
+			function hideToolTip(){
+				$("#zoomTick .tooltip").animate({"opacity": 0}, 250, function(){
+					$("#zoomTick .rightTooltipDiv").tooltip('destroy');
+				});
+			}
+
+			$("#zoomTick").draggable({axis: "x", containment: "parent"});
+			
+			window.setTimeout(hideToolTip, 1500);
+
+			// appends ticks to the enlarged tick bar
+			addEnlargedTicks();
+		}
+	});
 }
 
 //if the text is changed in the time input box, update the tick to the corresponding position
@@ -707,6 +886,7 @@ function hideRangeTick(){
 
 //this function does the calculations for the tick width while dragging
 function dragWidthCalc(e){
+	// console.log("startDragX: " + startDragX + ", startZoomX: " + startZoomX);
 	if(startDragX > 0 && !drag_mouseup){
 		showRangeTick(dragCurrentSec);
 		dragWidth = mouseX-startDragX - progressbarOffsetX();
@@ -719,6 +899,17 @@ function dragWidthCalc(e){
 		if($(".commentsView_newComment").css("display") == "none"){
 			comment_btn();
 		}
+	}
+	if(startZoomX > 0 && !zoom_mouseup){ //Dsan
+		var currentSec = mouseXtoSec(".tickmark_holder", e);
+		drag_on = true;
+		dragWidth = mouseX-startZoomX - progressbarOffsetX();
+		console.log(dragWidth);
+		var widthStr = dragWidth.toString() + "px";
+		$("#zoomTick").css("width", widthStr);
+		$("#zoomTick .rightTooltipDiv").tooltip("destroy");
+		$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});
+		$("#zoomTick .rightTooltipDiv").tooltip('show');
 	}
 }
 
@@ -777,8 +968,92 @@ function hideToolTipDelay(){
 /*
  *	5. Zoom on ticks-related Code
  */
+function showZoomTick(currentSec){ //Dsan
+	var tickLoc = calculateTickLoc(currentSec);
+	startDragX = tickLoc;
+	var tickLocStr = tickLoc.toString() + "px";
+	$("#zoomTick").css("left", tickLocStr);
+	$("#zoomTick").css("width", "2px")
+	$("#zoomTick").show();	
+}
+function hideZoomTick(){ //Dsan
+	$("#zoomTick").hide();
+	$("#zoomTick").css("width", "2px")	
+	dragWidth = 2;
+}
+function enlargedTickHTML(xLoc, width, ID){
+	var style = "'left:" + xLoc + "px; width:"+width + "px'";
+	var html = "<div class = 'enlargedTickmark' id = 'enlargedTickmark"+ID + "' style="+style+" onclick = tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
+	return html;
+}
 
+function createEnlargedTickPopover(ID){
+	for (var i = 0; i <= commentObj.length - 1; i++){
+        if (commentObj[i].ID == ID){
+          	var tickContent = commentObj[i].text;
+          	var tickTitle = commentObj[i].userName;
+          	$("#enlargedTickmark" + ID).popover({trigger: "hover", placement: "bottom",title: tickTitle, content: tickContent});
+        }
+    }
+}
+function zoomRecalc(e){
+	if (zoomDragging){
+		var zoomTickLeft = parseFloat($("#zoomTick").css("left"));
+		var zoomTickRight = zoomTickLeft + $("#zoomTick").width();
+		var startRatio = zoomTickLeft/$(".tickmark_holder").width();
+		var endRatio = zoomTickRight/$(".tickmark_holder").width();
+		enlargedTimeStart = startRatio*ytplayer.getDuration();
+		enlargedTimeEnd = endRatio*ytplayer.getDuration();
+		$(".enlargedTickStart").html(calculateTime(enlargedTimeStart));
+		$(".enlargedTickEnd").html(calculateTime(enlargedTimeEnd));
+		addEnlargedTicks();
+	}
+}
+function addEnlargedTicks(){
+	console.log("addEnlargedTicks called");
+	console.log("enlargedTimeStart: " + enlargedTimeStart);
+	console.log("enlargedTimeEnd: " + enlargedTimeEnd);
+	$(".enlargedTickBar").html("");
+	for (var i = 0; i <= commentObj.length - 1; i++){
+		if (commentObj[i].timeEndSec == "None"){
+			if(commentObj[i].timeSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd){
+				console.log("found a singular tick")
+				var startToTickDiff = commentObj[i].timeSec - enlargedTimeStart;
+				var totalDiff = enlargedTimeEnd - enlargedTimeStart;
+				var tickRatio = startToTickDiff/totalDiff;
+				var tickPxLeft = tickRatio*$(".enlargedTickBar").width();
+				var html = enlargedTickHTML(tickPxLeft, 1, commentObj[i].ID);
+				$(".enlargedTickBar").append(html);
+				createEnlargedTickPopover(commentObj[i].ID);
+			}
+		}else{
+			if((commentObj[i].timeSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd) || (commentObj[i].timeEndSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd)){
+				console.log("found tick ranges");
+				var startToTickStartDiff = commentObj[i].timeSec - enlargedTimeStart;
+				var startToTickEndDiff = commentObj[i].timeEndSec - enlargedTimeStart;
+				var totalDiff = enlargedTimeEnd - enlargedTimeStart;
+				var tickStartRatio = startToTickStartDiff/totalDiff;
+				var tickEndRatio = startToTickEndDiff/totalDiff;
+				if (commentObj[i].timeEndSec > enlargedTimeEnd){var tickEndRatio = 1;}
+				if (commentObj[i].timeSec < enlargedTimeStart){var tickStartRatio = 0;}
+				var tickPxLeft = tickStartRatio*$(".enlargedTickBar").width();
+				var tickWidth = (tickEndRatio-tickStartRatio)*$(".enlargedTickBar").width();
+				var html = enlargedTickHTML(tickPxLeft, tickWidth, commentObj[i].ID);
+				$(".enlargedTickBar").append(html);
+				createEnlargedTickPopover(commentObj[i].ID);
+			}
+		}
+	}
+}
 
+function zoomDrag(){
+	$("#zoomTick").mousedown(function(e){
+		zoomDragging = true;
+	});
+	$("#zoomTick").mouseup(function(e){
+		zoomDragging = false;
+	})
+}
 
 /*
  *	6. Draw Rectangle-related Code
@@ -899,7 +1174,8 @@ function extractRectInfo(){
 function calculateTickLoc(seconds){
 	var ratio = seconds/ytplayer.getDuration();
 	//console.log(seconds, ytplayer.getDuration(), ratio);
-	var xLoc = $(".progressbar_container").width()*ratio;
+	var xLoc = $("#progressbar").width()*ratio;
+	console.log("calculateTickLoc.xLoc: " + xLoc);
 	return xLoc;
 }
 
@@ -910,6 +1186,7 @@ function calculateTickWidth(startTime, endTime){
 		var rightLoc = calculateTickLoc(endTime);
 		var width = rightLoc - leftLoc;
 		//console.log(startTime, endTime, width);
+		console.log("calculateTickWidth.width: " + width)
 		return width;
 	}else{
 		return "1"
@@ -924,8 +1201,19 @@ function tickHTML(xLoc, width, ID){
 }
 
 //This function should be called the the page is loading, it appends all the ticks to the tickholder
+function createTickPopover(ID){
+	for (var i = 0; i <= commentObj.length - 1; i++){
+        if (commentObj[i].ID == ID){
+          	var tickContent = commentObj[i].text;
+          	var tickTitle = commentObj[i].userName;
+          	$("#tickmark" + ID).popover({trigger: "hover", placement: "bottom",title: tickTitle, content: tickContent});
+        }
+    }
+}
+
+//This function should be called the the page is loading
 function addAllTicks(){
-	$(".tickmark_holder").html("");
+	$(".tickmark_holder").html("<div id = 'zoomTick'><div class = 'rightTooltipDiv' style = 'float: right'></div></div>"); //Dsan
 	var xLoc, ID, width, html;
 	for(var num = 0; num < commentObj.length; num++){
 		xLoc = calculateTickLoc(commentObj[num].timeSec);
@@ -1051,6 +1339,7 @@ $(function(){
 		mouseY = e.pageY;
 		dragWidthCalc(e);
 		drawAreaCalc();
+		zoomRecalc(e);
 	}); 
  	updateProgressbarClick();
  	setup_commentDisplay();
@@ -1060,8 +1349,9 @@ $(function(){
 	time_updateTickRange();
 	timeEnd_updateTickRange();
 	drawRectOn();
+	zoomDrag(); //Dsan
 	dragRangeOn();
-
+	zoomRangeOn(); //Dsan
 
 
 });
