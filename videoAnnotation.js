@@ -763,54 +763,62 @@ function dragRangeOn(){
 }
 
 var zoomDragging = false;
+var zoomInitResizing = false;
+var zoomResizing = false;
 
 function zoomRangeOn(){ //Dsan
-	$(".tickmark_holder").mousedown(function(e){
-		console.log("tickmar_holder mousedown");
-		if(!timeStartFocused){
-			if (drag_on && !timeEndFocused && !zoomDragging ){
-				console.log("zoomTick should show")
-				startZoomX = mouseX - progressbarOffsetX();
-				zoom_mouseup = false; 
+	/*if (zoom_mouseup){*/
+		$(".tickmark_holder").mousedown(function(e){
+			console.log("tickmar_holder mousedown");
+			if(!timeStartFocused){
+				if (drag_on && !timeEndFocused && !zoomDragging ){
+					console.log("zoomTick should show")
+					startZoomX = mouseX - progressbarOffsetX();
+					zoom_mouseup = false; 
+					var currentSec = mouseXtoSec(this, e);
+					comment_btn();
+
+					// $("#comment_time").val(calculateTime(currentSec));
+					enlargedTimeStart = currentSec;
+					$(".enlargedTickStart").html(calculateTime(enlargedTimeStart));
+					var tickLoc = calculateTickLoc(currentSec);
+					var tickLocStr = tickLoc.toString() + "px";
+					
+					$("#zoomTick").css("left", tickLocStr);
+					$("#zoomTick").css("width", "2px")
+					$("#zoomTick").show();
+					$("#zoomTick .rightTooltipDiv").show();
+					$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});	
+					$("#zoomTick .rightTooltipDiv").tooltip('show');
+				}
+			}
+		});
+	/*}else if (!zoom_mouseup){*/
+		$(".tickmark_holder").mouseup(function(e){
+			if(drag_on){
+				zoom_mouseup = true;
 				var currentSec = mouseXtoSec(this, e);
-				comment_btn();
+				enlargedTimeEnd = currentSec;
+				$(".enlargedTickEnd").html(calculateTime(enlargedTimeEnd));
+				$(".enlargedTickBar").html("");
+				function hideToolTip(){
+					$("#zoomTick .tooltip").animate({"opacity": 0}, 250, function(){
+						$("#zoomTick .rightTooltipDiv").tooltip('destroy');
+					});
+				}
 
-				// $("#comment_time").val(calculateTime(currentSec));
-				enlargedTimeStart = currentSec;
-				$(".enlargedTickStart").html(calculateTime(enlargedTimeStart));
-				var tickLoc = calculateTickLoc(currentSec);
-				var tickLocStr = tickLoc.toString() + "px";
+				$(".zoomTickContent").draggable({axis: "x", containment: ".tickmark_holder"});
+				$(".leftZoomAdjust").draggable({axis: "x"});
+				$(".rightZoomAdjust").draggable({axis: "x"});
 				
-				$("#zoomTick").css("left", tickLocStr);
-				$("#zoomTick").css("width", "2px")
-				$("#zoomTick").show();
-				$("#zoomTick .rightTooltipDiv").show();
-				$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});	
-				$("#zoomTick .rightTooltipDiv").tooltip('show');
-			}
-		}
-	});
-	$(".tickmark_holder").mouseup(function(e){
-		if(drag_on){
-			zoom_mouseup = true;
-			var currentSec = mouseXtoSec(this, e);
-			enlargedTimeEnd = currentSec;
-			$(".enlargedTickEnd").html(calculateTime(enlargedTimeEnd));
-			$(".enlargedTickBar").html("");
-			function hideToolTip(){
-				$("#zoomTick .tooltip").animate({"opacity": 0}, 250, function(){
-					$("#zoomTick .rightTooltipDiv").tooltip('destroy');
-				});
-			}
+				window.setTimeout(hideToolTip, 1500);
 
-			$("#zoomTick").draggable({axis: "x", containment: "parent"});
-			
-			window.setTimeout(hideToolTip, 1500);
-
-			// appends ticks to the enlarged tick bar
-			addEnlargedTicks();
-		}
-	});
+				// appends ticks to the enlarged tick bar
+				addEnlargedTicks();
+			}
+		});
+	/*}*/
+	
 }
 
 //if the text is changed in the time input box, update the tick to the corresponding position
@@ -895,6 +903,7 @@ function dragWidthCalc(e){
 		$("#zoomTick .rightTooltipDiv").tooltip("destroy");
 		$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});
 		$("#zoomTick .rightTooltipDiv").tooltip('show');
+
 	}
 }
 
@@ -981,9 +990,9 @@ function createEnlargedTickPopover(ID){
     }
 }
 function zoomRecalc(e){
-	if (zoomDragging){
-		var zoomTickLeft = parseFloat($("#zoomTick").css("left"));
-		var zoomTickRight = zoomTickLeft + $("#zoomTick").width();
+	if (zoomInitResizing && !zoomResizing){
+		var zoomTickLeft = parseFloat($("#zoomTick").css("left")) + 4;
+		var zoomTickRight = zoomTickLeft + $(".zoomTickContent").width();
 		var startRatio = zoomTickLeft/$(".tickmark_holder").width();
 		var endRatio = zoomTickRight/$(".tickmark_holder").width();
 		enlargedTimeStart = startRatio*ytplayer.getDuration();
@@ -991,12 +1000,25 @@ function zoomRecalc(e){
 		$(".enlargedTickStart").html(calculateTime(enlargedTimeStart));
 		$(".enlargedTickEnd").html(calculateTime(enlargedTimeEnd));
 		addEnlargedTicks();
+	}else if(zoomResizing){
+		/*console.log("Resizing...");*/
 	}
+
+}
+function zoomInitialResize(){
+	$("#zoomTick").mousedown(function(e){
+		zoomInitResizing = true;
+		console.log("zoomInitResize on")
+	});
+	$("#zoomTick").mouseup(function(e){
+		zoomInitResizing = false;
+		console.log("zoomInitResize off")
+	})
 }
 function addEnlargedTicks(){
-	console.log("addEnlargedTicks called");
+	/*console.log("addEnlargedTicks called");
 	console.log("enlargedTimeStart: " + enlargedTimeStart);
-	console.log("enlargedTimeEnd: " + enlargedTimeEnd);
+	console.log("enlargedTimeEnd: " + enlargedTimeEnd);*/
 	$(".enlargedTickBar").html("");
 	for (var i = 0; i <= commentObj.length - 1; i++){
 		if (commentObj[i].timeEndSec == "None"){
@@ -1031,12 +1053,34 @@ function addEnlargedTicks(){
 }
 
 function zoomDrag(){
-	$("#zoomTick").mousedown(function(e){
+	$(".zoomTickContent").mousedown(function(e){
 		zoomDragging = true;
 	});
-	$("#zoomTick").mouseup(function(e){
+	$(".zoomTickContent").mouseup(function(e){
 		zoomDragging = false;
 	})
+}
+function zoomHover(){
+	$(".zoomAdjust").on("mouseenter", function(){
+		$(this).animate({"opacity": 1}, 250);
+	});
+
+	$(".zoomAdjust").on("mouseleave", function(){
+		$(this).animate({"opacity": .5}, 250);
+	})
+}
+function zoomResize(e){
+	if(zoomResizing){
+		$(".zoomAdjust").mouseup(function(e){
+			/*console.log("stopped resizing")*/
+			zoomResizing = false;
+		})
+	}else if(!zoomResizing){
+		$(".zoomAdjust").mousedown(function(e){
+			/*zoomResizing = true;*/
+			console.log("zoomResizing: " + zoomResizing)
+		});
+	}
 }
 /*
  *	6. Draw Rectangle-related Code
@@ -1189,7 +1233,7 @@ function createTickPopover(ID){
 
 //This function should be called the the page is loading
 function addAllTicks(){
-	$(".tickmark_holder").html("<div id = 'zoomTick'><div class = 'rightTooltipDiv' style = 'float: right'></div></div>"); //Dsan
+	$(".tickmark_holder").html(""); //Dsan
 	var xLoc, ID, width, html;
 	for(var num = 0; num < commentObj.length; num++){
 		xLoc = calculateTickLoc(commentObj[num].timeSec);
@@ -1310,6 +1354,7 @@ $(function(){
 		dragWidthCalc(e);
 		drawAreaCalc();
 		zoomRecalc(e);
+
 	}); 
  	updateProgressbarClick();
  	setup_commentDisplay();
@@ -1320,8 +1365,10 @@ $(function(){
 	timeEnd_updateTickRange();
 	drawRectOn();
 	zoomDrag(); //Dsan
+	zoomHover(); //Dsan
 	dragRangeOn();
 	zoomRangeOn(); //Dsan
+	zoomResize();
 
 
 });
