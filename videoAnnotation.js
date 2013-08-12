@@ -146,7 +146,8 @@ function playORpause(){
 }
 
 // called when the mute/unmute button is clicked
-// syncs the correct image with the actionfunction muteORunmute(){
+// syncs the correct image with the action
+function muteORunmute(){
 	if ($(".muteORunmute").attr("src") == "images/volume_up.png"){
 		$(".muteORunmute").attr("src", "images/mute.png")
 		muteVideo();
@@ -712,6 +713,7 @@ function mouseXtoSec(This, e){
 
 //given "this" (i.e. the progressbar), the function will calculate the mouse position relative to "this"
 //So it will give you the xLoc of the mouse of the progressbar with 0 being at the left border of the progressbar
+function getRelMouseX(This, e){
 	var parentOffset = $(This).parent().offset(); 
 	var relX = e.pageX - parentOffset.left;
 	return relX;
@@ -780,10 +782,9 @@ var zoomDragging = false;
 
 function zoomRangeOn(){ //Dsan
 	$(".tickmark_holder").mousedown(function(e){
-		console.log("tickmar_holder mousedown");
+		//console.log("tickmar_holder mousedown");
 		if(!timeStartFocused){
-			if (drag_on && !timeEndFocused && !zoomDragging ){
-				console.log("zoomTick should show")
+			if (!timeEndFocused && !zoomDragging ){
 				startZoomX = mouseX - progressbarOffsetX();
 				zoom_mouseup = false; 
 				var currentSec = mouseXtoSec(this, e);
@@ -804,26 +805,24 @@ function zoomRangeOn(){ //Dsan
 			}
 		}
 	});
-	$(".tickmark_holder").mouseup(function(e){
-		if(drag_on){
-			zoom_mouseup = true;
-			var currentSec = mouseXtoSec(this, e);
-			enlargedTimeEnd = currentSec;
-			$(".enlargedTickEnd").html(calculateTime(enlargedTimeEnd));
-			$(".enlargedTickBar").html("");
-			function hideToolTip(){
-				$("#zoomTick .tooltip").animate({"opacity": 0}, 250, function(){
-					$("#zoomTick .rightTooltipDiv").tooltip('destroy');
-				});
-			}
-
-			$("#zoomTick").draggable({axis: "x", containment: "parent"});
-			
-			window.setTimeout(hideToolTip, 1500);
-
-			// appends ticks to the enlarged tick bar
-			addEnlargedTicks();
+	$(".tickmark_holder").mouseup(function(e){	
+		zoom_mouseup = true;
+		var currentSec = mouseXtoSec(this, e);
+		enlargedTimeEnd = currentSec;
+		$(".enlargedTickEnd").html(calculateTime(enlargedTimeEnd));
+		$(".enlargedTickBar").html("");
+		function hideToolTip(){
+			$("#zoomTick .tooltip").animate({"opacity": 0}, 250, function(){
+				$("#zoomTick .rightTooltipDiv").tooltip('destroy');
+			});
 		}
+
+		$("#zoomTick").draggable({axis: "x", containment: "parent"});
+		
+		window.setTimeout(hideToolTip, 1500);
+
+		// appends ticks to the enlarged tick bar
+		addEnlargedTicks();
 	});
 }
 
@@ -904,7 +903,6 @@ function dragWidthCalc(e){
 		var currentSec = mouseXtoSec(".tickmark_holder", e);
 		drag_on = true;
 		dragWidth = mouseX-startZoomX - progressbarOffsetX();
-		console.log(dragWidth);
 		var widthStr = dragWidth.toString() + "px";
 		$("#zoomTick").css("width", widthStr);
 		$("#zoomTick .rightTooltipDiv").tooltip("destroy");
@@ -1010,14 +1008,10 @@ function zoomRecalc(e){
 	}
 }
 function addEnlargedTicks(){
-	console.log("addEnlargedTicks called");
-	console.log("enlargedTimeStart: " + enlargedTimeStart);
-	console.log("enlargedTimeEnd: " + enlargedTimeEnd);
 	$(".enlargedTickBar").html("");
 	for (var i = 0; i <= commentObj.length - 1; i++){
 		if (commentObj[i].timeEndSec == "None"){
 			if(commentObj[i].timeSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd){
-				console.log("found a singular tick")
 				var startToTickDiff = commentObj[i].timeSec - enlargedTimeStart;
 				var totalDiff = enlargedTimeEnd - enlargedTimeStart;
 				var tickRatio = startToTickDiff/totalDiff;
@@ -1028,7 +1022,6 @@ function addEnlargedTicks(){
 			}
 		}else{
 			if((commentObj[i].timeSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd) || (commentObj[i].timeEndSec > enlargedTimeStart && commentObj[i].timeSec < enlargedTimeEnd)){
-				console.log("found tick ranges");
 				var startToTickStartDiff = commentObj[i].timeSec - enlargedTimeStart;
 				var startToTickEndDiff = commentObj[i].timeEndSec - enlargedTimeStart;
 				var totalDiff = enlargedTimeEnd - enlargedTimeStart;
@@ -1175,7 +1168,6 @@ function calculateTickLoc(seconds){
 	var ratio = seconds/ytplayer.getDuration();
 	//console.log(seconds, ytplayer.getDuration(), ratio);
 	var xLoc = $("#progressbar").width()*ratio;
-	console.log("calculateTickLoc.xLoc: " + xLoc);
 	return xLoc;
 }
 
@@ -1185,8 +1177,6 @@ function calculateTickWidth(startTime, endTime){
 		var leftLoc = calculateTickLoc(startTime);
 		var rightLoc = calculateTickLoc(endTime);
 		var width = rightLoc - leftLoc;
-		//console.log(startTime, endTime, width);
-		console.log("calculateTickWidth.width: " + width)
 		return width;
 	}else{
 		return "1"
@@ -1220,7 +1210,6 @@ function addAllTicks(){
 		ID = commentObj[num].ID;
 		width =calculateTickWidth(commentObj[num].timeSec, commentObj[num].timeEndSec);
 		html = tickHTML(xLoc, width, ID);
-		//console.log(ID, xLoc, width, html);
 		$(".tickmark_holder").append(html);
 		createTickPopover(ID);
 		addTickHover(ID);
@@ -1372,6 +1361,34 @@ $(window).keyup(function(e) {
 			}else{
 				hide_addNewComment();
 				commentOrCancel = true;
+			}
+		}else if(e.which === 77){ // m
+			muteORunmute();
+		}
+	}
+	//here so that unaffected if textbox becomes focused
+	if(e.which == 27){ //esc
+		if($(".newCommentTextbox").val() == ""){
+			hide_addNewComment();
+			commentOrCancel = true;
+		}else{
+			closeCommentAlert();
+		}
+	}
+
+});
+
+/*
+ *	10. Alert-related code
+ */
+function closeCommentAlert(){
+	alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
+}
+
+ are sure you want to lose your data.");
+}
+
+;
 			}
 		}else if(e.which === 77){ // m
 			muteORunmute();
