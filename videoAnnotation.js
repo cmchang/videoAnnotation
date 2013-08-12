@@ -110,12 +110,14 @@ function calcualateTime_stringToNum(timeStr){
 	return totalSeconds;	
 }
 
+// This function is called every 500 milliseconds
+// It gets the current time from the youtube player and adjusts the progressbar_filler to match to the corresponding time
 function updateProgressbar(){
 	var percentage = 100*ytplayer.getCurrentTime()/ytplayer.getDuration();
 	$("#progressbar_filler").css("width", percentage+"%");
 } 
 
-// Allow the user to set the volume from 0-100
+// Allow the user to set the volume from 0-100 (feature is currently hidden)
 function setVideoVolume() {
 	var volume = parseInt(document.getElementById("volumeSetting").value);
 	if(isNaN(volume) || volume < 0 || volume > 100) {
@@ -130,7 +132,9 @@ function setVideoVolume() {
 function videoClicked(){
 	playORpause();
 }
-//when the play/pause button is clicked
+
+// called when the play/pause button is clicked
+// syncs the correct image with the action
 function playORpause(){
 	if ($(".playORpause").attr("src") == "images/play.png"){
 		$(".playORpause").attr("src", "images/pause.png")
@@ -141,8 +145,8 @@ function playORpause(){
 	}
 }
 
-//when the mute/unmute button is clicked
-function muteORunmute(){
+// called when the mute/unmute button is clicked
+// syncs the correct image with the actionfunction muteORunmute(){
 	if ($(".muteORunmute").attr("src") == "images/volume_up.png"){
 		$(".muteORunmute").attr("src", "images/mute.png")
 		muteVideo();
@@ -226,7 +230,7 @@ function goToTime(seconds){
  * 2. Progressbar-related Code  
  */
 
-//update the time of the ytplayer if the progress bar is clicked
+//update the time of the ytplayer given the mouse x-location
 function progressbar_click(mouseX){
 	var percentage = mouseX/$("#progressbar").width();  
 	//console.log(percentage);
@@ -237,7 +241,7 @@ function progressbar_click(mouseX){
 	ytplayer.seekTo(currentSec, true); 
 }
 
-//calculate the position of the mouse relative to the progressbar if clicked
+//If progressbar is clicked (mouseup), calculate the position of the mouse relative to the progressbar
 function updateProgressbarClick(){
 	//update progressbar if clicked
    $("#progressbar").mouseup(function(e){
@@ -250,6 +254,7 @@ function updateProgressbarClick(){
 	});
 }
 
+//returns the pixel value of the parent left offset
 function progressbarOffsetX(){
 	return $("#progressbar").parent().offset().left; //progressbar x offset
 }
@@ -258,15 +263,17 @@ function progressbarOffsetX(){
  * 3. Commenting-related Code
  */
 
-//the array of objects the stores all the information for every comment
-//drawArr: an array with the information of the drawn rect [leftPos, rightPos, width, height]; or "None" if no rect drawn
-//ID: number assigned in order of when comment is made (Starting at 0)
-//timeSec: the time in seconds at which the comment refers to
-//timeStr: the time as a string (in minute:second format) at which the comment refers to
-//text: the body text of the comment
-//type: the selected type - either Comment or Question
-//userName: the ID of the student or person commenting
-//viewer: who the student selected can view the comment (currently no functionality with it)
+// the array of objects the stores all the information for every comment
+// drawArr: an object with the information of the drawn rect {leftPos, rightPos, width, height}; or "None" if no rect drawn
+// ID: number assigned in order of when comment is made (Starting at 0)
+// timeEndSec: the end time in seconds at which the comment refers to; else “None”
+// timeEndSecStr: the time as a string (in minute:second format) at which the comment refers to; else “None”
+// timeSec: the time in seconds at which the comment refers to
+// timeStr: the time as a string (in minute:second format) at which the comment refers to
+// text: the body text of the comment
+// type: the selected type - either Comment or Question
+// userName: the ID of the student or person commenting
+// viewer: who the student selected can view the comment (currently no functionality with it)
 var commentObj = [
 					{"drawArr": "None",
 					"ID": 0,
@@ -420,7 +427,7 @@ var commentObj = [
 					"viewer" : "Just Me"}
 ];
 
-//this function does all the work to display the comments:
+//this function calls the necessary functions to display all the comments:
 //it calls SortsCommentObj, addAllCommentHTML, and setupAccordion
 function setup_commentDisplay(){
 	sortCommentObj();
@@ -479,7 +486,6 @@ function extractCommentHTML(num){
 	return html;
 }
 
-//only called once when page is setting up (document ready function)
 //goes in a for loop to add all of the objects to the accordion section of the html
 function addAllCommentHTML(){
 	var html = "";
@@ -490,7 +496,8 @@ function addAllCommentHTML(){
 	$("#accordion").append(html);
 }
 
-//go to the comment in the video and show rectangle if exists
+//Given the comment index (for commentObj), go to the time in the video associated to the comment
+//show rectangle if exists or hide rectangle if none
 function goToComment(index){
 	goToTime(commentObj[index].timeSec);
 	if(commentObj[index].drawArr != "None"){
@@ -501,7 +508,7 @@ function goToComment(index){
 	}
 }
 
-//sets up the accordion
+//sets up the accordion with correct options
 function setupAccordion(){
 	$("#accordion").accordion({ header: "text", //selects type of element to be recognized as the 'header'
 								collapsible: true, //allows all the panels to be collapsesd at the same time
@@ -509,7 +516,7 @@ function setupAccordion(){
 								heightStyle: "content"}); //each content panel adjusts its height to its own content
 }
 
-//shows the add new comment options
+//shows the comment editor
 function show_addNewComment(){
 	var currentSec = ytplayer.getCurrentTime();
 	shrinkCommentHolder();
@@ -520,7 +527,7 @@ function show_addNewComment(){
 	$(".newCommentTextbox").focus();
 	showRangeTick(currentSec);
 }
-//hodes the add new comment options
+//hides the comment editor
 function hide_addNewComment(){
 	normalSizeCommentHolder();
 	$(".commentsView_newComment").css("display", "None");
@@ -534,23 +541,23 @@ function hide_addNewComment(){
 
 }
 
-//Called when the showing the new comment
+//Called when the showing the comment editor to adjust the div height
 function shrinkCommentHolder(){
 	$(".commentsView_holder").css("height", "279px");
 }
 
-//Called when the no longer showing the new comment
+//Called when the no longer showing the new comment to adjust the div height
 function normalSizeCommentHolder(){
 	$(".commentsView_holder").css("height", "444px");
 }
 
-//when the comment button is pushed
+//Called when the comment button is pushed
 function comment_btn(){
 	pauseVideo();
 	show_addNewComment();
 }
 
-//when the submit button is pushed
+//Called when the submit button is pushed
 function submitNewComment(){
 	normalSizeCommentHolder();
 	var text = $(".newCommentTextbox").val();
@@ -593,7 +600,7 @@ function showNewComment(){
 }
 
 //An array to hold all the seconds at which there are comments
-//neede to sync video with opening the corresponding comment if at correct time
+//Necessary to sync video with opening the corresponding comment if at correct time
 var timeSecArray = [];
 function createTimeSecArray(){
 	timeSecArray = [];
@@ -668,6 +675,8 @@ function IDtoIndex(ID){
 	return false;
 }
 
+//Booleans indicating if the timeStart or timeEnd input box is focused -- interacts with dragRangeOn
+//setupTimeFocus assigns correct values to booleans depending on action
 var timeStartFocused = false;
 var timeEndFocused = false;
 function setupTimeFocus(){
@@ -681,6 +690,8 @@ function setupTimeFocus(){
 									});
 }
 
+//Boolean indicating if the main textbox in the comment editor is focused
+//setupTextboxFocus assigns the correct values to boolean depending on action
 var textboxFocused = false;
 function setupTextboxFocus(){
 	$(".newCommentTextbox").focus(function(){textboxFocused = true;});
@@ -692,8 +703,6 @@ function setupTextboxFocus(){
  *	4. Drag Range-related code
  */
 
-var drag_on = true;
-
 //given "this" (i.e. the progressbar), the function will calculate the mouse position and then convert it to seconds relative to the progress bar
 function mouseXtoSec(This, e){
 	var relX = getRelMouseX(This,e);
@@ -701,14 +710,21 @@ function mouseXtoSec(This, e){
 	return percentage*ytplayer.getDuration();
 }
 
-function getRelMouseX(This, e){
+//given "this" (i.e. the progressbar), the function will calculate the mouse position relative to "this"
+//So it will give you the xLoc of the mouse of the progressbar with 0 being at the left border of the progressbar
 	var parentOffset = $(This).parent().offset(); 
 	var relX = e.pageX - parentOffset.left;
 	return relX;
 }
 
 
-//this function controls when the mouse is clicked in unclicked over the progressbar IF drag_on is true (the drag button is pushed)
+//These variables should ONLY be used for functions related to dragRange 
+var startDragX; //relative to progressbar
+var dragWidth; //whenever the tick is adjusted, this needs to be adjusted as well
+var drag_mouseup = true; //important when calculating the width of the dragtick
+var dragCurrentSec; //the time when the drag initially starts
+
+//this function controls when the mouse is clicked in unclicked over the progressbar
 //this function creates the the tick under the progressbar and gives it the left position
 //the width of the tick is controlled under document.ready() in the mousemove function
 var startDragX; //relative to the page!
@@ -720,7 +736,7 @@ var dragCurrentSec;
 function dragRangeOn(){
 	$("#progressbar").mousedown(function(e){
 		if(!timeStartFocused){
-			if (drag_on && !timeEndFocused){
+			if (!timeEndFocused){
 				startDragX = mouseX - progressbarOffsetX();
 				drag_mouseup = false; 
 				dragCurrentSec = mouseXtoSec(this, e);
@@ -734,28 +750,26 @@ function dragRangeOn(){
 
 	});
 	$("#progressbar").mouseup(function(e){
-		if(drag_on){
-			drag_mouseup = true;
-			var currentSec = mouseXtoSec(this, e);
-			hideToolTipDelay();
-			if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
-				$("#comment_timeEnd").val(calculateTime(currentSec));
-				timeEndFocused_adjustTickWidth(this,e);
-				
-			}else if(timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
-				timeStartFocused_adjustTick(this, e);
+		drag_mouseup = true;
+		var currentSec = mouseXtoSec(this, e);
+		hideToolTipDelay();
+		if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
+			$("#comment_timeEnd").val(calculateTime(currentSec));
+			timeEndFocused_adjustTickWidth(this,e);
+			
+		}else if(timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
+			timeStartFocused_adjustTick(this, e);
 
-			}else{
-				if($("#comment_time").val() == calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
-					if (!timeStartFocused){//only the clear it if dragging - if user just wants to change the starting time don't clear
-						$("#comment_timeEnd").val("");
-					}
-				}else{
-					$("#comment_timeEnd").val(calculateTime(currentSec));
+		}else{
+			if($("#comment_time").val() == calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
+				if (!timeStartFocused){//only the clear it if dragging - if user just wants to change the starting time don't clear
+					$("#comment_timeEnd").val("");
 				}
+			}else{
+				$("#comment_timeEnd").val(calculateTime(currentSec));
 			}
-
 		}
+
 		timeStartFocused = false;
 		timeEndFocused = false;
 	});
@@ -860,7 +874,7 @@ function timeEnd_updateTickRange(){
 	})
 }
 
-//initializes the tick in the progressbar area give the currentSeconds (number, not string)
+//given the currentSeconds (number, not string), initialize the tick in the progressbar area
 function showRangeTick(currentSec){
 	$("#comment_time").val(calculateTime(currentSec));
 	var tickLoc = calculateTickLoc(currentSec);
@@ -871,17 +885,18 @@ function showRangeTick(currentSec){
 	$("#rangeTick").show();	
 }
 
+//hide the range tick and give it the default css
 function hideRangeTick(){
 	$("#rangeTick").hide();
 	$("#rangeTick").css("width", "2px")	
 	dragWidth = 2;
 }
 
+//this function does the calculations for the tick width while dragging
 function dragWidthCalc(e){
 	// console.log("startDragX: " + startDragX + ", startZoomX: " + startZoomX);
 	if(startDragX > 0 && !drag_mouseup){
 		showRangeTick(dragCurrentSec);
-		drag_on = true;
 		dragWidth = mouseX-startDragX - progressbarOffsetX();
 		var widthStr = dragWidth.toString() + "px";
 		$("#rangeTick").css("width", widthStr);
@@ -954,6 +969,7 @@ function hideToolTip(){
 	});
 }
 
+//calls hideToolTip after a delay of 250 milliseconds
 function hideToolTipDelay(){
 	window.setTimeout(hideToolTip, 250);
 }
@@ -1060,7 +1076,9 @@ function zoomDrag(){
 		zoomDragging = false;
 	})
 }
-function zoomHover(){
+
+//// Testing
+/*function zoomHover(){
 	$(".zoomAdjust").on("mouseenter", function(){
 		$(this).animate({"opacity": 1}, 250);
 	});
@@ -1072,21 +1090,22 @@ function zoomHover(){
 function zoomResize(e){
 	if(zoomResizing){
 		$(".zoomAdjust").mouseup(function(e){
-			/*console.log("stopped resizing")*/
+
 			zoomResizing = false;
 		})
 	}else if(!zoomResizing){
 		$(".zoomAdjust").mousedown(function(e){
-			/*zoomResizing = true;*/
+
 			console.log("zoomResizing: " + zoomResizing)
 		});
 	}
-}
+}*/
+
 /*
  *	6. Draw Rectangle-related Code
  */
 
-//make the rectangle visible
+//Pause the video, make the rectangle visible
 function showRect(){
 	pauseVideo();
 
@@ -1148,6 +1167,8 @@ function resetRectCSS(){
 	drawHeight = 0;
 }
 
+//changes the rect css given the necessary information
+//give "None" as a parameter if not necessary to change
 function changeRectCSS(left, top, width, height){
 	if (left != "None"){
 		var leftStr = left.toString() + "px";
@@ -1167,14 +1188,18 @@ function changeRectCSS(left, top, width, height){
 	}
 }
 
+//hide the drawn rect
 function hideDrawnRect(){
 	$("#drawnRect").hide();
 	resetRectCSS();
 }
+
+//returns the x offset of the objects containing the videoCover
 function videoCoverOffsetX(){
 	return $("#videoCover").parent().offset().left; //progressbar x offset
 }
 
+//returns the y offset of the objects containing the videoCover
 function videoCoverOffsetY(){
 	return $("#videoCover").parent().offset().top; //progressbar x offset
 }
@@ -1191,7 +1216,7 @@ function extractRectInfo(){
  *	7. Tick-related code
  */
 
-//calculate the tick location given the time where the associated comment is given
+//calculate the tick location given the time in seconds where the associated comment is given
 function calculateTickLoc(seconds){
 	var ratio = seconds/ytplayer.getDuration();
 	//console.log(seconds, ytplayer.getDuration(), ratio);
@@ -1200,7 +1225,7 @@ function calculateTickLoc(seconds){
 	return xLoc;
 }
 
-//calculate the tick location given the starting and end time associated with the comment
+//calculate the tick width given the starting and end time associated with the comment
 function calculateTickWidth(startTime, endTime){
 	if (endTime != "None"){
 		var leftLoc = calculateTickLoc(startTime);
@@ -1221,6 +1246,7 @@ function tickHTML(xLoc, width, ID){
 	return html;
 }
 
+//This function should be called the the page is loading, it appends all the ticks to the tickholder
 function createTickPopover(ID){
 	for (var i = 0; i <= commentObj.length - 1; i++){
         if (commentObj[i].ID == ID){
@@ -1248,7 +1274,7 @@ function addAllTicks(){
 	}
 }
 
-//Highlight the associated tick when hovering over the comment 
+//Don't touch or change this variables
 var currentHighlightedTick = "none";
 var currentID = "none";
 
@@ -1292,6 +1318,7 @@ function highlightTickControl(className){
 }
 
 //changes the tick css given the necessary information
+//give "No Change" as a parameter if not necessary to change
 function changeTickCSS(tick, color, width, opacity){
 	if(color !="No Change"){
 		tick.css("background", color);
@@ -1304,11 +1331,13 @@ function changeTickCSS(tick, color, width, opacity){
 	}
 }
 
+//give the tickID, call the tickHover/unTickHover function to make the associated comment in the accordion have the affect of having the mouse hover over it
 function addTickHover(ID){
 	var identifier = "#tickmark" +ID;
 	$(identifier).hover(function(){tickHover(this)}, function(){unTickHover(this)});
 }
 
+//gives the associated comment in the accodrion the correct attributes to act as if the mouse is hovering over it
 function tickHover(div){
 	var ID = div.id.substr(-1,1);
 	var index = IDtoIndex(ID);
@@ -1316,6 +1345,7 @@ function tickHover(div){
 	$(identifier).attr("class", "ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-corner-all ui-state-hover");
 }
 
+//gives the associated comment in the accodrion the correct attributes to act as if the mouse is not hovering over it
 function unTickHover(div){
 	var ID = div.id.substr(-1,1);
 	var index = IDtoIndex(ID);
@@ -1323,6 +1353,7 @@ function unTickHover(div){
 	$(identifier).attr("class", "ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-corner-all");
 }
 
+//if a tick is click, open the corresponding comment in the accordion by triggering a click on the comment
 function tickClick(div){
 	var ID = div.id.substr(-1,1);
 	var index = IDtoIndex(ID);
@@ -1332,6 +1363,7 @@ function tickClick(div){
 	goToTime(commentObj[index].timeSec);
 }
 
+//given the tick ID, adds the bootstrap popover 
 function createTickPopover(ID){
 	for (var i = 0; i <= commentObj.length - 1; i++){
 		if (commentObj[i].ID == ID){
