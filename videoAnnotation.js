@@ -1099,7 +1099,7 @@ function createEnlargedTickPopover(ID){
 }
 function zoomRecalc(e){
 	if (zoomInitResizing && !zoomResizing || zoomDragging){
-		var zoomTickLeft = parseFloat($("#zoomTick").css("left")) + 4;
+		var zoomTickLeft = parseFloat($("#zoomTick").css("left"))/* + 4*/;
 		var zoomTickRight = zoomTickLeft + $("#zoomTick").width();
 		var startRatio = zoomTickLeft/$(".tickmark_holder").width();
 		var endRatio = zoomTickRight/$(".tickmark_holder").width();
