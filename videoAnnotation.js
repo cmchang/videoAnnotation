@@ -1,3 +1,66 @@
+NB_vid = {
+	"yt": {"updateHTML": updateHTML,
+			"onPlayerError": onPlayerError,
+			"onPlayerStateChange": onPlayerStateChange,
+			"createTicks": true, //makes sure add all ticks is called once during setup
+			"updatePlayerInfo": updatePlayerInfo,
+			"calculateTime": calculateTime,
+			"calculateTime_stringToNum": calculateTime_stringToNum,
+			"setVideoVolume": setVideoVolume,
+			"videoClicked": videoClicked, //check here!
+			"playORpause": playORpause,
+			"muteORunmute": muteORunmute,
+			"playVideo": playVideo,
+			"pauseVideo": pauseVideo,
+			"muteVideo": muteVideo,
+			"unMuteVideo": unMuteVideo,
+			"onYouTubePlayerReady":onYouTubePlayerReady,
+			"loadPlayer": loadPlayer,
+			"_run":_run,
+			"goToTime":goToTime
+			},
+	"progressbar": {
+			"updateProgressbar":updateProgressbar,
+			"progressbar_click": progressbar_click,
+			"updateProgressbarClick:"updateProgressbarClick,
+			"progressbarOffsetX":progressbarOffsetX
+	},
+	"commentObj": commentObj,
+	"comment": {
+			"setup_commentDisplay":setup_commentDisplay,
+			"sortCommentObj":sortCommentObj,
+			"extractCommentHTML":extractCommentHTML,
+			"addAllCommentHTML":addAllCommentHTML,
+			"goToComment":goToComment,
+			"setupAccordion":setupAccordion,
+			"show_addNewComment":show_addNewComment,
+			"hide_addNewComment":hide_addNewComment,
+			"shrinkCommentHolder":shrinkCommentHolder,
+			"normalSizeCommentHolder":normalSizeCommentHolder,
+			"comment_btn":comment_btn,
+			"submitNewComment":submitNewComment,
+			"showNewComment":showNewComment,
+			"timeSecArray": [],
+			"createTimeSecArray":createTimeSecArray,
+			"openCommentSyncVideo":openCommentSyncVideo,
+			"commentAutoScroll":commentAutoScroll,
+			"isHoveringOver": false,
+			"IDtoIndex":IDtoIndex,
+			"timeStartFocused": false,
+			"timeEndFocused": false,
+			"setupTimeFocus":setupTimeFocus,
+			"textboxFocused":textboxFocused,
+			"setupTextboxFocus":setupTextboxFocus
+	},
+	"drag": {},
+	"zoom": {},
+	"draw": {},
+	"tick": {},
+	"jQueryReady": {},
+	"keyboard": {},
+	"alert": {}
+};
+
 /*
  * Table of Contents - Organized by astrixed comment sections
  *		1. Youtube Video-Related Code
@@ -29,34 +92,33 @@ function onPlayerError(errorCode) {
 
 // This function is called when the player changes state
 function onPlayerStateChange(newState) {
-	updateHTML("playerState", newState);
+	NB_vid.yt.updateHTML("playerState", newState);
 }
 
-var createTicks = true; //Dsan
 // Display information about the current state of the player
 // It’s called every 250 milliseconds in onYoutubePlayerReady()
 function updatePlayerInfo() {
 	// Also check that at least one function exists since when IE unloads the
 	// page, it will destroy the SWF before clearing the interval.
 	if(ytplayer && ytplayer.getDuration) {
-		updateHTML("videoDuration", ytplayer.getDuration());
-		updateHTML("videoCurrentTime", ytplayer.getCurrentTime());
+		NB_vid.yt.updateHTML("videoDuration", ytplayer.getDuration());
+		NB_vid.yt.updateHTML("videoCurrentTime", ytplayer.getCurrentTime());
 		var percentage = 100*ytplayer.getCurrentTime()/ytplayer.getDuration();
-		updateHTML("videoPercentage", percentage);
-		updateHTML("bytesTotal", ytplayer.getVideoBytesTotal());
-		updateHTML("startBytes", ytplayer.getVideoStartBytes());
-		updateHTML("bytesLoaded", ytplayer.getVideoBytesLoaded());
-		updateHTML("volume", ytplayer.getVolume());
-		updateHTML("videoCurrentTimeMinSec", ytplayer.getCurrentTime());
-		updateHTML("videoTimeDisplay", calculateTime(ytplayer.getCurrentTime())); //seen under progressbar
-		updateHTML("videoTotalTimeDisplay", calculateTime(ytplayer.getDuration()));
+		NB_vid.yt.updateHTML("videoPercentage", percentage);
+		NB_vid.yt.updateHTML("bytesTotal", ytplayer.getVideoBytesTotal());
+		NB_vid.yt.updateHTML("startBytes", ytplayer.getVideoStartBytes());
+		NB_vid.yt.updateHTML("bytesLoaded", ytplayer.getVideoBytesLoaded());
+		NB_vid.yt.updateHTML("volume", ytplayer.getVolume());
+		NB_vid.yt.updateHTML("videoCurrentTimeMinSec", ytplayer.getCurrentTime());
+		NB_vid.yt.updateHTML("videoTimeDisplay", NB_vid.yt.calculateTime(ytplayer.getCurrentTime())); //seen under progressbar
+		NB_vid.yt.updateHTML("videoTotalTimeDisplay", NB_vid.yt.calculateTime(ytplayer.getDuration()));
 		openCommentSyncVideo(); //syncs opening the comments with the video
 		commentAutoScroll(); //Automatically scrolls to correct comment
 		highlightTick();
 
 		//this makes sure the ticks are only created AFTER ytplayer is created so we can use .getDuration()
-		if(createTicks && ytplayer.getDuration() > 0){ //Dsan
-			createTicks = false;
+		if(NB_vid.yt.createTicks && ytplayer.getDuration() > 0){ 
+			NB_vid.yt.createTicks = false;
 			addAllTicks();
 
 		}
@@ -94,7 +156,7 @@ function calculateTime(givenTime){
 }
 
 // Given the time as a string, return the time as a number of seconds
-function calcualateTime_stringToNum(timeStr){
+function calculateTime_stringToNum(timeStr){
 	var seconds = parseInt(timeStr.substring(timeStr.length-2, timeStr.length)); //gets seconds
 	timeStr = timeStr.substring(0, timeStr.length-3); //gets rid of the seconds portion of string
 	var minutes, hours = 0;
@@ -110,13 +172,6 @@ function calcualateTime_stringToNum(timeStr){
 	return totalSeconds;	
 }
 
-// This function is called every 500 milliseconds
-// It gets the current time from the youtube player and adjusts the progressbar_filler to match to the corresponding time
-function updateProgressbar(){
-	var percentage = 100*ytplayer.getCurrentTime()/ytplayer.getDuration();
-	$("#progressbar_filler").css("width", percentage+"%");
-} 
-
 // Allow the user to set the volume from 0-100 (feature is currently hidden)
 function setVideoVolume() {
 	var volume = parseInt(document.getElementById("volumeSetting").value);
@@ -130,7 +185,7 @@ function setVideoVolume() {
 
 //when the div covering the video is clicked; syncs with the play/pause button
 function videoClicked(){
-	playORpause();
+	NB_vid.yt.playORpause();
 }
 
 // called when the play/pause button is clicked
@@ -138,10 +193,10 @@ function videoClicked(){
 function playORpause(){
 	if ($(".playORpause").attr("src") == "images/play.png"){
 		$(".playORpause").attr("src", "images/pause.png")
-		playVideo();
+		NB_vid.yt.playVideo();
 	}else{
 		$(".playORpause").attr("src", "images/play.png")
-		pauseVideo();
+		NB_vid.yt.pauseVideo();
 	}
 }
 
@@ -150,10 +205,10 @@ function playORpause(){
 function muteORunmute(){
 	if ($(".muteORunmute").attr("src") == "images/volume_up.png"){
 		$(".muteORunmute").attr("src", "images/mute.png")
-		muteVideo();
+		NB_vid.yt.muteVideo();
 	}else{
 		$(".muteORunmute").attr("src", "images/volume_up.png")
-		unMuteVideo();
+		NB_vid.yt.unMuteVideo();
 	}
 }
 
@@ -198,8 +253,8 @@ function onYouTubePlayerReady(playerId) {
 	// This causes the updatePlayerInfo function to be called every 250ms to
 	// get fresh data from the player
 	setInterval(updateProgressbar, 1000);
-	setInterval(updatePlayerInfo, 250);
-	updatePlayerInfo();		
+	setInterval(NB_vid.yt.updatePlayerInfo, 250);
+	NB_vid.yt.updatePlayerInfo();		
 	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
 	ytplayer.addEventListener("onError", "onPlayerError");
 	//Load an initial video into the player
@@ -230,6 +285,13 @@ function goToTime(seconds){
 /*
  * 2. Progressbar-related Code  
  */
+
+// This function is called every 500 milliseconds
+// It gets the current time from the youtube player and adjusts the progressbar_filler to match to the corresponding time
+function updateProgressbar(){
+	var percentage = 100*ytplayer.getCurrentTime()/ytplayer.getDuration();
+	$("#progressbar_filler").css("width", percentage+"%");
+} 
 
 //update the time of the ytplayer given the mouse x-location
 function progressbar_click(mouseX){
@@ -500,7 +562,7 @@ function addAllCommentHTML(){
 //Given the comment index (for commentObj), go to the time in the video associated to the comment
 //show rectangle if exists or hide rectangle if none
 function goToComment(index){
-	goToTime(commentObj[index].timeSec);
+	NB_vid.yt.goToTime(commentObj[index].timeSec);
 	if(commentObj[index].drawArr != "None"){
 		changeRectCSS(commentObj[index].drawArr.posX, commentObj[index].drawArr.posY, commentObj[index].drawArr.width, commentObj[index].drawArr.height);
 		$("#drawnRect").show();
@@ -523,7 +585,7 @@ function show_addNewComment(){
 	shrinkCommentHolder();
 	$(".commentsView_newComment").css("display", "");
 	if(!timeEndFocused){
-		$("#comment_time").val(calculateTime(currentSec));
+		$("#comment_time").val(NB_vid.yt.calculateTime(currentSec));
 	}
 	$(".newCommentTextbox").focus();
 	showRangeTick(currentSec);
@@ -554,7 +616,7 @@ function normalSizeCommentHolder(){
 
 //Called when the comment button is pushed
 function comment_btn(){
-	pauseVideo();
+	NB_vid.yt.pauseVideo();
 	show_addNewComment();
 }
 
@@ -571,14 +633,14 @@ function submitNewComment(){
 		timeEnd = "None";
 		timeEndStr = "None";
 	}else{
-		timeEnd = calcualateTime_stringToNum(timeEndStr);
+		timeEnd = NB_vid.yt.calculateTime_stringToNum(timeEndStr);
 	}
 	commentObj.push({ "drawArr": extractRectInfo(),
 						"ID": commentObj.length,
 						"text" : text,
 						"timeEndSec": timeEnd,
 						"timeEndStr": timeEndStr,
-						"timeSec" : calcualateTime_stringToNum(timeStr),
+						"timeSec" : NB_vid.yt.calculateTime_stringToNum(timeStr),
 						"timeStr" : timeStr,
 						"type" : type,
 						"userName": "You",
@@ -623,7 +685,7 @@ function openCommentSyncVideo(){
 }
 
 // Automatically keeps the current comment in view wihin the comment container
-function commentAutoScroll(){ //Dsan
+function commentAutoScroll(){ 
 	createTimeSecArray();
 	var currentTime = parseInt(ytplayer.getCurrentTime());
 	var indexOfArr = timeSecArray.indexOf(currentTime);
@@ -730,10 +792,10 @@ var dragCurrentSec; //the time when the drag initially starts
 //this function creates the the tick under the progressbar and gives it the left position
 //the width of the tick is controlled under document.ready() in the mousemove function
 var startDragX; //relative to the page!
-var startZoomX;	//Dsan
+var startZoomX;	
 var dragWidth;
 var drag_mouseup = true; //important when calculating the width of the dragtick
-var zoom_mouseup = true; //Dsan
+var zoom_mouseup = true; 
 var dragCurrentSec;
 function dragRangeOn(){
 	$("#progressbar").mousedown(function(e){
@@ -756,19 +818,19 @@ function dragRangeOn(){
 		var currentSec = mouseXtoSec(this, e);
 		hideToolTipDelay();
 		if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
-			$("#comment_timeEnd").val(calculateTime(currentSec));
+			$("#comment_timeEnd").val(NB_vid.yt.calculateTime(currentSec));
 			timeEndFocused_adjustTickWidth(this,e);
 			
 		}else if(timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
 			timeStartFocused_adjustTick(this, e);
 
 		}else{
-			if($("#comment_time").val() == calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
+			if($("#comment_time").val() == NB_vid.yt.calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
 				if (!timeStartFocused){//only the clear it if dragging - if user just wants to change the starting time don't clear
 					$("#comment_timeEnd").val("");
 				}
 			}else{
-				$("#comment_timeEnd").val(calculateTime(currentSec));
+				$("#comment_timeEnd").val(NB_vid.yt.calculateTime(currentSec));
 			}
 		}
 
@@ -780,7 +842,7 @@ function dragRangeOn(){
 
 var zoomDragging = false;
 
-function zoomRangeOn(){ //Dsan
+function zoomRangeOn(){ 
 	$(".tickmark_holder").mousedown(function(e){
 		//console.log("tickmar_holder mousedown");
 		if(!timeStartFocused){
@@ -790,9 +852,8 @@ function zoomRangeOn(){ //Dsan
 				var currentSec = mouseXtoSec(this, e);
 				comment_btn();
 
-				// $("#comment_time").val(calculateTime(currentSec));
 				enlargedTimeStart = currentSec;
-				$(".enlargedTickStart").html(calculateTime(enlargedTimeStart));
+				$(".enlargedTickStart").html(NB_vid.yt.calculateTime(enlargedTimeStart));
 				var tickLoc = calculateTickLoc(currentSec);
 				var tickLocStr = tickLoc.toString() + "px";
 				
@@ -800,7 +861,7 @@ function zoomRangeOn(){ //Dsan
 				$("#zoomTick").css("width", "2px")
 				$("#zoomTick").show();
 				$("#zoomTick .rightTooltipDiv").show();
-				$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});	
+				$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: NB_vid.yt.calculateTime(currentSec)});	
 				$("#zoomTick .rightTooltipDiv").tooltip('show');
 			}
 		}
@@ -809,7 +870,7 @@ function zoomRangeOn(){ //Dsan
 		zoom_mouseup = true;
 		var currentSec = mouseXtoSec(this, e);
 		enlargedTimeEnd = currentSec;
-		$(".enlargedTickEnd").html(calculateTime(enlargedTimeEnd));
+		$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(enlargedTimeEnd));
 		$(".enlargedTickBar").html("");
 		function hideToolTip(){
 			$("#zoomTick .tooltip").animate({"opacity": 0}, 250, function(){
@@ -829,14 +890,14 @@ function zoomRangeOn(){ //Dsan
 //if the text is changed in the time input box, update the tick to the corresponding position
 function time_updateTickRange(){
 	$("#comment_time").change(function(){
-		var timeStart = calcualateTime_stringToNum($("#comment_time").val());
+		var timeStart = NB_vid.yt.calculateTime_stringToNum($("#comment_time").val());
 		startDragX = calculateTickLoc(timeStart);
 		if($("#comment_time").val() != ""){
 			$("#rangeTick").css("left", startDragX);
-			goToTime(timeStart);
+			NB_vid.yt.goToTime(timeStart);
 		}
 		if($("#comment_timeEnd").val() != ""){
-			var timeEnd = calcualateTime_stringToNum($("#comment_timeEnd").val());
+			var timeEnd = NB_vid.yt.calculateTime_stringToNum($("#comment_timeEnd").val());
 			var endDragX = calculateTickLoc(timeEnd);
 			dragWidth = endDragX - startDragX;
 			var widthStr = dragWidth.toString() + "px";
@@ -850,14 +911,14 @@ function time_updateTickRange(){
 function timeEnd_updateTickRange(){
 	$("#comment_timeEnd").change(function(){
 		if($("#comment_timeEnd").val() != ""){
-			var timeStart = calcualateTime_stringToNum($("#comment_time").val());
-			var timeEnd = calcualateTime_stringToNum($("#comment_timeEnd").val());
+			var timeStart = NB_vid.yt.calculateTime_stringToNum($("#comment_time").val());
+			var timeEnd = NB_vid.yt.calculateTime_stringToNum($("#comment_timeEnd").val());
 			var timeDiff = timeEnd - timeStart;
 			var ratio = timeDiff/ytplayer.getDuration();
 			dragWidth = ratio*$("#progressbar").width();
 			var widthStr = dragWidth.toString() + "px";
 			$("#rangeTick").css("width", widthStr);
-			goToTime(timeEnd);
+			NB_vid.yt.goToTime(timeEnd);
 
 		}
 		timeEndFocused = false;
@@ -867,7 +928,7 @@ function timeEnd_updateTickRange(){
 
 //given the currentSeconds (number, not string), initialize the tick in the progressbar area
 function showRangeTick(currentSec){
-	$("#comment_time").val(calculateTime(currentSec));
+	$("#comment_time").val(NB_vid.yt.calculateTime(currentSec));
 	var tickLoc = calculateTickLoc(currentSec);
 	startDragX = tickLoc;
 	var tickLocStr = tickLoc.toString() + "px";
@@ -899,14 +960,13 @@ function dragWidthCalc(e){
 			comment_btn();
 		}
 	}
-	if(startZoomX > 0 && !zoom_mouseup){ //Dsan
+	if(startZoomX > 0 && !zoom_mouseup){ 
 		var currentSec = mouseXtoSec(".tickmark_holder", e);
-		drag_on = true;
 		dragWidth = mouseX-startZoomX - progressbarOffsetX();
 		var widthStr = dragWidth.toString() + "px";
 		$("#zoomTick").css("width", widthStr);
 		$("#zoomTick .rightTooltipDiv").tooltip("destroy");
-		$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});
+		$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: NB_vid.yt.calculateTime(currentSec)});
 		$("#zoomTick .rightTooltipDiv").tooltip('show');
 	}
 }
@@ -937,7 +997,7 @@ function timeStartFocused_adjustTick(This, e){
 	var widthStr = dragWidth.toString() + "px";
 	$("#rangeTick").css("width", widthStr);
 	//startDragX -= Math.abs(moveX);
-	$("#comment_time").val(calculateTime(currentSec));
+	$("#comment_time").val(NB_vid.yt.calculateTime(currentSec));
 	var tickLocStr = startDragX.toString() + "px";
 	$("#rangeTick").css("left", tickLocStr);
 	
@@ -947,7 +1007,7 @@ function timeStartFocused_adjustTick(This, e){
 function showToolTip(currentSec){
 	// $("#rangeTick .rightTooltipDiv").show();
 	$("#rangeTick .rightTooltipDiv").tooltip("destroy");
-	$("#rangeTick .rightTooltipDiv").tooltip({animation: false, title: calculateTime(currentSec)});	
+	$("#rangeTick .rightTooltipDiv").tooltip({animation: false, title: NB_vid.yt.calculateTime(currentSec)});	
 	$("#rangeTick .rightTooltipDiv").tooltip('show');
 }
 
@@ -966,7 +1026,7 @@ function hideToolTipDelay(){
 /*
  *	5. Zoom on ticks-related Code
  */
-function showZoomTick(currentSec){ //Dsan
+function showZoomTick(currentSec){ 
 	var tickLoc = calculateTickLoc(currentSec);
 	startDragX = tickLoc;
 	var tickLocStr = tickLoc.toString() + "px";
@@ -974,7 +1034,7 @@ function showZoomTick(currentSec){ //Dsan
 	$("#zoomTick").css("width", "2px")
 	$("#zoomTick").show();	
 }
-function hideZoomTick(){ //Dsan
+function hideZoomTick(){ 
 	$("#zoomTick").hide();
 	$("#zoomTick").css("width", "2px")	
 	dragWidth = 2;
@@ -1002,8 +1062,8 @@ function zoomRecalc(e){
 		var endRatio = zoomTickRight/$(".tickmark_holder").width();
 		enlargedTimeStart = startRatio*ytplayer.getDuration();
 		enlargedTimeEnd = endRatio*ytplayer.getDuration();
-		$(".enlargedTickStart").html(calculateTime(enlargedTimeStart));
-		$(".enlargedTickEnd").html(calculateTime(enlargedTimeEnd));
+		$(".enlargedTickStart").html(NB_vid.yt.calculateTime(enlargedTimeStart));
+		$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(enlargedTimeEnd));
 		addEnlargedTicks();
 	}
 }
@@ -1054,7 +1114,7 @@ function zoomDrag(){
 
 //Pause the video, make the rectangle visible
 function showRect(){
-	pauseVideo();
+	NB_vid.yt.pauseVideo();
 
 	if($(".commentsView_newComment").css("display") == "none"){
 		show_addNewComment();
@@ -1081,7 +1141,7 @@ function drawRectOn(){
 	});
 	$("#videoCover").mouseup(function(e){
 		if($("#drawnRect").width()==0){ //when not drawing, a click will play/pause video (width is automatically set to 0 when not seen)
-			videoClicked();
+			NB_vid.yt.videoClicked();
 		}
 		draw_mouseup = true;
 		
@@ -1203,7 +1263,7 @@ function createTickPopover(ID){
 
 //This function should be called the the page is loading
 function addAllTicks(){
-	$(".tickmark_holder").html("<div id = 'zoomTick'><div class = 'rightTooltipDiv' style = 'float: right'></div></div>"); //Dsan
+	$(".tickmark_holder").html("<div id = 'zoomTick'><div class = 'rightTooltipDiv' style = 'float: right'></div></div>"); 
 	var xLoc, ID, width, html;
 	for(var num = 0; num < commentObj.length; num++){
 		xLoc = calculateTickLoc(commentObj[num].timeSec);
@@ -1302,8 +1362,8 @@ function tickClick(div){
 	var index = IDtoIndex(ID);
 	var identifier = "#ui-accordion-accordion-header-" + index;
 	$(identifier).trigger("click");
-	pauseVideo();
-	goToTime(commentObj[index].timeSec);
+	NB_vid.yt.pauseVideo();
+	NB_vid.yt.goToTime(commentObj[index].timeSec);
 }
 
 //given the tick ID, adds the bootstrap popover 
@@ -1338,9 +1398,9 @@ $(function(){
 	time_updateTickRange();
 	timeEnd_updateTickRange();
 	drawRectOn();
-	zoomDrag(); //Dsan
+	zoomDrag(); 
 	dragRangeOn();
-	zoomRangeOn(); //Dsan
+	zoomRangeOn(); 
 
 
 });
@@ -1353,7 +1413,7 @@ var commentOrCancel = true;  // true - next click is comment, false - next click
 $(window).keyup(function(e) {
 	if (!textboxFocused){
 		if(e.which == 32){ //spacebar
-			videoClicked();
+			NB_vid.yt.videoClicked();
 		}else if (e.which === 67){ // c
 			if (commentOrCancel){
 				comment_btn();
@@ -1363,7 +1423,7 @@ $(window).keyup(function(e) {
 				commentOrCancel = true;
 			}
 		}else if(e.which === 77){ // m
-			muteORunmute();
+			NB_vid.yt.muteORunmute();
 		}
 	}
 	//here so that unaffected if textbox becomes focused
@@ -1378,33 +1438,6 @@ $(window).keyup(function(e) {
 
 });
 
-/*
- *	10. Alert-related code
- */
-function closeCommentAlert(){
-	alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
-}
-
- are sure you want to lose your data.");
-}
-
-;
-			}
-		}else if(e.which === 77){ // m
-			muteORunmute();
-		}
-	}
-	//here so that unaffected if textbox becomes focused
-	if(e.which == 27){ //esc
-		if($(".newCommentTextbox").val() == ""){
-			hide_addNewComment();
-			commentOrCancel = true;
-		}else{
-			closeCommentAlert();
-		}
-	}
-
-});
 
 /*
  *	10. Alert-related code
