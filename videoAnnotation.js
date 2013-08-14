@@ -281,6 +281,7 @@ function progressbarOffsetX(){
 // type: the selected type - either Comment or Question
 // userName: the ID of the student or person commenting
 // viewer: who the student selected can view the comment (currently no functionality with it)
+yourUserName = "You"
 var commentObj = [
 					{"drawArr": "None",
 					"ID": 0,
@@ -290,6 +291,8 @@ var commentObj = [
 					"timeSec" : 158, 
 					"timeStr" : "2:38",
 					"type" : "Comment",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User1",
 					"viewer" : "Class",},
 					{"drawArr": "None",
@@ -300,6 +303,8 @@ var commentObj = [
 					"timeSec" : 38, 
 					"timeStr" : "0:38",
 					"type" : "Comment",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User2",
 					"viewer" : "Class",},
 					{"drawArr": {posX: 78.00284099578857, posY: 157, width: 522, height: 47},
@@ -310,6 +315,8 @@ var commentObj = [
 					"timeSec" : 8, 
 					"timeStr" : "0:08",
 					"type" : "Question",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User3",
 					"viewer" : "Class",},
 					{"drawArr": "None",
@@ -320,6 +327,8 @@ var commentObj = [
 					"timeSec" : 191, 
 					"timeStr" : "3:11",
 					"type" : "Question",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User4",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -330,6 +339,8 @@ var commentObj = [
 					"timeSec" : 214, 
 					"timeStr" : "3:34",
 					"type" : "Question",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User5",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -340,6 +351,8 @@ var commentObj = [
 					"timeSec" : 2, 
 					"timeStr" : "0:02",
 					"type" : "Comment",
+					"upvotes": 4,
+					"upvotesUserArray": ["User1", "User2", "User3", "User4"],
 					"userName": "User6",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -350,6 +363,8 @@ var commentObj = [
 					"timeSec" : 5, 
 					"timeStr" : "0:05",
 					"type" : "Question",
+					"upvotes": 1,
+					"upvotesUserArray": ["You"],
 					"userName": "User7",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -360,6 +375,8 @@ var commentObj = [
 					"timeSec" : 25, 
 					"timeStr" : "0:25",
 					"type" : "Comment",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User8",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -370,6 +387,8 @@ var commentObj = [
 					"timeSec" : 30, 
 					"timeStr" : "0:30",
 					"type" : "Comment",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User9",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -380,6 +399,8 @@ var commentObj = [
 					"timeSec" : 35, 
 					"timeStr" : "0:35",
 					"type" : "Comment",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User10",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -390,6 +411,8 @@ var commentObj = [
 					"timeSec" : 40, 
 					"timeStr" : "0:40",
 					"type" : "Comment",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User11",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -400,6 +423,8 @@ var commentObj = [
 					"timeSec" : 45, 
 					"timeStr" : "0:45",
 					"type" : "Comment",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User12",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -410,6 +435,8 @@ var commentObj = [
 					"timeSec" : 50, 
 					"timeStr" : "0:50",
 					"type" : "Comment",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User13",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -420,6 +447,8 @@ var commentObj = [
 					"timeSec" :55, 
 					"timeStr" : "0:55",
 					"type" : "Comment",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User14",
 					"viewer" : "Just Me"},
 					{"drawArr": "None",
@@ -430,6 +459,8 @@ var commentObj = [
 					"timeSec" : 60, 
 					"timeStr" : "1:00",
 					"type" : "Comment",
+					"upvotes": 0,
+					"upvotesUserArray": [],
 					"userName": "User15",
 					"viewer" : "Just Me"}
 ];
@@ -485,8 +516,15 @@ function extractCommentHTML(num){
 
 	var contentHTML = "<div>";
 	var timeHTML = "<span id = 'commentTimeShow' onclick = 'goToComment(" + num + ")' >Time: " +timeStr +"  </span>";
+	if (commentObj[num].upvotesUserArray.indexOf(yourUserName) == -1){
+		console.log("could not find you user name for this comment")
+		var upvoteHTML = "<span style = 'float: right;' class = 'comment" + commentObj[num].ID + "upvoteSpan'><img class = 'upvoteBtn' id = 'upvoteBtn" + commentObj[num].ID + "' style = 'width: 13px; height: 13px' src = 'images/unvoteIcon.png'><span style = 'vertical-align: middle' id = 'comment" + commentObj[num].ID + "upvotes' >" + commentObj[num].upvotes + "</span></span>"	
+	}else{
+		var upvoteHTML = "<span style = 'float: right;' class = 'comment" + commentObj[num].ID + "upvoteSpan'><img class = 'upvoteBtn' id = 'upvoteBtn" + commentObj[num].ID + "' style = 'width: 13px; height: 13px' src = 'images/upvoteIcon.png'><span style = 'vertical-align: middle' id = 'comment" + commentObj[num].ID + "upvotes' >" + commentObj[num].upvotes + "</span></span>"
+	}
+	
 	var textHTML = "<p>"+ text +"</p>";
-	contentHTML += timeHTML + textHTML + "</div>";
+	contentHTML += timeHTML + upvoteHTML + textHTML + "</div>";
 
 	var html = headerHTML + contentHTML;
 
@@ -501,6 +539,7 @@ function addAllCommentHTML(){
 		html += htmlSection;
 	}
 	$("#accordion").append(html);
+	// upvoteClick();
 }
 
 //Given the comment index (for commentObj), go to the time in the video associated to the comment
@@ -562,6 +601,7 @@ function normalSizeCommentHolder(){
 function comment_btn(){
 	pauseVideo();
 	show_addNewComment();
+	
 }
 
 //Called when the submit button is pushed
@@ -587,7 +627,9 @@ function submitNewComment(){
 						"timeSec" : calcualateTime_stringToNum(timeStr),
 						"timeStr" : timeStr,
 						"type" : type,
-						"userName": "You",
+						"upvotes": 0,
+						"upvotesUserArray": [],
+						"userName": yourUserName,
 						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
 	//order matters for the next few functions!
@@ -595,6 +637,7 @@ function submitNewComment(){
 	hide_addNewComment();
 	goToComment(commentObj.length-1);
 	showNewComment();
+	upvoteClick();
 }
 
 //gets rid of accordion and gets rid of the html
@@ -630,34 +673,36 @@ function openCommentSyncVideo(){
 
 // Automatically keeps the current comment in view wihin the comment container
 function commentAutoScroll(){ //Dsan
-	createTimeSecArray();
-	var currentTime = parseInt(ytplayer.getCurrentTime());
-	var indexOfArr = timeSecArray.indexOf(currentTime);
-	var commentID = "#ui-accordion-accordion-header-" + indexOfArr;
+	if(playVideo){
+		createTimeSecArray();
+		var currentTime = parseInt(ytplayer.getCurrentTime());
+		var indexOfArr = timeSecArray.indexOf(currentTime);
+		var commentID = "#ui-accordion-accordion-header-" + indexOfArr;
 
-	var container = $('.commentsView_holder'),
-    scrollTo = $(commentID);
+		var container = $('.commentsView_holder'),
+	    scrollTo = $(commentID);
 
-	if (indexOfArr > -1){
-		container.animate({"opacity": 1}, 500, function(){
-			/*container.scrollTop(
-			    scrollTo.offset().top - container.offset().top + container.scrollTop()
-			);*/
+		if (indexOfArr > -1){
+			container.animate({"opacity": 1}, 500, function(){
+				/*container.scrollTop(
+				    scrollTo.offset().top - container.offset().top + container.scrollTop()
+				);*/
 
+				// Or you can animate the scrolling:
+
+				container.animate({
+				    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop()
+				}, 500);
+			})
+			
+		
 			// Or you can animate the scrolling:
 
-			container.animate({
+			/*container.animate({
 			    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop()
-			}, 500);
-		})
-		
-	
-		// Or you can animate the scrolling:
+			}, 1000);*/
 
-		/*container.animate({
-		    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop()
-		}, 1000);*/
-
+		}
 	}
 }
 
@@ -704,6 +749,40 @@ function setupTextboxFocus(){
 	$(".newCommentTextbox").focus(function(){textboxFocused = true;});
 	$(".newCommentTextbox").focusout(function(){textboxFocused = false;});
 
+}
+
+function upvoteClick(){
+	$(".upvoteBtn").on("click", function(){
+		var commentID = $(this).attr("id");
+		var commentNum = parseInt(commentID.slice(9, commentID.length));
+		var numUpvotes = parseInt($("#comment" + commentNum + "upvotes").html());
+		console.log(numUpvotes);
+		if ($(this).attr("src") == "images/upvoteIcon.png"){
+			$("#comment" + commentNum + "upvotes").html(parseInt($("#comment" + commentNum + "upvotes").html()) - 1);
+			for (var i = 0; i < commentObj.length; i++){
+				if(commentObj[i].ID == commentNum){
+					commentObj[i].upvotes -= 1;
+					var array = commentObj[i].upvotesUserArray
+					var index = array.indexOf(yourUserName);
+					array.splice(index, 1);
+					console.log(array);
+				}
+			}
+			$(this).attr("src", "images/unvoteIcon.png")
+		}else if($(this).attr("src") == "images/unvoteIcon.png"){
+			$("#comment" + commentNum + "upvotes").html(parseInt($("#comment" + commentNum + "upvotes").html()) + 1);
+			for (var i = 0; i < commentObj.length; i++){
+				if(commentObj[i].ID == commentNum){
+					commentObj[i].upvotes += 1;
+					commentObj[i].upvotesUserArray.push(yourUserName);
+					console.log(commentObj[i].upvotesUserArray)
+					
+				}
+			}
+			$(this).attr("src", "images/upvoteIcon.png")
+		}
+		
+	})
 }
 
 /*
@@ -1441,6 +1520,7 @@ $(function(){
  	updateProgressbarClick();
  	setup_commentDisplay();
 	isHoveringOverComments();
+	upvoteClick();
 	setupTimeFocus();
 	setupTextboxFocus();
 	time_updateTickRange();
@@ -1452,6 +1532,7 @@ $(function(){
 	zoomRangeOn(); //Dsan
 	// zoomResize();
 	progressBarHover();
+
 
 
 });
