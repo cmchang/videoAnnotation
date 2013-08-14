@@ -1,3 +1,18 @@
+/*
+ * Table of Contents - Organized by astrixed comment sections
+ *		1. Youtube Video-Related Code
+ *		2. Progressbar-related Code
+ *		3. Commenting-related Code (includes accordion)
+ *		4. Drag Range-related Code
+ *		5. Zoom on ticks-related Code
+ *		6. Draw Rectangle-related Code
+ *		7. Tick-related code
+ *		8. jQuery(document).ready() 
+ *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), isHoveringOverComments()
+ *		9. Keyboard Shortcuts
+ *		10. Alert-related code
+ */
+
 NB_vid = {
 	"yt": {"updateHTML": updateHTML,
 			"onPlayerError": onPlayerError,
@@ -22,7 +37,7 @@ NB_vid = {
 	"progressbar": {
 			"updateProgressbar":updateProgressbar,
 			"progressbar_click": progressbar_click,
-			"updateProgressbarClick:"updateProgressbarClick,
+			"updateProgressbarClick":updateProgressbarClick,
 			"progressbarOffsetX":progressbarOffsetX
 	},
 	"commentObj": commentObj,
@@ -52,29 +67,83 @@ NB_vid = {
 			"textboxFocused":textboxFocused,
 			"setupTextboxFocus":setupTextboxFocus
 	},
-	"drag": {},
-	"zoom": {},
-	"draw": {},
-	"tick": {},
-	"jQueryReady": {},
-	"keyboard": {},
-	"alert": {}
+	"drag": {
+			"mouseXtoSec":mouseXtoSec,
+			"getRelMouseX":getRelMouseX,
+			"startDragX": 0,
+			"dragWidth": 0,
+			"drag_mouseup": true,
+			"dragCurrentSec": 0,
+			"dragRangeOn":dragRangeOn,
+			"time_updateTickRange":time_updateTickRange,
+			"timeEnd_updateTickRange":timeEnd_updateTickRange,
+			"showRangeTick":showRangeTick,
+			"hideRangeTick":hideRangeTick,
+			"dragWidthCalc":dragWidthCalc, //take out the zoom into its own function...
+			"timeEndFocused_adjustTickWidth":timeEndFocused_adjustTickWidth,
+			"timeStartFocused_adjustTick":timeStartFocused_adjustTick,
+			"showToolTip":showToolTip,
+			"hideToolTip":hideToolTip,
+			"hideToolTipDelay":hideToolTipDelay
+	},
+	"zoom": {
+			"zoomDragging":false,
+			"zoom_mouseup":false,
+			"zoomRangeOn": zoomRangeOn,
+			"showZoomTick":showZoomTick,
+			"hideZoomTick":hideZoomTick,
+			"enlargedTickHTML":enlargedTickHTML,
+			"createEnlargedTickPopover":createEnlargedTickPopover,
+			"zoomRecalc":zoomRecalc,
+			"addEnlargedTicks":addEnlargedTicks,
+			"zoomDrag":zoomDrag
+	},
+	"draw": {
+			"showRect":showRect,
+			"startDrawX": 0,
+			"startDrawY": 0,
+			"drawWidth": 0,
+			"drawHeight": 0,
+			"draw_mouseup": true,
+			"drawRectOn": drawRectOn,
+			"drawAreaCalc": drawAreaCalc,
+			"resetRectCSS":resetRectCSS,
+			"changeRectCSS":changeRectCSS,
+			"hideDrawnRect":hideDrawnRect,
+			"videoCoverOffsetX":videoCoverOffsetX,
+			"videoCoverOffsetY":videoCoverOffsetY,
+			"extractRectInfo":extractRectInfo
+	},
+	"tick": {
+			"calculateTickLoc":calculateTickLoc,
+			"calculateTickWidth":calculateTickWidth,
+			"tickHTML":tickHTML,
+			"createTickPopover":createTickPopover,
+			"addAllTicks":addAllTicks,
+			"currentHighlightedTick": "none",
+			"currentID": "none",
+			"highlightTick": highlightTick,
+			"highlightTickControl": highlightTickControl,
+			"changeTickCSS":changeTickCSS,
+			"addTickHover":addTickHover,
+			"tickHover":tickHover,
+			"unTickHover":unTickHover,
+			"tickClick":tickClick,
+			"createTickPopover":createTickPopover
+	},
+	"jQueryReady": {
+			"mouseX": mouseX,
+			"mouseY": mouseY,
+			"mouseLoc": mouseLoc,
+			"funcList": [NB_vid.jQueryReady.mouseLoc, NB_vid.progressbar.updateProgressbarClick]
+	},
+	"keyboard": {
+			"commentOrCancel"; commentOrCancel
+	},
+	"alert": {
+			"closeCommentAlert":closeCommentAlert
+	}
 };
-
-/*
- * Table of Contents - Organized by astrixed comment sections
- *		1. Youtube Video-Related Code
- *		2. Progressbar-related Code
- *		3. Commenting-related Code (includes accordion)
- *		4. Drag Range-related Code
- *		5. Zoom on ticks-related Code
- *		6. Draw Rectangle-related Code
- *		7. Tick-related code
- *		8. jQuery(document).ready() 
- *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), isHoveringOverComments()
- *		9. Keyboard Shortcuts
- *		10. Alert-related code
- */
 
 /*
  * 1. Youtube Video-Related Code
@@ -782,12 +851,6 @@ function getRelMouseX(This, e){
 }
 
 
-//These variables should ONLY be used for functions related to dragRange 
-var startDragX; //relative to progressbar
-var dragWidth; //whenever the tick is adjusted, this needs to be adjusted as well
-var drag_mouseup = true; //important when calculating the width of the dragtick
-var dragCurrentSec; //the time when the drag initially starts
-
 //this function controls when the mouse is clicked in unclicked over the progressbar
 //this function creates the the tick under the progressbar and gives it the left position
 //the width of the tick is controlled under document.ready() in the mousemove function
@@ -795,7 +858,6 @@ var startDragX; //relative to the page!
 var startZoomX;	
 var dragWidth;
 var drag_mouseup = true; //important when calculating the width of the dragtick
-var zoom_mouseup = true; 
 var dragCurrentSec;
 function dragRangeOn(){
 	$("#progressbar").mousedown(function(e){
@@ -838,53 +900,6 @@ function dragRangeOn(){
 		timeEndFocused = false;
 	});
 
-}
-
-var zoomDragging = false;
-
-function zoomRangeOn(){ 
-	$(".tickmark_holder").mousedown(function(e){
-		//console.log("tickmar_holder mousedown");
-		if(!timeStartFocused){
-			if (!timeEndFocused && !zoomDragging ){
-				startZoomX = mouseX - progressbarOffsetX();
-				zoom_mouseup = false; 
-				var currentSec = mouseXtoSec(this, e);
-				comment_btn();
-
-				enlargedTimeStart = currentSec;
-				$(".enlargedTickStart").html(NB_vid.yt.calculateTime(enlargedTimeStart));
-				var tickLoc = calculateTickLoc(currentSec);
-				var tickLocStr = tickLoc.toString() + "px";
-				
-				$("#zoomTick").css("left", tickLocStr);
-				$("#zoomTick").css("width", "2px")
-				$("#zoomTick").show();
-				$("#zoomTick .rightTooltipDiv").show();
-				$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: NB_vid.yt.calculateTime(currentSec)});	
-				$("#zoomTick .rightTooltipDiv").tooltip('show');
-			}
-		}
-	});
-	$(".tickmark_holder").mouseup(function(e){	
-		zoom_mouseup = true;
-		var currentSec = mouseXtoSec(this, e);
-		enlargedTimeEnd = currentSec;
-		$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(enlargedTimeEnd));
-		$(".enlargedTickBar").html("");
-		function hideToolTip(){
-			$("#zoomTick .tooltip").animate({"opacity": 0}, 250, function(){
-				$("#zoomTick .rightTooltipDiv").tooltip('destroy');
-			});
-		}
-
-		$("#zoomTick").draggable({axis: "x", containment: "parent"});
-		
-		window.setTimeout(hideToolTip, 1500);
-
-		// appends ticks to the enlarged tick bar
-		addEnlargedTicks();
-	});
 }
 
 //if the text is changed in the time input box, update the tick to the corresponding position
@@ -960,7 +975,7 @@ function dragWidthCalc(e){
 			comment_btn();
 		}
 	}
-	if(startZoomX > 0 && !zoom_mouseup){ 
+	if(startZoomX > 0 && !zoom_mouseup){ /////MOVE THIS TO OWN FUNCTION: zoomWidthCalc
 		var currentSec = mouseXtoSec(".tickmark_holder", e);
 		dragWidth = mouseX-startZoomX - progressbarOffsetX();
 		var widthStr = dragWidth.toString() + "px";
@@ -1026,6 +1041,55 @@ function hideToolTipDelay(){
 /*
  *	5. Zoom on ticks-related Code
  */
+
+var zoomDragging = false;
+var zoom_mouseup = false;
+
+function zoomRangeOn(){ 
+	$(".tickmark_holder").mousedown(function(e){
+		//console.log("tickmar_holder mousedown");
+		if(!timeStartFocused){
+			if (!timeEndFocused && !zoomDragging ){
+				startZoomX = mouseX - progressbarOffsetX();
+				zoom_mouseup = false; 
+				var currentSec = mouseXtoSec(this, e);
+				comment_btn();
+
+				enlargedTimeStart = currentSec;
+				$(".enlargedTickStart").html(NB_vid.yt.calculateTime(enlargedTimeStart));
+				var tickLoc = calculateTickLoc(currentSec);
+				var tickLocStr = tickLoc.toString() + "px";
+				
+				$("#zoomTick").css("left", tickLocStr);
+				$("#zoomTick").css("width", "2px")
+				$("#zoomTick").show();
+				$("#zoomTick .rightTooltipDiv").show();
+				$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: NB_vid.yt.calculateTime(currentSec)});	
+				$("#zoomTick .rightTooltipDiv").tooltip('show');
+			}
+		}
+	});
+	$(".tickmark_holder").mouseup(function(e){	
+		zoom_mouseup = true;
+		var currentSec = mouseXtoSec(this, e);
+		enlargedTimeEnd = currentSec;
+		$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(enlargedTimeEnd));
+		$(".enlargedTickBar").html("");
+		function hideToolTip(){
+			$("#zoomTick .tooltip").animate({"opacity": 0}, 250, function(){
+				$("#zoomTick .rightTooltipDiv").tooltip('destroy');
+			});
+		}
+
+		$("#zoomTick").draggable({axis: "x", containment: "parent"});
+		
+		window.setTimeout(hideToolTip, 1500);
+
+		// appends ticks to the enlarged tick bar
+		addEnlargedTicks();
+	});
+}
+
 function showZoomTick(currentSec){ 
 	var tickLoc = calculateTickLoc(currentSec);
 	startDragX = tickLoc;
@@ -1381,7 +1445,7 @@ function createTickPopover(ID){
  */
 
 var mouseX, mouseY;
-$(function(){ 
+function mouseLoc(){
 	$(document).mousemove(function(e){
 		$('#status').html(e.pageX +', '+ e.pageY);
 		mouseX = e.pageX;
@@ -1390,6 +1454,10 @@ $(function(){
 		drawAreaCalc();
 		zoomRecalc(e);
 	}); 
+}
+
+$(function(){ 
+	mouseLoc();
  	updateProgressbarClick();
  	setup_commentDisplay();
 	isHoveringOverComments();
