@@ -1054,14 +1054,17 @@ function zoomRangeOn(){ //Dsan
 					$("#zoomTick .rightTooltipDiv").tooltip('destroy');
 				});
 			}*/
+			$(".enlargedTickContainer").show().animate({"opacity": 1}, 400);
 
 			$("#zoomTick").draggable({axis: "x", containment: "parent"});
+			$("#zoomTick").effect("transfer", {to: ".enlargedTickBar"});
 			enlargedDraggableCreated = true;
 			
 			window.setTimeout(hideToolTip("#zoomTick"), 1500);
 
 			// appends ticks to the enlarged tick bar
 			addEnlargedTicks();
+			
 		}
 	});
 	
@@ -1177,6 +1180,20 @@ function zoomDrag(){
 	})
 }
 
+// Closes the enlarged tick bar and deletes the blue enlarged selection if they exist
+function zoomClose(){
+	if(enlargedDraggableCreated){
+		$(".enlargedTickContainer").animate({"opacity": 0}, 400, function(){
+			$(".enlargedTickContainer").hide();
+		})
+		$("#zoomTick").draggable("destroy");
+		$("#zoomTick").animate({"opacity": 0}, 400, function(){
+			$("#zoomTick").hide();
+			$("#zoomTick").css("opacity", 1);
+		})
+		enlargedDraggableCreated = false;
+	}
+}
 //// Testing
 /*function zoomHover(){
 	$(".zoomAdjust").on("mouseenter", function(){

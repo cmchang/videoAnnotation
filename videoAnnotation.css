@@ -223,14 +223,16 @@
 	/*display: none;*/
 }
 .enlargedTickContainer{
+	display: none;
 	margin-top: 5px;
 	height: 40px;
 	border-radius: 5px;
 	background: #E6E6E6; 
+	opacity: 0;
 }
 .enlargedTickBar{
 	position: absolute;
-	width: 660px;
+	width: 635px;
 	margin-top: 10px;
 	height: 15px;
 	border-radius: 5px;
@@ -281,6 +283,10 @@
 }
 .upvoteBtn{
 	cursor: pointer;
+}
+.ui-effects-transfer{
+	border: 1px solid black;
+	border-radius: 5px;
 }
 /*.tooltip{
 	z-index: 1;
