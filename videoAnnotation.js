@@ -177,30 +177,6 @@ NB_vid = {};
 		}
 	}
 
-
-	// This function is automatically called by the player once it loads
-	function onYouTubePlayerReady(playerId) {
-		ytplayer = document.getElementById("ytPlayer");
-
-		//This hack is an attempt to eliminate the big red play button by default
-		//it prevents the default play button from playing the video without changing my own play button
-		//it also starts the loading of the video sooner
-		window.setTimeout(function() {
-			ytplayer.playVideo();
-		    ytplayer.pauseVideo();
-		}, 0);
-
-		// This causes the updatePlayerInfo function to be called every 250ms to
-		// get fresh data from the player
-		setInterval(NB_vid.progressbar.updateProgressbar, 1000);
-		setInterval(NB_vid.yt.updatePlayerInfo, 250);
-		NB_vid.yt.updatePlayerInfo();		
-		ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
-		ytplayer.addEventListener("onError", "onPlayerError");
-		//Load an initial video into the player
-		ytplayer.cueVideoById("HtSuA80QTyo");
-	}
-
 	// The "main method" of this sample. Called when someone clicks "Run".
 	function loadPlayer() {
 		// Lets Flash from another domain call JavaScript
@@ -1304,39 +1280,20 @@ NB_vid = {};
 		}); 
 	}
 
-	$(function(){ 
-		NB_vid.tick.mouseLoc();
-	 	NB_vid.progressbar.updateProgressbarClick();
-	 	NB_vid.comment.setup_commentDisplay();
-		NB_vid.comment.isHoveringOverComments();
-		NB_vid.comment.setupTimeFocus();
-		NB_vid.comment.setupTextboxFocus();
-		NB_vid.drag.time_updateTickRange();
-		NB_vid.drag.timeEnd_updateTickRange();
-		NB_vid.draw.drawRectOn();
-		NB_vid.zoom.zoomDrag(); 
-		NB_vid.drag.dragRangeOn();
-		NB_vid.zoom.zoomRangeOn(); 
-
-
-	});
-
-
 	/*
 	 *	9. Keyboard Shortcuts
 	 */
-	var commentOrCancel = true;  // true - next click is comment, false - next click cancels
 	$(window).keyup(function(e) {
 		if (!NB_vid.comment.textboxFocused){
 			if(e.which == 32){ //spacebar
 				NB_vid.yt.videoClicked();
 			}else if (e.which === 67){ // c
-				if (commentOrCancel){
+				if (NB_vid.keyboard.commentOrCancel){
 					NB_vid.comment.comment_btn();
-					commentOrCancel = false;
+					NB_vid.keyboard.commentOrCancel = false;
 				}else{
 					NB_vid.comment.hide_addNewComment();
-					commentOrCancel = true;
+					NB_vid.keyboard.commentOrCancel = true;
 				}
 			}else if(e.which === 77){ // m
 				NB_vid.yt.muteORunmute();
@@ -1346,9 +1303,9 @@ NB_vid = {};
 		if(e.which == 27){ //esc
 			if($(".newCommentTextbox").val() == ""){
 				NB_vid.comment.hide_addNewComment();
-				commentOrCancel = true;
+				NB_vid.keyboard.commentOrCancel = true;
 			}else{
-				closeCommentAlert();
+				NB_vid.alert.closeCommentAlert();
 			}
 		}
 
@@ -1379,7 +1336,6 @@ NB_vid = {};
 				"pauseVideo": pauseVideo,
 				"muteVideo": muteVideo,
 				"unMuteVideo": unMuteVideo,
-				"onYouTubePlayerReady":onYouTubePlayerReady,
 				"loadPlayer": loadPlayer,
 				"_run":_run,
 				"goToTime":goToTime
@@ -1482,18 +1438,61 @@ NB_vid = {};
 				"tickClick":tickClick,
 		},
 		"jQueryReady": {
-				"mouseX": mouseX,
-				"mouseY": mouseY,
+				"mouseX": 0,
+				"mouseY": 0,
 				"mouseLoc": mouseLoc
-				//"funcList": [NB_vid.jQueryReady.mouseLoc, NB_vid.progressbar.updateProgressbarClick]
 		},
 		"keyboard": {
-				"commentOrCancel": commentOrCancel
+				"commentOrCancel": true  // true - next click is comment, false - next click cancels
 		},
 		"alert": {
 				"closeCommentAlert":closeCommentAlert
 		}
 	};
+
+	NB_vid.funcLists = { "jQueryReady":[NB_vid.jQueryReady.mouseLoc, 
+										NB_vid.progressbar.updateProgressbarClick, 
+										NB_vid.comment.setup_commentDisplay,
+										NB_vid.comment.isHoveringOverComments,
+										NB_vid.comment.setupTimeFocus,
+										NB_vid.comment.setupTextboxFocus,
+										NB_vid.drag.time_updateTickRange,
+										NB_vid.drag.timeEnd_updateTickRange,
+										NB_vid.draw.drawRectOn,
+										NB_vid.zoom.zoomDrag,
+										NB_vid.drag.dragRangeOn,
+										NB_vid.zoom.zoomRangeOn]
+						};
+						
 })();
 
+// This function is automatically called by the player once it loads
+function onYouTubePlayerReady(playerId) {
+	ytplayer = document.getElementById("ytPlayer");
 
+	//This hack is an attempt to eliminate the big red play button by default
+	//it prevents the default play button from playing the video without changing my own play button
+	//it also starts the loading of the video sooner
+	window.setTimeout(function() {
+		ytplayer.playVideo();
+	    ytplayer.pauseVideo();
+	}, 0);
+
+	// This causes the updatePlayerInfo function to be called every 250ms to
+	// get fresh data from the player
+	setInterval(NB_vid.progressbar.updateProgressbar, 1000);
+	setInterval(NB_vid.yt.updatePlayerInfo, 250);
+	NB_vid.yt.updatePlayerInfo();		
+	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
+	ytplayer.addEventListener("onError", "onPlayerError");
+	//Load an initial video into the player
+	ytplayer.cueVideoById("HtSuA80QTyo");
+}
+
+
+$(function(){ 
+	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
+		NB_vid.funcLists.jQueryReady[x]();
+	}
+	
+});
