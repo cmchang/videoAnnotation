@@ -3,8 +3,7 @@ You are free to copy and use this sample in accordance with the terms of the
 Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 -->
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<title>Video Annotation</title>
@@ -145,7 +144,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 					<option>Just me</option>
 					<option>Instructor</option>
 				</select>
-				<button class = "btn btn-small" id = "submit_btn" onclick="submitNewComment()">Submit</button>
+				<button class = "btn btn-small" id = "submit_btn" onclick="NB_vid.comment.submitNewComment()">Submit</button>
 				<button class ="btn btn-small" id = "cancel_btn" onclick = "hide_addNewComment()">Cancel</button>
 
 			</div>
@@ -165,6 +164,10 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		<p>Current Time: <span id="videoCurrentTime">--:--</span> | Duration: <span id="videoDuration">--:--</span> | Percentage: <span id = "videoPercentage">--:--</span></p>
 		<p>Bytes Total: <span id="bytesTotal">--</span> | Start Bytes: <span id="startBytes">--</span> | Bytes Loaded: <span id="bytesLoaded">--</span></p>
 		<p><input id="volumeSetting" type="text" size="3" />&nbsp;<a href="javascript:void(0)" onclick="setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
+	</div>				
+</body>
+</html>
+​ onclick="setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
 	</div>				
 </body>
 </html>
