@@ -54,12 +54,12 @@ NB_vid = {};
 			NB_vid.yt.updateHTML("videoTotalTimeDisplay", NB_vid.yt.calculateTime(ytplayer.getDuration()));
 			NB_vid.comment.openCommentSyncVideo(); //syncs opening the comments with the video
 			NB_vid.comment.commentAutoScroll(); //Automatically scrolls to correct comment
-			highlightTick();
+			NB_vid.tick.highlightTick();
 
 			//this makes sure the ticks are only created AFTER ytplayer is created so we can use .getDuration()
 			if(NB_vid.yt.createTicks && ytplayer.getDuration() > 0){ 
 				NB_vid.yt.createTicks = false;
-				addAllTicks();
+				NB_vid.tick.addAllTicks();
 
 			}
 		}
@@ -234,8 +234,8 @@ NB_vid = {};
 	} 
 
 	//update the time of the ytplayer given the mouse x-location
-	function progressbar_click(mouseX){
-		var percentage = mouseX/$("#progressbar").width();  
+	function progressbar_click(xloc){
+		var percentage = xloc/$("#progressbar").width();  
 		//console.log(percentage);
 		$("#progressbar_filler").css("width", percentage*100 + "%"); //updates progressbar location
 		var currentSec = percentage*ytplayer.getDuration();
@@ -504,10 +504,10 @@ NB_vid = {};
 	function goToComment(index){
 		NB_vid.yt.goToTime(NB_vid.commentObj[index].timeSec);
 		if(NB_vid.commentObj[index].drawArr != "None"){
-			changeRectCSS(NB_vid.commentObj[index].drawArr.posX, NB_vid.commentObj[index].drawArr.posY, NB_vid.commentObj[index].drawArr.width, NB_vid.commentObj[index].drawArr.height);
+			NB_vid.draw.changeRectCSS(NB_vid.commentObj[index].drawArr.posX, NB_vid.commentObj[index].drawArr.posY, NB_vid.commentObj[index].drawArr.width, NB_vid.commentObj[index].drawArr.height);
 			$("#drawnRect").show();
 		}else{
-			hideDrawnRect();
+			NB_vid.draw.hideDrawnRect();
 		}
 	}
 
@@ -540,7 +540,7 @@ NB_vid = {};
 		$(".newCommentTextbox").focusout();
 		NB_vid.comment.timeEndFocused = false;
 		NB_vid.drag.hideRangeTick();
-		hideDrawnRect();
+		NB_vid.draw.hideDrawnRect();
 
 	}
 
@@ -575,7 +575,7 @@ NB_vid = {};
 		}else{
 			timeEnd = NB_vid.yt.calculateTime_stringToNum(timeEndStr);
 		}
-		NB_vid.commentObj.push({ "drawArr": extractRectInfo(),
+		NB_vid.commentObj.push({ "drawArr": NB_vid.draw.extractRectInfo(),
 							"ID": NB_vid.commentObj.length,
 							"text" : text,
 							"timeEndSec": timeEnd,
@@ -587,7 +587,7 @@ NB_vid = {};
 							"viewer" : viewer});
 		$(".newCommentTextbox").val(""); //empty textbox
 		//order matters for the next few functions!
-		addAllTicks();
+		NB_vid.tick.addAllTicks();
 		NB_vid.comment.hide_addNewComment();
 		NB_vid.comment.goToComment(NB_vid.commentObj.length-1);
 		NB_vid.comment.showNewComment();
@@ -725,7 +725,7 @@ NB_vid = {};
 		$("#progressbar").mousedown(function(e){
 			if(!NB_vid.comment.timeStartFocused){
 				if (!NB_vid.comment.timeEndFocused){
-					NB_vid.drag.startDragX = mouseX - NB_vid.progressbar.progressbarOffsetX();
+					NB_vid.drag.startDragX = NB_vid.tick.mouseX - NB_vid.progressbar.progressbarOffsetX();
 					NB_vid.drag.drag_mouseup = false; 
 					NB_vid.drag.dragCurrentSec = NB_vid.drag.mouseXtoSec(this, e);
 					if($(".commentsView_newComment").css("display") != "none"){
@@ -768,14 +768,14 @@ NB_vid = {};
 	function time_updateTickRange(){
 		$("#comment_time").change(function(){
 			var timeStart = NB_vid.yt.calculateTime_stringToNum($("#comment_time").val());
-			NB_vid.drag.startDragX = calculateTickLoc(timeStart);
+			NB_vid.drag.startDragX = NB_vid.tick.calculateTickLoc(timeStart);
 			if($("#comment_time").val() != ""){
 				$("#rangeTick").css("left", NB_vid.drag.startDragX);
 				NB_vid.yt.goToTime(timeStart);
 			}
 			if($("#comment_timeEnd").val() != ""){
 				var timeEnd = NB_vid.yt.calculateTime_stringToNum($("#comment_timeEnd").val());
-				var endDragX = calculateTickLoc(timeEnd);
+				var endDragX = NB_vid.tick.calculateTickLoc(timeEnd);
 				NB_vid.drag.dragWidth = endDragX - NB_vid.drag.startDragX;
 				var widthStr = NB_vid.drag.dragWidth.toString() + "px";
 				$("#rangeTick").css("width", widthStr);
@@ -806,7 +806,7 @@ NB_vid = {};
 	//given the currentSeconds (number, not string), initialize the tick in the progressbar area
 	function showRangeTick(currentSec){
 		$("#comment_time").val(NB_vid.yt.calculateTime(currentSec));
-		var tickLoc = calculateTickLoc(currentSec);
+		var tickLoc = NB_vid.tick.calculateTickLoc(currentSec);
 		NB_vid.drag.startDragX = tickLoc;
 		var tickLocStr = tickLoc.toString() + "px";
 		$("#rangeTick").css("left", tickLocStr);
@@ -825,7 +825,7 @@ NB_vid = {};
 	function dragWidthCalc(e){
 		if(NB_vid.drag.startDragX > 0 && !NB_vid.drag.drag_mouseup){
 			NB_vid.drag.showRangeTick(NB_vid.drag.dragCurrentSec);
-			NB_vid.drag.dragWidth = mouseX-NB_vid.drag.startDragX - NB_vid.progressbar.progressbarOffsetX();
+			NB_vid.drag.dragWidth = NB_vid.tick.mouseX-NB_vid.drag.startDragX - NB_vid.progressbar.progressbarOffsetX();
 			var widthStr = NB_vid.drag.dragWidth.toString() + "px";
 			$("#rangeTick").css("width", widthStr);
 
@@ -838,7 +838,7 @@ NB_vid = {};
 		}
 		if(startZoomX > 0 && !NB_vid.zoom.zoom_mouseup){ /////MOVE THIS TO OWN FUNCTION: zoomWidthCalc
 			var currentSec = NB_vid.drag.mouseXtoSec(".tickmark_holder", e);
-			NB_vid.drag.dragWidth = mouseX-startZoomX - NB_vid.progressbar.progressbarOffsetX();
+			NB_vid.drag.dragWidth = NB_vid.tick.mouseX-startZoomX - NB_vid.progressbar.progressbarOffsetX();
 			var widthStr = NB_vid.drag.dragWidth.toString() + "px";
 			$("#zoomTick").css("width", widthStr);
 			$("#zoomTick .rightTooltipDiv").tooltip("destroy");
@@ -851,7 +851,7 @@ NB_vid = {};
 	//the function readjusts the width of the tick depending on where the click occurs
 	function timeEndFocused_adjustTickWidth(This, e){
 		var currentSec = NB_vid.drag.mouseXtoSec(This, e);
-		var currentX = calculateTickLoc(currentSec);
+		var currentX = NB_vid.tick.calculateTickLoc(currentSec);
 		NB_vid.drag.dragWidth = currentX-NB_vid.drag.startDragX;
 		var widthStr = NB_vid.drag.dragWidth.toString() + "px";
 		$("#rangeTick").css("width", widthStr);
@@ -861,7 +861,7 @@ NB_vid = {};
 	//the function readjusts the width and the left position of the tick depending on where the click occurs
 	function timeStartFocused_adjustTick(This, e){
 		var currentSec = NB_vid.drag.mouseXtoSec(This, e);
-		NB_vid.drag.startDragX = calculateTickLoc(currentSec);
+		NB_vid.drag.startDragX = NB_vid.tick.calculateTickLoc(currentSec);
 		var currentTickX = parseInt($("#rangeTick").css("left").substr(0, $("#rangeTick").css("left").length-2));
 		var xDiff = NB_vid.drag.startDragX - currentTickX;
 
@@ -907,14 +907,14 @@ NB_vid = {};
 			//console.log("tickmar_holder mousedown");
 			if(!NB_vid.comment.timeStartFocused){
 				if (!NB_vid.comment.timeEndFocused && !NB_vid.zoom.zoomDragging ){
-					startZoomX = mouseX - NB_vid.progressbar.progressbarOffsetX();
-					zoom_mouseup = false; 
+					startZoomX = NB_vid.tick.mouseX - NB_vid.progressbar.progressbarOffsetX();
+					NB_vid.zoom.zoom_mouseup = false; 
 					var currentSec = NB_vid.drag.mouseXtoSec(this, e);
 					NB_vid.comment.comment_btn();
 
 					enlargedTimeStart = currentSec;
 					$(".enlargedTickStart").html(NB_vid.yt.calculateTime(enlargedTimeStart));
-					var tickLoc = calculateTickLoc(currentSec);
+					var tickLoc = NB_vid.tick.calculateTickLoc(currentSec);
 					var tickLocStr = tickLoc.toString() + "px";
 					
 					$("#zoomTick").css("left", tickLocStr);
@@ -927,7 +927,7 @@ NB_vid = {};
 			}
 		});
 		$(".tickmark_holder").mouseup(function(e){	
-			zoom_mouseup = true;
+			NB_vid.zoom.zoom_mouseup = true;
 			var currentSec = NB_vid.drag.mouseXtoSec(this, e);
 			enlargedTimeEnd = currentSec;
 			$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(enlargedTimeEnd));
@@ -943,12 +943,12 @@ NB_vid = {};
 			window.setTimeout(NB_vid.drag.hideToolTip, 1500);
 
 			// appends ticks to the enlarged tick bar
-			addEnlargedTicks();
+			NB_vid.zoom.addEnlargedTicks();
 		});
 	}
 
 	function showZoomTick(currentSec){ 
-		var tickLoc = calculateTickLoc(currentSec);
+		var tickLoc = NB_vid.tick.calculateTickLoc(currentSec);
 		NB_vid.drag.startDragX = tickLoc;
 		var tickLocStr = tickLoc.toString() + "px";
 		$("#zoomTick").css("left", tickLocStr);
@@ -962,7 +962,7 @@ NB_vid = {};
 	}
 	function enlargedTickHTML(xLoc, width, ID){
 		var style = "'left:" + xLoc + "px; width:"+width + "px'";
-		var html = "<div class = 'enlargedTickmark' id = 'enlargedTickmark"+ID + "' style="+style+" onclick = tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
+		var html = "<div class = 'enlargedTickmark' id = 'enlargedTickmark"+ID + "' style="+style+" onclick = NB_vid.tick.tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
 		return html;
 	}
 
@@ -985,7 +985,7 @@ NB_vid = {};
 			enlargedTimeEnd = endRatio*ytplayer.getDuration();
 			$(".enlargedTickStart").html(NB_vid.yt.calculateTime(enlargedTimeStart));
 			$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(enlargedTimeEnd));
-			addEnlargedTicks();
+			NB_vid.zoom.addEnlargedTicks();
 		}
 	}
 	function addEnlargedTicks(){
@@ -997,9 +997,9 @@ NB_vid = {};
 					var totalDiff = enlargedTimeEnd - enlargedTimeStart;
 					var tickRatio = startToTickDiff/totalDiff;
 					var tickPxLeft = tickRatio*$(".enlargedTickBar").width();
-					var html = enlargedTickHTML(tickPxLeft, 1, NB_vid.commentObj[i].ID);
+					var html = NB_vid.zoom.enlargedTickHTML(tickPxLeft, 1, NB_vid.commentObj[i].ID);
 					$(".enlargedTickBar").append(html);
-					createEnlargedTickPopover(NB_vid.commentObj[i].ID);
+					NB_vid.zoom.createEnlargedTickPopover(NB_vid.commentObj[i].ID);
 				}
 			}else{
 				if((NB_vid.commentObj[i].timeSec > enlargedTimeStart && NB_vid.commentObj[i].timeSec < enlargedTimeEnd) || (NB_vid.commentObj[i].timeEndSec > enlargedTimeStart && NB_vid.commentObj[i].timeSec < enlargedTimeEnd)){
@@ -1012,9 +1012,9 @@ NB_vid = {};
 					if (NB_vid.commentObj[i].timeSec < enlargedTimeStart){var tickStartRatio = 0;}
 					var tickPxLeft = tickStartRatio*$(".enlargedTickBar").width();
 					var tickWidth = (tickEndRatio-tickStartRatio)*$(".enlargedTickBar").width();
-					var html = enlargedTickHTML(tickPxLeft, tickWidth, NB_vid.commentObj[i].ID);
+					var html = NB_vid.zoom.enlargedTickHTML(tickPxLeft, tickWidth, NB_vid.commentObj[i].ID);
 					$(".enlargedTickBar").append(html);
-					createEnlargedTickPopover(NB_vid.commentObj[i].ID);
+					NB_vid.zoom.createEnlargedTickPopover(NB_vid.commentObj[i].ID);
 				}
 			}
 		}
@@ -1041,30 +1041,27 @@ NB_vid = {};
 			NB_vid.comment.show_addNewComment();
 		}
 
-		var leftStr = startDrawX.toString() + "px";
-		var topStr = startDrawY.toString() + "px";
+		var leftStr = NB_vid.draw.startDrawX.toString() + "px";
+		var topStr = NB_vid.draw.startDrawY.toString() + "px";
 		$("#drawnRect").show();
 		$("#drawnRect").css("left", leftStr);
 		$("#drawnRect").css("top", topStr);
 	}
-	var startDrawX, startDrawY; //relative to the videoCover
-	var drawWidth,drawHeight;
-	var draw_mouseup = true;
 
 	//this function is the mousehandler for drawing the rectangle
 	function drawRectOn(){
 		$("#videoCover").mousedown(function(e){
-			draw_mouseup = false;
-			resetRectCSS();
-			startDrawX = mouseX - videoCoverOffsetX();
-			startDrawY = mouseY - videoCoverOffsetY();
+			NB_vid.draw.draw_mouseup = false;
+			NB_vid.draw.resetRectCSS();
+			NB_vid.draw.startDrawX = NB_vid.tick.mouseX - NB_vid.draw.videoCoverOffsetX();
+			NB_vid.draw.startDrawY = NB_vid.tick.mouseY - NB_vid.draw.videoCoverOffsetY();
 			
 		});
 		$("#videoCover").mouseup(function(e){
 			if($("#drawnRect").width()==0){ //when not drawing, a click will play/pause video (width is automatically set to 0 when not seen)
 				NB_vid.yt.videoClicked();
 			}
-			draw_mouseup = true;
+			NB_vid.draw.draw_mouseup = true;
 			
 		});
 
@@ -1072,14 +1069,14 @@ NB_vid = {};
 
 	//this calculates the width and height of the rectangle when dragging the mouse over the videoCover
 	function drawAreaCalc(){
-		if(!draw_mouseup){
-			drawWidth = mouseX - startDrawX - videoCoverOffsetX();
-			drawHeight = mouseY - startDrawY - videoCoverOffsetY();
+		if(!NB_vid.draw.draw_mouseup){
+			NB_vid.draw.drawWidth = NB_vid.tick.mouseX - NB_vid.draw.startDrawX - NB_vid.draw.videoCoverOffsetX();
+			NB_vid.draw.drawHeight = NB_vid.tick.mouseY - NB_vid.draw.startDrawY - NB_vid.draw.videoCoverOffsetY();
 
-			if(drawWidth > 2 || drawHeight > 2){
-				showRect();
-				var widthStr = drawWidth.toString() + "px";
-				var heightStr = drawHeight.toString() + "px";
+			if(NB_vid.draw.drawWidth > 2 || NB_vid.draw.drawHeight > 2){
+				NB_vid.draw.showRect();
+				var widthStr = NB_vid.draw.drawWidth.toString() + "px";
+				var heightStr = NB_vid.draw.drawHeight.toString() + "px";
 				$("#drawnRect").css("width", widthStr);
 				$("#drawnRect").css("height", heightStr);
 			}
@@ -1091,8 +1088,8 @@ NB_vid = {};
 	function resetRectCSS(){
 		$("#drawnRect").css("width", "0px");
 		$("#drawnRect").css("height", "0px");
-		drawWidth = 0;
-		drawHeight = 0;
+		NB_vid.draw.drawWidth = 0;
+		NB_vid.draw.drawHeight = 0;
 	}
 
 	//changes the rect css given the necessary information
@@ -1119,7 +1116,7 @@ NB_vid = {};
 	//hide the drawn rect
 	function hideDrawnRect(){
 		$("#drawnRect").hide();
-		resetRectCSS();
+		NB_vid.draw.resetRectCSS();
 	}
 
 	//returns the x offset of the objects containing the videoCover
@@ -1134,8 +1131,8 @@ NB_vid = {};
 
 	//This functions gets all the informatino from the rectangle that needs to be stored in the commentObj
 	function extractRectInfo(){
-		if (drawWidth > 0){
-			return {"posX": startDrawX, "posY":startDrawY,"width": drawWidth, "height": drawHeight};
+		if (NB_vid.draw.drawWidth > 0){
+			return {"posX": NB_vid.draw.startDrawX, "posY":NB_vid.draw.startDrawY,"width": NB_vid.draw.drawWidth, "height": NB_vid.draw.drawHeight};
 		}else{
 			return "None";
 		}
@@ -1155,8 +1152,8 @@ NB_vid = {};
 	//calculate the tick width given the starting and end time associated with the comment
 	function calculateTickWidth(startTime, endTime){
 		if (endTime != "None"){
-			var leftLoc = calculateTickLoc(startTime);
-			var rightLoc = calculateTickLoc(endTime);
+			var leftLoc = NB_vid.tick.calculateTickLoc(startTime);
+			var rightLoc = NB_vid.tick.calculateTickLoc(endTime);
 			var width = rightLoc - leftLoc;
 			return width;
 		}else{
@@ -1167,7 +1164,7 @@ NB_vid = {};
 	//given the tick location and ID, it creates the string of HTML to create the tick
 	function tickHTML(xLoc, width, ID){
 		var style = "'left:" + xLoc + "px; width:"+width + "px'";
-		var html = "<div class = 'tickmark' id = 'tickmark"+ID + "' style="+style+" onclick = tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
+		var html = "<div class = 'tickmark' id = 'tickmark"+ID + "' style="+style+" onclick = NB_vid.tick.tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
 		return html;
 	}
 
@@ -1187,29 +1184,25 @@ NB_vid = {};
 		$(".tickmark_holder").html("<div id = 'zoomTick'><div class = 'rightTooltipDiv' style = 'float: right'></div></div>"); 
 		var xLoc, ID, width, html;
 		for(var num = 0; num < NB_vid.commentObj.length; num++){
-			xLoc = calculateTickLoc(NB_vid.commentObj[num].timeSec);
+			xLoc = NB_vid.tick.calculateTickLoc(NB_vid.commentObj[num].timeSec);
 			ID = NB_vid.commentObj[num].ID;
-			width =calculateTickWidth(NB_vid.commentObj[num].timeSec, NB_vid.commentObj[num].timeEndSec);
-			html = tickHTML(xLoc, width, ID);
+			width =NB_vid.tick.calculateTickWidth(NB_vid.commentObj[num].timeSec, NB_vid.commentObj[num].timeEndSec);
+			html = NB_vid.tick.tickHTML(xLoc, width, ID);
 			$(".tickmark_holder").append(html);
-			createTickPopover(ID);
-			addTickHover(ID);
+			NB_vid.tick.createTickPopover(ID);
+			NB_vid.tick.addTickHover(ID);
 			
 		}
 	}
-
-	//Don't touch or change this variables
-	var currentHighlightedTick = "none";
-	var currentID = "none";
 
 	//highlights a tickmark if the mouse is hovering over a comment or if a comment is selected (via keyboard controls)
 	//issue: can only call highlightTickControl() one at a time for hover and focus
 	//			--without the if statement, the last function called will be the only one that works (it un-does what the first one did)
 	function highlightTick(){
 		if($(".ui-state-hover").length>0){
-			highlightTickControl(".ui-state-hover");
+			NB_vid.tick.highlightTickControl(".ui-state-hover");
 		}else{
-			highlightTickControl(".ui-state-focus");
+			NB_vid.tick.highlightTickControl(".ui-state-focus");
 		}
 	}
 
@@ -1220,22 +1213,21 @@ NB_vid = {};
 	 		var index = $(className).attr("id").substr(30, $(className).attr("id").length);
 	 		//index gets the correct element index of the commentObj-- commentObj (array of objs) was rearranged to be in order
 	 		var tickID = NB_vid.commentObj[index].ID;
-	 		if(currentID != tickID){ //if the mouse is not hovering over same comment, continue
+	 		if(NB_vid.tick.currentID != tickID){ //if the mouse is not hovering over same comment, continue
 				var tickStr = "#tickmark" + tickID;
 				var tickmark = $(tickStr);
-				changeTickCSS(tickmark, "red", "No Change", "1");
-				//console.log(currentID);
-				if(currentHighlightedTick != "none"){
-					changeTickCSS(currentHighlightedTick, "red", "No Change", ".4");
+				NB_vid.tick.changeTickCSS(tickmark, "red", "No Change", "1");
+				if(NB_vid.tick.currentHighlightedTick != "none"){
+					NB_vid.tick.changeTickCSS(NB_vid.tick.currentHighlightedTick, "red", "No Change", ".4");
 				}
-				currentHighlightedTick = tickmark;
-				currentID = currentHighlightedTick.attr("ID").substr(8, currentHighlightedTick.attr("ID").length-1);
+				NB_vid.tick.currentHighlightedTick = tickmark;
+				NB_vid.tick.currentID = NB_vid.tick.currentHighlightedTick.attr("ID").substr(8, NB_vid.tick.currentHighlightedTick.attr("ID").length-1);
 			}
 		}else{
-			if(currentHighlightedTick != "none"){
-				changeTickCSS(currentHighlightedTick, "red", "No Change", ".4");
-				currentHighlightedTick = "none";
-				currentID = "none";
+			if(NB_vid.tick.currentHighlightedTick != "none"){
+				NB_vid.tick.changeTickCSS(NB_vid.tick.currentHighlightedTick, "red", "No Change", ".4");
+				NB_vid.tick.currentHighlightedTick = "none";
+				NB_vid.tick.currentID = "none";
 
 			}
 		}
@@ -1258,7 +1250,7 @@ NB_vid = {};
 	//give the tickID, call the tickHover/unTickHover function to make the associated comment in the accordion have the affect of having the mouse hover over it
 	function addTickHover(ID){
 		var identifier = "#tickmark" +ID;
-		$(identifier).hover(function(){tickHover(this)}, function(){unTickHover(this)});
+		$(identifier).hover(function(){NB_vid.tick.tickHover(this)}, function(){NB_vid.tick.unTickHover(this)});
 	}
 
 	//gives the associated comment in the accodrion the correct attributes to act as if the mouse is hovering over it
@@ -1301,20 +1293,19 @@ NB_vid = {};
 	 *	8. jQuery(document).ready()
 	 */
 
-	var mouseX, mouseY;
 	function mouseLoc(){
 		$(document).mousemove(function(e){
 			$('#status').html(e.pageX +', '+ e.pageY);
-			mouseX = e.pageX;
-			mouseY = e.pageY;
+			NB_vid.tick.mouseX = e.pageX;
+			NB_vid.tick.mouseY = e.pageY;
 			NB_vid.drag.dragWidthCalc(e);
-			drawAreaCalc();
-			zoomRecalc(e);
+			NB_vid.draw.drawAreaCalc();
+			NB_vid.zoom.zoomRecalc(e);
 		}); 
 	}
 
 	$(function(){ 
-		mouseLoc();
+		NB_vid.tick.mouseLoc();
 	 	NB_vid.progressbar.updateProgressbarClick();
 	 	NB_vid.comment.setup_commentDisplay();
 		NB_vid.comment.isHoveringOverComments();
@@ -1322,10 +1313,10 @@ NB_vid = {};
 		NB_vid.comment.setupTextboxFocus();
 		NB_vid.drag.time_updateTickRange();
 		NB_vid.drag.timeEnd_updateTickRange();
-		drawRectOn();
-		zoomDrag(); 
+		NB_vid.draw.drawRectOn();
+		NB_vid.zoom.zoomDrag(); 
 		NB_vid.drag.dragRangeOn();
-		zoomRangeOn(); 
+		NB_vid.zoom.zoomRangeOn(); 
 
 
 	});
@@ -1460,8 +1451,8 @@ NB_vid = {};
 		},
 		"draw": {
 				"showRect":showRect,
-				"startDrawX": 0,
-				"startDrawY": 0,
+				"startDrawX": 0, //relative to the video cover
+				"startDrawY": 0, //relative to the video cover
 				"drawWidth": 0,
 				"drawHeight": 0,
 				"draw_mouseup": true,
@@ -1489,7 +1480,6 @@ NB_vid = {};
 				"tickHover":tickHover,
 				"unTickHover":unTickHover,
 				"tickClick":tickClick,
-				"createTickPopover":createTickPopover
 		},
 		"jQueryReady": {
 				"mouseX": mouseX,
