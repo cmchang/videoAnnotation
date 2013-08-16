@@ -1,19 +1,21 @@
 /*
  * Table of Contents - Organized by astrixed comment sections
  *		1. Youtube Video-Related Code
- *		2. Progressbar-related Code
- *		3. Commenting-related Code (includes accordion)
- *		4. Drag Range-related Code
- *		5. Zoom on ticks-related Code
- *		6. Draw Rectangle-related Code
- *		7. Tick-related code
- *		8. Progressbar hover tooltip-related Code
- *		9. jQuery(document).ready() 
+ *		2. Username Storage-Related Code
+ *		3. Progressbar-related Code
+ *		4. Commenting-related Code (includes accordion)
+ *		5. Drag Range-related Code
+ *		6. Zoom on ticks-related Code
+ *		7. Draw Rectangle-related Code
+ *		8. Tick-related code
+ *		9. Progressbar hover tooltip-related Code
+ *		10. jQuery(document).ready() 
  *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), isHoveringOverComments()
- *		10. Keyboard Shortcuts
- *		11. Alert-related code
+ *		11. Keyboard Shortcuts
+ *		12. Alert-related code
  */
 
+Parse.initialize("viexWXBNypmbAgN4HTsr000EkCzJ4t6mGle8wFoE", "bKkVou2qscsLmYvKsYiusjxAA0oJBUBE7vRXkJZP");
 /*
  * 1. Youtube Video-Related Code
  */
@@ -95,7 +97,7 @@ function calculateTime(givenTime){
 }
 
 // Given the time as a string, return the time as a number of seconds
-function calcualateTime_stringToNum(timeStr){
+function calculateTime_stringToNum(timeStr){
 	var seconds = parseInt(timeStr.substring(timeStr.length-2, timeStr.length)); //gets seconds
 	timeStr = timeStr.substring(0, timeStr.length-3); //gets rid of the seconds portion of string
 	var minutes, hours = 0;
@@ -206,6 +208,7 @@ function onYouTubePlayerReady(playerId) {
 	}
 	setInterval(updatePlayerInfo, 250);
 	updatePlayerInfo();		
+	deleteHoverCheck();
 	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
 	ytplayer.addEventListener("onError", "onPlayerError");
 	//Load an initial video into the player
@@ -232,9 +235,63 @@ google.setOnLoadCallback(_run);
 function goToTime(seconds){
 	ytplayer.seekTo(seconds,true);
 }
+/*
+ * 2. Username Storage-related Code
+ */
+function submitUsername(){
+	yourUserName = $(".usernameInput").val();
+	localStorage.yourUserName = yourUserName;
+	$('.logBtn').html(yourUserName);
+	$('.logBtn').attr("href", "#logoutModal");
+	$('#loginModal').modal('hide')
+	console.log(localStorage);
+}
+function submitCommentUsername(){
+	yourUserName = $(".usernameCommentInput").val();
+	localStorage.yourUserName = yourUserName;
+	$('.logBtn').html(yourUserName);
+	$('.logBtn').attr("href", "#logoutModal");
+	$('#loginCommentModal').modal('hide')
+	console.log(localStorage);
+}
+
+function logout(){
+	delete localStorage["yourUserName"];
+	location.reload();
+}
+
+function addLoginButton(){
+	var loginBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#loginModal" data-toggle = "modal">Log In</a></li>');
+	var logoutBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#logoutModal" data-toggle = "modal">' + yourUserName + '</a></li>')
+	if("yourUserName" in localStorage){
+		$(".nav").append(logoutBtn);
+	}else{
+		$(".nav").append(loginBtn);
+	}
+	$('.logBtn').on("mouseenter", function(){
+		if($('.logBtn').html() == yourUserName){
+			$('.logBtn').html('Log Out');
+		}
+	});
+	$('.logBtn').on("mouseleave", function(){
+		if($('.logBtn').html() == 'Log Out'){
+			$('.logBtn').html(yourUserName);
+		}
+	})
+	$(".usernameInput").keyup(function(event){
+	    if(event.keyCode == 13){
+	        submitUsername();
+	    }
+	});
+	$(".usernameCommentInput").keyup(function(event){
+	    if(event.keyCode == 13){
+	    	submitCommentUsername();    
+	    }
+	});
+}
 
 /*
- * 2. Progressbar-related Code  
+ * 3. Progressbar-related Code  
  */
 
 //update the time of the ytplayer given the mouse x-location
@@ -267,7 +324,7 @@ function progressbarOffsetX(){
 }
 
 /*
- * 3. Commenting-related Code
+ * 4. Commenting-related Code
  */
 
 // the array of objects the stores all the information for every comment
@@ -281,8 +338,56 @@ function progressbarOffsetX(){
 // type: the selected type - either Comment or Question
 // userName: the ID of the student or person commenting
 // viewer: who the student selected can view the comment (currently no functionality with it)
-yourUserName = "You"
-var commentObj = [
+yourUserName = localStorage.yourUserName;
+/*var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
+var parseCommentObj = new ParseCommentObj();*/
+var commentObj = [];
+var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
+var query = new Parse.Query(ParseCommentObj);
+query.find({
+	success: function(results){
+		console.log("Successfully retrieved " + results.length + " results")
+		for (var i = 0; i < results.length; i++){
+			var object = results[i];
+			var parseDrawArr = object.get('drawArr');
+			var parseID = object.get('ID');
+			var parseText = object.get('text');
+			var parseTimeEndSec = object.get('timeEndSec');
+			var parseTimeEndStr = object.get('timeEndStr');
+			var parseTimeSec = object.get('timeSec');
+			var parseTimeStr = object.get('timeStr');
+			var parseType = object.get('type');
+			var parseUpvotes= object.get('upvotes');
+			var parseUpvotesUserArray = object.get('upvotesUserArray');
+			var parseUserName = object.get('userName');
+			var parseViewer = object.get('viewer');
+
+			if(parseTimeEndSec == -1){
+				var parseTimeEndSec = "None";
+			}
+
+			commentObj.push({"drawArr": parseDrawArr, 
+				"ID": parseID, 
+				"text": parseText, 
+				"timeEndSec": parseTimeEndSec, 
+				"timeEndStr": parseTimeEndStr, 
+				"timeSec": parseTimeSec, 
+				"timeStr": parseTimeStr, 
+				"type": parseType, 
+				"upvotes": parseUpvotes, 
+				"upvotesUserArray": parseUpvotesUserArray, 
+				"userName": parseUserName, 
+				"viewer": parseViewer})
+		}
+		console.log(commentObj);
+		showNewComment();
+		upvoteClick();
+	}
+})
+
+
+
+/*var commentObj = [
 					{"drawArr": "None",
 					"ID": 0,
 					"text": "This is my first comment! This is frame is interesting since ...",
@@ -464,7 +569,7 @@ var commentObj = [
 					"userName": "User15",
 					"viewer" : "Just Me"}
 ];
-
+*/
 //this function calls the necessary functions to display all the comments:
 //it calls SortsCommentObj, addAllCommentHTML, and setupAccordion
 function setup_commentDisplay(){
@@ -512,9 +617,11 @@ function extractCommentHTML(num){
 	if(text.length > 30){ //if the text is too long, only show a portion of it
 		headerHTML += "...";
 	}
-	headerHTML +="</text>";
+	var deleteCommentBtn = '<button onclick="showDeleteModal(' + commentObj[num].ID + ')" type="button" id = "deleteComment' + commentObj[num].ID + '" class = "btn btn-danger deleteComment" style="float: right"><b>×</b></button>';
+	headerHTML += deleteCommentBtn + "</text>";
 
 	var contentHTML = "<div>";
+	var userNameHTML = "<span id = userNameHTML><b>" + commentObj[num].userName + "</b></span>&nbsp&nbsp&nbsp"
 	var timeHTML = "<span id = 'commentTimeShow' onclick = 'goToComment(" + num + ")' >Time: " +timeStr +"  </span>";
 	if (commentObj[num].upvotesUserArray.indexOf(yourUserName) == -1){
 		console.log("could not find you user name for this comment")
@@ -524,11 +631,87 @@ function extractCommentHTML(num){
 	}
 	
 	var textHTML = "<p>"+ text +"</p>";
-	contentHTML += timeHTML + upvoteHTML + textHTML + "</div>";
+	contentHTML += userNameHTML + timeHTML + upvoteHTML + textHTML + "</div>";
 
 	var html = headerHTML + contentHTML;
 
 	return html;
+}
+function showDeleteModal(commentID){
+	$("#deleteModal").modal("show");
+	$("#deleteModal .btn-danger").attr("id", commentID);
+
+}
+function deleteComment(commentID){
+	// Client Side
+	for (var i = 0; i < commentObj.length; i++){
+		if (commentObj[i].ID == commentID){
+			commentObj.splice(i, 1);
+			// location.reload();
+			console.log(commentObj);
+			console.log("Your changes will appear when you refresh the page")
+		}
+	}
+
+	// Server Side
+	var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
+	var query = new Parse.Query(ParseCommentObj);
+	query.equalTo("ID", parseInt(commentID));
+	query.find({
+	  success: function(results) {
+	    console.log("Successfully retrieved " + results.length + " comments");
+	    // Do something with the returned Parse.Object values
+	    for (var i = 0; i < results.length; i++) { 
+	      var object = results[i];
+	      object.destroy({
+	      	success: function(object){
+	      		console.log("successfully removed your comment")
+	      		$(".commentAlert").show();
+	      		$(".commentAlert").animate({"opacity": "1"}, 250, function(){
+	      			$(".commentAlert").animate({"opacity": "1"}, 5000, function(){
+		      			$(".commentAlert").animate({"opacity": "0"}, 250, function(){
+		      				$(".commentAlert").hide();
+		      				$(".commentAlert").css("opacity", "1");
+		      			})
+		      		})
+	      		})
+	      		
+	      	},
+	      	error: function(object, error){
+	      		console.log("We were unable to remove your object: " + error);
+	      	}
+	      })
+	    }
+	  },
+	  error: function(error) {
+	    alert("Error: " + error.code + " " + error.message);
+	  }
+	});
+}
+
+function deleteHoverCheck(){
+	$(".deleteComment").hide();
+	$(".commentAlert").hide();
+	$(".commentAlert").css("background-color", "rgba(252, 248, 227, 0.95)");
+	$(".ui-accordion-header").mouseenter(function(){
+		var deleteNum = $(this).children(".deleteComment").attr("id");
+		var commentNum = deleteNum.slice(13, deleteNum.length);
+		for (var i = 0; i < commentObj.length; i++){
+			if (commentObj[i].ID == parseInt(commentNum)){
+				if (commentObj[i].userName == yourUserName){
+					$("#deleteComment" + commentNum).css("opacity", "1");
+					$("#deleteComment" + commentNum).show();
+				}
+				
+			}
+		}
+		
+	});
+	$(".ui-accordion-header").mouseleave(function(){
+		var deleteNum = $(this).children(".deleteComment").attr("id");
+		var commentNum = deleteNum.slice(13, deleteNum.length);
+		$("#deleteComment" + commentNum).hide();
+	})
 }
 
 //goes in a for loop to add all of the objects to the accordion section of the html
@@ -539,6 +722,7 @@ function addAllCommentHTML(){
 		html += htmlSection;
 	}
 	$("#accordion").append(html);
+	
 	// upvoteClick();
 }
 
@@ -599,9 +783,12 @@ function normalSizeCommentHolder(){
 
 //Called when the comment button is pushed
 function comment_btn(){
-	pauseVideo();
-	show_addNewComment();
-	
+	if ("yourUserName" in localStorage){
+		pauseVideo();
+		show_addNewComment();
+	}else{
+		$('#loginCommentModal').modal({'show': true});
+	}
 }
 
 //Called when the submit button is pushed
@@ -614,17 +801,43 @@ function submitNewComment(){
 	var timeEndStr = $('#comment_timeEnd').val();
 	var timeEnd;
 	if(timeEndStr == "" || timeStr == timeEndStr){
+		parseTimeEnd = -1;
 		timeEnd = "None";
 		timeEndStr = "None";
 	}else{
-		timeEnd = calcualateTime_stringToNum(timeEndStr);
+		timeEnd = calculateTime_stringToNum(timeEndStr);
+		parseTimeEnd = calculateTime_stringToNum(timeEndStr);
 	}
+	var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
+	var parseCommentObj = new ParseCommentObj();
+	parseCommentObj.save({"drawArr": extractRectInfo(),
+					"ID": commentObj.length,
+					"text" : text,
+					"timeEndSec": parseTimeEnd,
+					"timeEndStr": timeEndStr,
+					"timeSec" : calculateTime_stringToNum(timeStr),
+					"timeStr" : timeStr,
+					"type" : type,
+					"upvotes": 0,
+					"upvotesUserArray": [],
+					"userName": yourUserName,
+					"viewer" : viewer}, {
+  		success: function(parseCommentObj) {
+  		  // Execute any logic that should take place after the object is saved.
+  		  console.log('New object created with objectId: ' + parseCommentObj.id);
+  		},
+  error: function(parseCommentObj, error) {
+    // Execute any logic that should take place if the save fails.
+    // error is a Parse.Error with an error code and description.
+    console.log('Failed to create new object, with error code: ' + error.description);
+  }
+	});
 	commentObj.push({ "drawArr": extractRectInfo(),
 						"ID": commentObj.length,
 						"text" : text,
 						"timeEndSec": timeEnd,
 						"timeEndStr": timeEndStr,
-						"timeSec" : calcualateTime_stringToNum(timeStr),
+						"timeSec" : calculateTime_stringToNum(timeStr),
 						"timeStr" : timeStr,
 						"type" : type,
 						"upvotes": 0,
@@ -633,11 +846,13 @@ function submitNewComment(){
 						"viewer" : viewer});
 	$(".newCommentTextbox").val(""); //empty textbox
 	//order matters for the next few functions!
+	console.log(commentObj);
 	addAllTicks();
 	hide_addNewComment();
 	goToComment(commentObj.length-1);
 	showNewComment();
 	upvoteClick();
+	deleteHoverCheck();
 }
 
 //gets rid of accordion and gets rid of the html
@@ -761,6 +976,21 @@ function upvoteClick(){
 			$("#comment" + commentNum + "upvotes").html(parseInt($("#comment" + commentNum + "upvotes").html()) - 1);
 			for (var i = 0; i < commentObj.length; i++){
 				if(commentObj[i].ID == commentNum){
+					var query = new Parse.Query(ParseCommentObj);
+					query.equalTo("ID", commentNum);
+					query.find({
+						success: function(results){
+							for(var i = 0; i < results.length; i++){
+								results[i].increment("upvotes", -1); 
+								console.log("Reduced upvotes by 1"); 
+								var parseUsernameArray = results[i].get("upvotesUserArray");
+								var index = parseUsernameArray.indexOf(yourUserName);
+								parseUsernameArray.splice(index, 1);
+								results[i].set("upvotesUserArray", parseUsernameArray);
+								results[i].save();
+							}
+						}
+					})
 					commentObj[i].upvotes -= 1;
 					var array = commentObj[i].upvotesUserArray
 					var index = array.indexOf(yourUserName);
@@ -773,6 +1003,19 @@ function upvoteClick(){
 			$("#comment" + commentNum + "upvotes").html(parseInt($("#comment" + commentNum + "upvotes").html()) + 1);
 			for (var i = 0; i < commentObj.length; i++){
 				if(commentObj[i].ID == commentNum){
+					var query = new Parse.Query(ParseCommentObj);
+					query.equalTo("ID", commentNum);
+					query.find({
+						success: function(results){
+							for(var i = 0; i < results.length; i++){
+								results[i].increment("upvotes"); 
+								console.log("Increased upvotes by 1");
+								var parseUsernameArray = results[i].get("upvotesUserArray");
+								parseUsernameArray.push(yourUserName); 
+								results[i].save();
+							}
+						}
+					})
 					commentObj[i].upvotes += 1;
 					commentObj[i].upvotesUserArray.push(yourUserName);
 					console.log(commentObj[i].upvotesUserArray)
@@ -786,7 +1029,7 @@ function upvoteClick(){
 }
 
 /*
- *	4. Drag Range-related code
+ *	5. Drag Range-related code
  */
 
 //given "this" (i.e. the progressbar), the function will calculate the mouse position and then convert it to seconds relative to the progress bar
@@ -868,14 +1111,14 @@ function dragRangeOn(){
 //if the text is changed in the time input box, update the tick to the corresponding position
 function time_updateTickRange(){
 	$("#comment_time").change(function(){
-		var timeStart = calcualateTime_stringToNum($("#comment_time").val());
+		var timeStart = calculateTime_stringToNum($("#comment_time").val());
 		startDragX = calculateTickLoc(timeStart);
 		if($("#comment_time").val() != ""){
 			$("#rangeTick").css("left", startDragX);
 			goToTime(timeStart);
 		}
 		if($("#comment_timeEnd").val() != ""){
-			var timeEnd = calcualateTime_stringToNum($("#comment_timeEnd").val());
+			var timeEnd = calculateTime_stringToNum($("#comment_timeEnd").val());
 			var endDragX = calculateTickLoc(timeEnd);
 			dragWidth = endDragX - startDragX;
 			var widthStr = dragWidth.toString() + "px";
@@ -889,8 +1132,8 @@ function time_updateTickRange(){
 function timeEnd_updateTickRange(){
 	$("#comment_timeEnd").change(function(){
 		if($("#comment_timeEnd").val() != ""){
-			var timeStart = calcualateTime_stringToNum($("#comment_time").val());
-			var timeEnd = calcualateTime_stringToNum($("#comment_timeEnd").val());
+			var timeStart = calculateTime_stringToNum($("#comment_time").val());
+			var timeEnd = calculateTime_stringToNum($("#comment_timeEnd").val());
 			var timeDiff = timeEnd - timeStart;
 			var ratio = timeDiff/ytplayer.getDuration();
 			dragWidth = ratio*$("#progressbar").width();
@@ -1004,7 +1247,7 @@ function hideToolTipDelay(Parent){
 }
 
 /*
- *	5. Zoom on ticks-related Code
+ *	6. Zoom on ticks-related Code
  */
 
  var zoomDragging = false;
@@ -1219,7 +1462,7 @@ function zoomResize(e){
 }*/
 
 /*
- *	6. Draw Rectangle-related Code
+ *	7. Draw Rectangle-related Code
  */
 
 //Pause the video, make the rectangle visible
@@ -1330,7 +1573,7 @@ function extractRectInfo(){
 	}
 }
 /*
- *	7. Tick-related code
+ *	8. Tick-related code
  */
 
 //calculate the tick location given the time in seconds where the associated comment is given
@@ -1487,7 +1730,7 @@ function createTickPopover(ID){
 	}
 }
 /*
- * 	9. Progress bar tooltip hover
+ * 	10. Progress bar tooltip hover
  */
 var progressbarHovering = false;
  function progressBarHover(){
@@ -1518,7 +1761,7 @@ var progressbarHovering = false;
 
 
 /*
- *	8. jQuery(document).ready()
+ *	10. jQuery(document).ready()
  */
 
 var mouseX, mouseY;
@@ -1534,6 +1777,7 @@ $(function(){
 		
 
 	}); 
+	addLoginButton();
  	updateProgressbarClick();
  	setup_commentDisplay();
 	isHoveringOverComments();
@@ -1549,6 +1793,7 @@ $(function(){
 	zoomRangeOn(); //Dsan
 	// zoomResize();
 	progressBarHover();
+	
 
 
 
@@ -1556,7 +1801,7 @@ $(function(){
 
 
 /*
- *	9. Keyboard Shortcuts
+ *	11. Keyboard Shortcuts
  */
 var commentOrCancel = true;  // true - next click is comment, false - next click cancels
 $(window).keyup(function(e) {
@@ -1588,7 +1833,7 @@ $(window).keyup(function(e) {
 });
 
 /*
- *	10. Alert-related code
+ *	12. Alert-related code
  */
 function closeCommentAlert(){
 	alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");

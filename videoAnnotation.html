@@ -9,6 +9,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<title>Video Annotation</title>
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<script src="http://www.parsecdn.com/js/parse-1.2.9.min.js"></script>
 	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 	<script src="http://www.google.com/jsapi" type="text/javascript"></script>
@@ -17,9 +18,10 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 	</script>    
 
 	<script src = "videoAnnotation.js" type="text/javascript"></script>
-	<link rel="stylesheet" type="text/css" href="videoAnnotation.css">
+	
 	<script src = "js/bootstrap.js"></script>
 	<link rel = "stylesheet" href = "css/bootstrap.css"></link>
+	<link rel="stylesheet" type="text/css" href="videoAnnotation.css">
 
 </head>
 <body>
@@ -30,9 +32,14 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 				<li class = "nav-collapse collapse divider-vertical">
 					<a class = "navbar_btn" href="#rulesModal" data-toggle = "modal" >Instructions</a>
 				</li>
+				<!-- the li below should be defined in JS, and should depend on whether or not the user has logged in -->
+				<!-- <li class = "nav-collapse collapse divider-vertical">
+					<a class = "navbar_btn" href="#loginModal" data-toggle = "modal">Log In</a>
+				</li> -->
 			</ul>
 		</div>
 	</div>
+
 
 	<div id="rulesModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-header">
@@ -73,6 +80,63 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		</div>
 	</div>
 
+	<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Delete Comment</h3>	
+		</div>
+		<div class="modal-body">
+			<h4>Are you sure you'd like to delete your comment?</h4>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" onclick="deleteComment($(this).attr('id'))">Delete</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		</div>
+	</div>
+
+	<div id="loginModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Log In</h3>	
+			<p>Please input the username that you'd like to use for commenting below:</p>
+		</div>
+		<div class="modal-body">
+			Username: <input class = "usernameInput"></input>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="submitUsername()">Submit</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
+	<div id="loginCommentModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Log In</h3>	
+			<p>In order to comment, you need to log in first:</p>
+		</div>
+		<div class="modal-body">
+			Username: <input class = "usernameCommentInput"></input>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="submitCommentUsername()">Submit</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
+	<div id="logoutModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Log Out</h3>	
+		</div>
+		<div class="modal-body">
+			<p>Are you sure you want to log out?</p>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" onclick="logout()">Log out</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
 
 	<div class = "videoView">
 		<div class = "videoContainer">
@@ -114,9 +178,14 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		</div>
 	</div>
 
+	<div class="alert commentAlert">
+	  <button type="button" class="close" data-dismiss="alert">&times;</button>
+	  Your changes will appear when you refresh the page
+	</div>
+
 	<div class = "commentsView">
 		<div class = "commentsView_menu">
-			<button class = "btn btn-small" onclick="comment_btn()">Comment</button>
+			<button class = "commentBtn btn btn-small" onclick="comment_btn()">Comment</button>
 			<div class="btn-group">
 				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
 					Filter Comments

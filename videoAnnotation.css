@@ -126,6 +126,7 @@
 }
 
 #showTime{
+	margin-top: -5px;
 	text-align: right;	
 	height: 100%;
 }
@@ -291,3 +292,19 @@
 /*.tooltip{
 	z-index: 1;
 }*/
+.deleteComment{
+	opacity: 0;
+	padding: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-top: -3px;
+	/*background-image: linear-gradient(to bottom, #FA3631, #BD0D04);*/
+}
+.commentAlert{
+	opacity: 0;
+	/*background-color: rgba(252, 248, 227, 0.95);*/
+	margin-top: 372px;
+	margin-left: 5px;
+	z-index: 2;
+	position: absolute;
+}
