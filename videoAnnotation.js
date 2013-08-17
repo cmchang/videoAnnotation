@@ -3,16 +3,18 @@ NB_vid = {};
 /*
  * Table of Contents - Organized by astrixed comment sections
  *		1. Youtube Video-Related Code
- *		2. Progressbar-related Code
- *		3. Commenting-related Code (includes accordion)
- *		4. Drag Range-related Code
- *		5. Zoom on ticks-related Code
- *		6. Draw Rectangle-related Code
- *		7. Tick-related code
- *		8. jQuery(document).ready() 
+ *		2. Username Storage-Related Code
+ *		3. Progressbar-related Code
+ *		4. Commenting-related Code (includes accordion)
+ *		5. Drag Range-related Code
+ *		6. Zoom on ticks-related Code
+ *		7. Draw Rectangle-related Code
+ *		8. Tick-related code
+ *		9. Progressbar hover tooltip-related Code
+ *		10. jQuery(document).ready() 
  *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), isHoveringOverComments()
- *		9. Keyboard Shortcuts
- *		10. Alert-related code
+ *		11. Keyboard Shortcuts
+ *		12. Alert-related code
  */
 
 (function(){
@@ -199,8 +201,62 @@ NB_vid = {};
 	}
 
 	/*
-	 * 2. Progressbar-related Code  
+	 * 2. Username Storage-related Code
 	 */
+	function submitUsername(){
+		NB_vid.user.yourUserName = $(".usernameInput").val();
+		localStorage.yourUserName = NB_vid.user.yourUserName;
+		
+		$('.logBtn').html(NB_vid.user.yourUserName);
+		$('.logBtn').attr("href", "#logoutModal");
+		$('#loginModal').modal('hide')
+	}
+	function submitCommentUsername(){
+		NB_vid.user.yourUserName = $(".usernameCommentInput").val();
+		localStorage.yourUserName = NB_vid.user.yourUserName;
+		$('.logBtn').html(NB_vid.user.yourUserName);
+		$('.logBtn').attr("href", "#logoutModal");
+		$('#loginCommentModal').modal('hide')
+	}
+
+	function logout(){
+		delete localStorage["yourUserName"];
+		location.reload();
+	}
+
+	function addLoginButton(){
+		var loginBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#loginModal" data-toggle = "modal">Log In</a></li>');
+		var logoutBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#logoutModal" data-toggle = "modal">' + NB_vid.user.yourUserName + '</a></li>')
+		if("yourUserName" in localStorage){
+			$(".nav").append(logoutBtn);
+		}else{
+			$(".nav").append(loginBtn);
+		}
+		$('.logBtn').on("mouseenter", function(){
+			if($('.logBtn').html() == NB_vid.user.yourUserName){
+				$('.logBtn').html('Log Out');
+			}
+		});
+		$('.logBtn').on("mouseleave", function(){
+			if($('.logBtn').html() == 'Log Out'){
+				$('.logBtn').html(NB_vid.user.yourUserName);
+			}
+		})
+		$(".usernameInput").keyup(function(event){
+			if(event.keyCode == 13){ //enter button
+				NB_vid.user.submitUsername();
+			}
+		});
+		$(".usernameCommentInput").keyup(function(event){
+			if(event.keyCode == 13){ //enter button
+				NB_vid.user.submitCommentUsername();    
+			}
+		});
+	}
+
+/*
+ * 3. Progressbar-related Code  
+ */
 
 	// This function is called every 500 milliseconds
 	// It gets the current time from the youtube player and adjusts the progressbar_filler to match to the corresponding time
@@ -239,7 +295,7 @@ NB_vid = {};
 	}
 
 	/*
-	 * 3. Commenting-related Code
+	 * 4. Commenting-related Code
 	 */
 
 	// the array of objects the stores all the information for every comment
@@ -251,160 +307,216 @@ NB_vid = {};
 	// timeStr: the time as a string (in minute:second format) at which the comment refers to
 	// text: the body text of the comment
 	// type: the selected type - either Comment or Question
+	// upvotes: Contains the number of upvotes currently associated with a comment
+	// upvotesUserArray: Contains the usernames of all the users who upvoted this comment
 	// userName: the ID of the student or person commenting
 	// viewer: who the student selected can view the comment (currently no functionality with it)
-	var commentObj = [
-						{"drawArr": "None",
-						"ID": 0,
-						"text": "This is my first comment! This is frame is interesting since ...",
-						"timeEndSec": 164,
-						"timeEndStr": "2:44",
-						"timeSec" : 158, 
-						"timeStr" : "2:38",
-						"type" : "Comment",
-						"userName": "User1",
-						"viewer" : "Class",},
-						{"drawArr": "None",
-						"ID": 1,
-						"text": "Comment number 2!",
-						"timeEndSec": 42,
-						"timeEndStr": "2:48",
-						"timeSec" : 38, 
-						"timeStr" : "0:38",
-						"type" : "Comment",
-						"userName": "User2",
-						"viewer" : "Class",},
-						{"drawArr": {posX: 78.00284099578857, posY: 157, width: 522, height: 47},
-						"ID": 2,
-						"text": "Question number 1!",
-						"timeEndSec": "None",
-						"timeEndStr": "None",
-						"timeSec" : 8, 
-						"timeStr" : "0:08",
-						"type" : "Question",
-						"userName": "User3",
-						"viewer" : "Class",},
-						{"drawArr": "None",
-						"ID": 3,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": 192,
-						"timeEndStr": "3:12",
-						"timeSec" : 191, 
-						"timeStr" : "3:11",
-						"type" : "Question",
-						"userName": "User4",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 4,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": 218,
-						"timeEndStr": "3:38",
-						"timeSec" : 214, 
-						"timeStr" : "3:34",
-						"type" : "Question",
-						"userName": "User5",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 5,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": "None",
-						"timeEndStr": "None",
-						"timeSec" : 2, 
-						"timeStr" : "0:02",
-						"type" : "Comment",
-						"userName": "User6",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 6,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": 15,
-						"timeEndStr": "0:20",
-						"timeSec" : 5, 
-						"timeStr" : "0:05",
-						"type" : "Question",
-						"userName": "User7",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 7,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": "None",
-						"timeEndStr": "None",
-						"timeSec" : 25, 
-						"timeStr" : "0:25",
-						"type" : "Comment",
-						"userName": "User8",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 8,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": "None",
-						"timeEndStr": "None",
-						"timeSec" : 30, 
-						"timeStr" : "0:30",
-						"type" : "Comment",
-						"userName": "User9",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 9,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": "None",
-						"timeEndStr": "None",
-						"timeSec" : 35, 
-						"timeStr" : "0:35",
-						"type" : "Comment",
-						"userName": "User10",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 10,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": "None",
-						"timeEndStr": "None",
-						"timeSec" : 40, 
-						"timeStr" : "0:40",
-						"type" : "Comment",
-						"userName": "User11",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 11,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": "None",
-						"timeEndStr": "None",
-						"timeSec" : 45, 
-						"timeStr" : "0:45",
-						"type" : "Comment",
-						"userName": "User12",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 12,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": "None",
-						"timeEndStr": "None",
-						"timeSec" : 50, 
-						"timeStr" : "0:50",
-						"type" : "Comment",
-						"userName": "User13",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 13,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": "None",
-						"timeEndStr": "None",
-						"timeSec" :55, 
-						"timeStr" : "0:55",
-						"type" : "Comment",
-						"userName": "User14",
-						"viewer" : "Just Me"},
-						{"drawArr": "None",
-						"ID": 14,
-						"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
-						"timeEndSec": "None",
-						"timeEndStr": "None",
-						"timeSec" : 60, 
-						"timeStr" : "1:00",
-						"type" : "Comment",
-						"userName": "User15",
-						"viewer" : "Just Me"}
-	];
+	
+	/*var UsernameArray = Parse.Object.extend("UsernameArray");
+	usernameArray = new UsernameArray();*/
+	/*var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
+	var parseCommentObj = new ParseCommentObj();*/
+	var commentObj = [];
+
+	//
+	function parseInit(){
+		var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
+		var query = new Parse.Query(ParseCommentObj);
+		query.find({
+			success: function(results){
+				console.log("Successfully retrieved " + results.length + " results")
+				for (var i = 0; i < results.length; i++){
+					var object = results[i];
+					var parseDrawArr = object.get('drawArr');
+					var parseID = object.get('ID');
+					var parseText = object.get('text');
+					var parseTimeEndSec = object.get('timeEndSec');
+					var parseTimeEndStr = object.get('timeEndStr');
+					var parseTimeSec = object.get('timeSec');
+					var parseTimeStr = object.get('timeStr');
+					var parseType = object.get('type');
+					var parseUpvotes= object.get('upvotes');
+					var parseUpvotesUserArray = object.get('upvotesUserArray');
+					var parseUserName = object.get('userName');
+					var parseViewer = object.get('viewer');
+
+					if(parseTimeEndSec == -1){
+						var parseTimeEndSec = "None";
+					}
+
+					commentObj.push({"drawArr": parseDrawArr, 
+						"ID": parseID, 
+						"text": parseText, 
+						"timeEndSec": parseTimeEndSec, 
+						"timeEndStr": parseTimeEndStr, 
+						"timeSec": parseTimeSec, 
+						"timeStr": parseTimeStr, 
+						"type": parseType, 
+						"upvotes": parseUpvotes, 
+						"upvotesUserArray": parseUpvotesUserArray, 
+						"userName": parseUserName, 
+						"viewer": parseViewer})
+				}
+				console.log(commentObj);
+				showNewComment();
+				upvoteClick();
+			}
+		})	
+
+	}
+
+	// var commentObj = [
+	// 					{"drawArr": "None",
+	// 					"ID": 0,
+	// 					"text": "This is my first comment! This is frame is interesting since ...",
+	// 					"timeEndSec": 164,
+	// 					"timeEndStr": "2:44",
+	// 					"timeSec" : 158, 
+	// 					"timeStr" : "2:38",
+	// 					"type" : "Comment",
+	// 					"userName": "User1",
+	// 					"viewer" : "Class",},
+	// 					{"drawArr": "None",
+	// 					"ID": 1,
+	// 					"text": "Comment number 2!",
+	// 					"timeEndSec": 42,
+	// 					"timeEndStr": "2:48",
+	// 					"timeSec" : 38, 
+	// 					"timeStr" : "0:38",
+	// 					"type" : "Comment",
+	// 					"userName": "User2",
+	// 					"viewer" : "Class",},
+	// 					{"drawArr": {posX: 78.00284099578857, posY: 157, width: 522, height: 47},
+	// 					"ID": 2,
+	// 					"text": "Question number 1!",
+	// 					"timeEndSec": "None",
+	// 					"timeEndStr": "None",
+	// 					"timeSec" : 8, 
+	// 					"timeStr" : "0:08",
+	// 					"type" : "Question",
+	// 					"userName": "User3",
+	// 					"viewer" : "Class",},
+	// 					{"drawArr": "None",
+	// 					"ID": 3,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": 192,
+	// 					"timeEndStr": "3:12",
+	// 					"timeSec" : 191, 
+	// 					"timeStr" : "3:11",
+	// 					"type" : "Question",
+	// 					"userName": "User4",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 4,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": 218,
+	// 					"timeEndStr": "3:38",
+	// 					"timeSec" : 214, 
+	// 					"timeStr" : "3:34",
+	// 					"type" : "Question",
+	// 					"userName": "User5",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 5,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": "None",
+	// 					"timeEndStr": "None",
+	// 					"timeSec" : 2, 
+	// 					"timeStr" : "0:02",
+	// 					"type" : "Comment",
+	// 					"userName": "User6",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 6,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": 15,
+	// 					"timeEndStr": "0:20",
+	// 					"timeSec" : 5, 
+	// 					"timeStr" : "0:05",
+	// 					"type" : "Question",
+	// 					"userName": "User7",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 7,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": "None",
+	// 					"timeEndStr": "None",
+	// 					"timeSec" : 25, 
+	// 					"timeStr" : "0:25",
+	// 					"type" : "Comment",
+	// 					"userName": "User8",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 8,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": "None",
+	// 					"timeEndStr": "None",
+	// 					"timeSec" : 30, 
+	// 					"timeStr" : "0:30",
+	// 					"type" : "Comment",
+	// 					"userName": "User9",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 9,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": "None",
+	// 					"timeEndStr": "None",
+	// 					"timeSec" : 35, 
+	// 					"timeStr" : "0:35",
+	// 					"type" : "Comment",
+	// 					"userName": "User10",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 10,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": "None",
+	// 					"timeEndStr": "None",
+	// 					"timeSec" : 40, 
+	// 					"timeStr" : "0:40",
+	// 					"type" : "Comment",
+	// 					"userName": "User11",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 11,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": "None",
+	// 					"timeEndStr": "None",
+	// 					"timeSec" : 45, 
+	// 					"timeStr" : "0:45",
+	// 					"type" : "Comment",
+	// 					"userName": "User12",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 12,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": "None",
+	// 					"timeEndStr": "None",
+	// 					"timeSec" : 50, 
+	// 					"timeStr" : "0:50",
+	// 					"type" : "Comment",
+	// 					"userName": "User13",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 13,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": "None",
+	// 					"timeEndStr": "None",
+	// 					"timeSec" :55, 
+	// 					"timeStr" : "0:55",
+	// 					"type" : "Comment",
+	// 					"userName": "User14",
+	// 					"viewer" : "Just Me"},
+	// 					{"drawArr": "None",
+	// 					"ID": 14,
+	// 					"text": "Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque.",
+	// 					"timeEndSec": "None",
+	// 					"timeEndStr": "None",
+	// 					"timeSec" : 60, 
+	// 					"timeStr" : "1:00",
+	// 					"type" : "Comment",
+	// 					"userName": "User15",
+	// 					"viewer" : "Just Me"}
+	// ];
 
 	//this function calls the necessary functions to display all the comments:
 	//it calls SortsCommentObj, addAllCommentHTML, and setupAccordion
@@ -453,16 +565,101 @@ NB_vid = {};
 		if(text.length > 30){ //if the text is too long, only show a portion of it
 			headerHTML += "...";
 		}
-		headerHTML +="</text>";
+		var deleteCommentBtn = '<button onclick="NB_vid.comment.showDeleteModal(' + NB_vid.commentObj[num].ID + ')" type="button" id = "deleteComment' + NB_vid.commentObj[num].ID + '" class = "btn btn-danger deleteComment" style="float: right"><b>×</b></button>';
+		headerHTML += deleteCommentBtn + "</text>";
 
 		var contentHTML = "<div>";
+		var userNameHTML = "<span id = userNameHTML><b>" + NB_vid.commentObj[num].userName + "</b></span>&nbsp&nbsp&nbsp"
 		var timeHTML = "<span id = 'commentTimeShow' onclick = 'NB_vid.comment.goToComment(" + num + ")' >Time: " +timeStr +"  </span>";
+		if (NB_vid.commentObj[num].upvotesUserArray.indexOf(yourUserName) == -1){
+			console.log("could not find you user name for this comment")
+			var upvoteHTML = "<span style = 'float: right;' class = 'comment" + NB_vid.commentObj[num].ID + "upvoteSpan'><img class = 'upvoteBtn' id = 'upvoteBtn" + NB_vid.commentObj[num].ID + "' style = 'width: 13px; height: 13px' src = 'images/unvoteIcon.png'><span style = 'vertical-align: middle' id = 'comment" + NB_vid.commentObj[num].ID + "upvotes' >" + NB_vid.commentObj[num].upvotes + "</span></span>"	
+		}else{
+			var upvoteHTML = "<span style = 'float: right;' class = 'comment" + NB_vid.commentObj[num].ID + "upvoteSpan'><img class = 'upvoteBtn' id = 'upvoteBtn" + NB_vid.commentObj[num].ID + "' style = 'width: 13px; height: 13px' src = 'images/upvoteIcon.png'><span style = 'vertical-align: middle' id = 'comment" + NB_vid.commentObj[num].ID + "upvotes' >" + NB_vid.commentObj[num].upvotes + "</span></span>"
+		}
+		
 		var textHTML = "<p>"+ text +"</p>";
-		contentHTML += timeHTML + textHTML + "</div>";
+		contentHTML += userNameHTML + timeHTML + upvoteHTML + textHTML + "</div>";
 
 		var html = headerHTML + contentHTML;
 
 		return html;
+	}
+
+	function showDeleteModal(commentID){
+		$("#deleteModal").modal("show");
+		$("#deleteModal .btn-danger").attr("id", commentID);
+
+	}
+	function deleteComment(commentID){
+		// Client Side
+		for (var i = 0; i < NB_vid.commentObj.length; i++){
+			if (NB_vid.commentObj[i].ID == NB_vid.comment.commentID){
+				NB_vid.commentObj.splice(i, 1);
+				// location.reload();
+				// console.log(commentObj);
+				// console.log("Your changes will appear when you refresh the page")
+			}
+		}
+
+		// Server Side
+		var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
+		var query = new Parse.Query(ParseCommentObj);
+		query.equalTo("ID", parseInt(commentID));
+		query.find({
+		  success: function(results) {
+		    console.log("Successfully retrieved " + results.length + " comments");
+		    // Do something with the returned Parse.Object values
+		    for (var i = 0; i < results.length; i++) { 
+		      var object = results[i];
+		      object.destroy({
+		      	success: function(object){
+		      		console.log("successfully removed your comment")
+		      		$(".commentAlert").show();
+		      		$(".commentAlert").animate({"opacity": "1"}, 250, function(){
+		      			$(".commentAlert").animate({"opacity": "1"}, 5000, function(){
+			      			$(".commentAlert").animate({"opacity": "0"}, 250, function(){
+			      				$(".commentAlert").hide();
+			      				$(".commentAlert").css("opacity", "1");
+			      			})
+			      		})
+		      		})
+		      		
+		      	},
+		      	error: function(object, error){
+		      		console.log("We were unable to remove your object: " + error);
+		      	}
+		      })
+		    }
+		  },
+		  error: function(error) {
+		    alert("Error: " + error.code + " " + error.message);
+		  }
+		});
+	}
+	// When hovering over an accordion header, checks if you were the user that created that comment
+	// If you are, then a delete button is shown
+	function deleteHoverCheck(){
+		$(".deleteComment").hide();
+		$(".commentAlert").hide();
+		$(".commentAlert").css("background-color", "rgba(252, 248, 227, 0.95)");
+		$(".ui-accordion-header").mouseenter(function(){
+			var deleteNum = $(this).children(".deleteComment").attr("id");
+			var commentNum = deleteNum.slice(13, deleteNum.length);
+			for (var i = 0; i < NB_vid.commentObj.length; i++){
+				if (NB_vid.commentObj[i].ID == parseInt(commentNum)){
+					if (NB_vid.commentObj[i].userName == yourUserName){
+						$("#deleteComment" + commentNum).css("opacity", "1");
+						$("#deleteComment" + commentNum).show();
+					}
+				}
+			}
+		});
+		$(".ui-accordion-header").mouseleave(function(){
+			var deleteNum = $(this).children(".deleteComment").attr("id");
+			var commentNum = deleteNum.slice(13, deleteNum.length);
+			$("#deleteComment" + commentNum).hide();
+		})
 	}
 
 	//goes in a for loop to add all of the objects to the accordion section of the html
@@ -544,14 +741,16 @@ NB_vid = {};
 		var viewer = $('#comment_viewer').find(":selected").text();
 		var timeStr = $('#comment_time').val();
 		var timeEndStr = $('#comment_timeEnd').val();
-		var timeEnd;
+		var timeEnd, parseTimeEnd;
 		if(timeEndStr == "" || timeStr == timeEndStr){
+			parseTimeEnd = -1;
 			timeEnd = "None";
 			timeEndStr = "None";
 		}else{
 			timeEnd = NB_vid.yt.calculateTime_stringToNum(timeEndStr);
+			parseTimeEnd = NB_vid.yt.calculateTime_stringToNum(timeEndStr);
 		}
-		NB_vid.commentObj.push({ "drawArr": NB_vid.draw.extractRectInfo(),
+		commentObj.push({ "drawArr": NB_vid.draw.extractRectInfo(),
 							"ID": NB_vid.commentObj.length,
 							"text" : text,
 							"timeEndSec": timeEnd,
@@ -559,14 +758,36 @@ NB_vid = {};
 							"timeSec" : NB_vid.yt.calculateTime_stringToNum(timeStr),
 							"timeStr" : timeStr,
 							"type" : type,
-							"userName": "You",
+							"upvotes": 0,
+							"upvotesUserArray": [],
+							"userName": NB_vid.user.yourUserName,
 							"viewer" : viewer});
-		$(".newCommentTextbox").val(""); //empty textbox
+		$(".newCommentTextbox").val(""); //empty textbox		
+
+		var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
+		var parseCommentObj = new ParseCommentObj();
+		parseCommentObj.save( NB_vid.commentObj[NB_vid.commentObj.length -1], {
+	  		success: function(parseCommentObj) {
+	  			// Execute any logic that should take place after the object is saved.
+	  			console.log('New object created with objectId: ' + parseCommentObj.id);
+	  		},
+			error: function(parseCommentObj, error) {
+				// Execute any logic that should take place if the save fails.
+				// error is a Parse.Error with an error code and description.
+				console.log('Failed to create new object, with error code: ' + error.description);
+			}
+		});
+
+
+
 		//order matters for the next few functions!
+		console.log(commentObj);
 		NB_vid.tick.addAllTicks();
 		NB_vid.comment.hide_addNewComment();
-		NB_vid.comment.goToComment(NB_vid.commentObj.length-1);
+		NB_vid.comment.goToComment(commentObj.length-1);
 		NB_vid.comment.showNewComment();
+		NB_vid.comment.upvoteClick();
+		NB_vid.comment.deleteHoverCheck();
 	}
 
 	//gets rid of accordion and gets rid of the html
@@ -600,38 +821,39 @@ NB_vid = {};
 	}
 
 	// Automatically keeps the current comment in view wihin the comment container
-	function commentAutoScroll(){ 
-		NB_vid.comment.createTimeSecArray();
-		var currentTime = parseInt(ytplayer.getCurrentTime());
-		var indexOfArr = NB_vid.comment.timeSecArray.indexOf(currentTime);
-		var commentID = "#ui-accordion-accordion-header-" + indexOfArr;
+	function commentAutoScroll(){ //Dsan
+		if(playVideo && !isHoveringOver){
+			createTimeSecArray();
+			var currentTime = parseInt(ytplayer.getCurrentTime());
+			var indexOfArr = timeSecArray.indexOf(currentTime);
+			var commentID = "#ui-accordion-accordion-header-" + indexOfArr;
 
-		var container = $('.commentsView_holder'),
-	    scrollTo = $(commentID);
+			var container = $('.commentsView_holder'),
+		    scrollTo = $(commentID);
 
-		if (indexOfArr > -1){
-			container.animate({"opacity": 1}, 500, function(){
-				/*container.scrollTop(
-				    scrollTo.offset().top - container.offset().top + container.scrollTop()
-				);*/
+			if (indexOfArr > -1){
+				container.animate({"opacity": 1}, 500, function(){
+					/*container.scrollTop(
+					    scrollTo.offset().top - container.offset().top + container.scrollTop()
+					);*/
 
+					// Or you can animate the scrolling:
+
+					container.animate({
+					    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop()
+					}, 500);
+				})
+				
+			
 				// Or you can animate the scrolling:
 
-				container.animate({
+				/*container.animate({
 				    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop()
-				}, 500);
-			})
-			
-		
-			// Or you can animate the scrolling:
+				}, 1000);*/
 
-			/*container.animate({
-			    scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop()
-			}, 1000);*/
-
+			}
 		}
 	}
-
 
 	//this function sets a boolean depending if the mouse is hovering over the .commentsView_holder div
 	function isHoveringOverComments(){
@@ -673,8 +895,70 @@ NB_vid = {};
 
 	}
 
+
+	function upvoteClick(){
+		$(".upvoteBtn").on("click", function(){
+			var commentID = $(this).attr("id");
+			var commentNum = parseInt(commentID.slice(9, commentID.length));
+			var numUpvotes = parseInt($("#comment" + commentNum + "upvotes").html());
+			if ("yourUserName" in localStorage){
+				if ($(this).attr("src") == "images/upvoteIcon.png"){
+					$("#comment" + commentNum + "upvotes").html(parseInt($("#comment" + commentNum + "upvotes").html()) - 1);
+					for (var i = 0; i < NB_vid.commentObj.length; i++){
+						if(NB_vid.commentObj[i].ID == commentNum){
+							var query = new Parse.Query(ParseCommentObj);
+							query.equalTo("ID", commentNum);
+							query.find({
+								success: function(results){
+									for(var i = 0; i < results.length; i++){
+										results[i].increment("upvotes", -1); 
+										var parseUsernameArray = results[i].get("upvotesUserArray");
+										var index = parseUsernameArray.indexOf(yourUserName);
+										parseUsernameArray.splice(index, 1);
+										results[i].set("upvotesUserArray", parseUsernameArray);
+										results[i].save();
+									}
+								}
+							})
+							NB_vid.commentObj[i].upvotes -= 1;
+							var array = NB_vid.commentObj[i].upvotesUserArray
+							var index = array.indexOf(yourUserName);
+							array.splice(index, 1);
+						}
+					}
+					$(this).attr("src", "images/unvoteIcon.png")
+				}else if($(this).attr("src") == "images/unvoteIcon.png"){
+					$("#comment" + commentNum + "upvotes").html(parseInt($("#comment" + commentNum + "upvotes").html()) + 1);
+					for (var i = 0; i < NB_vid.commentObj.length; i++){
+						if(NB_vid.commentObj[i].ID == commentNum){
+							var query = new Parse.Query(ParseCommentObj);
+							query.equalTo("ID", commentNum);
+							query.find({
+								success: function(results){
+									for(var i = 0; i < results.length; i++){
+										results[i].increment("upvotes"); 
+										console.log("Increased upvotes by 1");
+										var parseUsernameArray = results[i].get("upvotesUserArray");
+										parseUsernameArray.push(yourUserName); 
+										results[i].save();
+									}
+								}
+							})
+							NB_vid.commentObj[i].upvotes += 1;
+							NB_vid.commentObj[i].upvotesUserArray.push(yourUserName);
+							
+						}
+					}
+					$(this).attr("src", "images/upvoteIcon.png")
+				}
+			}else{
+				$("#loginUpvoteModal").modal("show");
+			}
+		})
+	}
+
 	/*
-	 *	4. Drag Range-related code
+	 *	5. Drag Range-related code
 	 */
 
 	//given "this" (i.e. the progressbar), the function will calculate the mouse position and then convert it to seconds relative to the progress bar
@@ -696,7 +980,6 @@ NB_vid = {};
 	//this function controls when the mouse is clicked in unclicked over the progressbar
 	//this function creates the the tick under the progressbar and gives it the left position
 	//the width of the tick is controlled under document.ready() in the mousemove function
-	var startZoomX;	
 	function dragRangeOn(){
 		$("#progressbar").mousedown(function(e){
 			if(!NB_vid.comment.timeStartFocused){
@@ -713,29 +996,31 @@ NB_vid = {};
 			}
 
 		});
-		$("#progressbar").mouseup(function(e){
-			NB_vid.drag.drag_mouseup = true;
-			var currentSec = NB_vid.drag.mouseXtoSec(this, e);
-			NB_vid.drag.hideToolTipDelay();
-			if(NB_vid.comment.timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
-				$("#comment_timeEnd").val(NB_vid.yt.calculateTime(currentSec));
-				NB_vid.drag.timeEndFocused_adjustTickWidth(this,e);
-				
-			}else if(NB_vid.comment.timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
-				NB_vid.drag.timeStartFocused_adjustTick(this, e);
-
-			}else{
-				if($("#comment_time").val() == NB_vid.yt.calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
-					if (!NB_vid.comment.timeStartFocused){//only the clear it if dragging - if user just wants to change the starting time don't clear
-						$("#comment_timeEnd").val("");
-					}
-				}else{
+		$(document).mouseup(function(e){
+			if(!NB_vid.drag.drag_mouseup){
+				NB_vid.drag.drag_mouseup = true;
+				var currentSec = NB_vid.drag.mouseXtoSec("#progressbar", e);
+				NB_vid.drag.hideToolTipDelay("#rangeTick");
+				if(NB_vid.comment.timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
 					$("#comment_timeEnd").val(NB_vid.yt.calculateTime(currentSec));
-				}
-			}
+					NB_vid.drag.timeEndFocused_adjustTickWidth(this,e);
+					
+				}else if(NB_vid.comment.timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
+					NB_vid.drag.timeStartFocused_adjustTick(this, e);
 
-			NB_vid.comment.timeStartFocused = false;
-			NB_vid.comment.timeEndFocused = false;
+				}else{
+					if($("#comment_time").val() == NB_vid.yt.calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
+						if (!NB_vid.comment.timeStartFocused){//only the clear it if dragging - if user just wants to change the starting time don't clear
+							$("#comment_timeEnd").val("");
+						}
+					}else{
+						$("#comment_timeEnd").val(NB_vid.yt.calculateTime(currentSec));
+					}
+				}
+
+				NB_vid.comment.timeStartFocused = false;
+				NB_vid.comment.timeEndFocused = false;
+			}
 		});
 
 	}
@@ -875,7 +1160,7 @@ NB_vid = {};
 	}
 
 	/*
-	 *	5. Zoom on ticks-related Code
+	 *	6. Zoom on ticks-related Code
 	 */
 
 	function zoomRangeOn(){ 
@@ -883,13 +1168,16 @@ NB_vid = {};
 			//console.log("tickmar_holder mousedown");
 			if(!NB_vid.comment.timeStartFocused){
 				if (!NB_vid.comment.timeEndFocused && !NB_vid.zoom.zoomDragging ){
-					startZoomX = NB_vid.tick.mouseX - NB_vid.progressbar.progressbarOffsetX();
+					if (NB_vid.zoom.enlargedDraggableCreated){
+						$("#zoomTick").draggable("destroy");
+					}
+					NB_vid.zoom.startZoomX = NB_vid.tick.mouseX - NB_vid.progressbar.progressbarOffsetX(); 
 					NB_vid.zoom.zoom_mouseup = false; 
 					var currentSec = NB_vid.drag.mouseXtoSec(this, e);
 					NB_vid.comment.comment_btn();
 
-					enlargedTimeStart = currentSec;
-					$(".enlargedTickStart").html(NB_vid.yt.calculateTime(enlargedTimeStart));
+					NB_vid.zoom.enlargedTimeStart = currentSec;
+					$(".enlargedTickStart").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeStart));
 					var tickLoc = NB_vid.tick.calculateTickLoc(currentSec);
 					var tickLocStr = tickLoc.toString() + "px";
 					
@@ -905,8 +1193,8 @@ NB_vid = {};
 		$(".tickmark_holder").mouseup(function(e){	
 			NB_vid.zoom.zoom_mouseup = true;
 			var currentSec = NB_vid.drag.mouseXtoSec(this, e);
-			enlargedTimeEnd = currentSec;
-			$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(enlargedTimeEnd));
+			NB_vid.zoom.enlargedTimeEnd = currentSec;
+			$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeEnd));
 			$(".enlargedTickBar").html("");
 			function hideToolTip(){
 				$("#zoomTick .tooltip").animate({"opacity": 0}, 250, function(){
@@ -964,13 +1252,27 @@ NB_vid = {};
 			NB_vid.zoom.addEnlargedTicks();
 		}
 	}
+
+	function updateEnlargedTickBar(){ 
+		if (NB_vid.zoom.enlargedTimeStart != "--:--" && NB_vid.zoom.enlargedTimeEnd != "--:--"){
+			var enlargedDuration = NB_vid.zoom.enlargedTimeEnd - NB_vid.zoom.enlargedTimeStart;
+			var percentage = 100*(ytplayer.getCurrentTime() - NB_vid.zoom.enlargedTimeStart)/enlargedDuration;
+			var currentTime = ytplayer.getCurrentTime();
+			if (currentTime > NB_vid.zoom.enlargedTimeStart && currentTime < NB_vid.zoom.enlargedTimeEnd){
+				$(".currentPlayerLocationTick").css("display", "block").css("left", percentage + "%");
+			}else{
+				$(".currentPlayerLocationTick").css("display", "none")
+			}
+		}
+	}
+
 	function addEnlargedTicks(){
 		$(".enlargedTickBar").html("");
 		for (var i = 0; i <= NB_vid.commentObj.length - 1; i++){
 			if (NB_vid.commentObj[i].timeEndSec == "None"){
-				if(NB_vid.commentObj[i].timeSec > enlargedTimeStart && NB_vid.commentObj[i].timeSec < enlargedTimeEnd){
-					var startToTickDiff = NB_vid.commentObj[i].timeSec - enlargedTimeStart;
-					var totalDiff = enlargedTimeEnd - enlargedTimeStart;
+				if(NB_vid.commentObj[i].timeSec > NB_vid.zoom.enlargedTimeStart && NB_vid.commentObj[i].timeSec < NB_vid.zoom.enlargedTimeEnd){
+					var startToTickDiff = NB_vid.commentObj[i].timeSec - NB_vid.zoom.enlargedTimeStart;
+					var totalDiff = NB_vid.zoom.enlargedTimeEnd - NB_vid.zoom.enlargedTimeStart;
 					var tickRatio = startToTickDiff/totalDiff;
 					var tickPxLeft = tickRatio*$(".enlargedTickBar").width();
 					var html = NB_vid.zoom.enlargedTickHTML(tickPxLeft, 1, NB_vid.commentObj[i].ID);
@@ -978,14 +1280,14 @@ NB_vid = {};
 					NB_vid.zoom.createEnlargedTickPopover(NB_vid.commentObj[i].ID);
 				}
 			}else{
-				if((NB_vid.commentObj[i].timeSec > enlargedTimeStart && NB_vid.commentObj[i].timeSec < enlargedTimeEnd) || (NB_vid.commentObj[i].timeEndSec > enlargedTimeStart && NB_vid.commentObj[i].timeSec < enlargedTimeEnd)){
-					var startToTickStartDiff = NB_vid.commentObj[i].timeSec - enlargedTimeStart;
-					var startToTickEndDiff = NB_vid.commentObj[i].timeEndSec - enlargedTimeStart;
-					var totalDiff = enlargedTimeEnd - enlargedTimeStart;
+				if((NB_vid.commentObj[i].timeSec > NB_vid.zoom.enlargedTimeStart && NB_vid.commentObj[i].timeSec < NB_vid.zoom.enlargedTimeEnd) || (NB_vid.commentObj[i].timeEndSec > NB_vid.zoom.enlargedTimeStart && NB_vid.commentObj[i].timeSec < NB_vid.zoom.enlargedTimeEnd)){
+					var startToTickStartDiff = NB_vid.commentObj[i].timeSec - NB_vid.zoom.enlargedTimeStart;
+					var startToTickEndDiff = NB_vid.commentObj[i].timeEndSec - NB_vid.zoom.enlargedTimeStart;
+					var totalDiff = NB_vid.zoom.enlargedTimeEnd - NB_vid.zoom.enlargedTimeStart;
 					var tickStartRatio = startToTickStartDiff/totalDiff;
 					var tickEndRatio = startToTickEndDiff/totalDiff;
-					if (NB_vid.commentObj[i].timeEndSec > enlargedTimeEnd){var tickEndRatio = 1;}
-					if (NB_vid.commentObj[i].timeSec < enlargedTimeStart){var tickStartRatio = 0;}
+					if (NB_vid.commentObj[i].timeEndSec > NB_vid.zoom.enlargedTimeEnd){var tickEndRatio = 1;}
+					if (NB_vid.commentObj[i].timeSec < NB_vid.zoom.enlargedTimeStart){var tickStartRatio = 0;}
 					var tickPxLeft = tickStartRatio*$(".enlargedTickBar").width();
 					var tickWidth = (tickEndRatio-tickStartRatio)*$(".enlargedTickBar").width();
 					var html = NB_vid.zoom.enlargedTickHTML(tickPxLeft, tickWidth, NB_vid.commentObj[i].ID);
@@ -1005,8 +1307,23 @@ NB_vid = {};
 		})
 	}
 
+	// Closes the enlarged tick bar and deletes the blue enlarged selection if they exist
+	function zoomClose(){
+		if(enlargedDraggableCreated){
+			$(".enlargedTickContainer").animate({"opacity": 0}, 400, function(){
+				$(".enlargedTickContainer").hide();
+			})
+			$("#zoomTick").draggable("destroy");
+			$("#zoomTick").animate({"opacity": 0}, 400, function(){
+				$("#zoomTick").hide();
+				$("#zoomTick").css("opacity", 1);
+			})
+			enlargedDraggableCreated = false;
+		}
+	}
+
 	/*
-	 *	6. Draw Rectangle-related Code
+	 *	7. Draw Rectangle-related Code
 	 */
 
 	//Pause the video, make the rectangle visible
@@ -1110,11 +1427,11 @@ NB_vid = {};
 		if (NB_vid.draw.drawWidth > 0){
 			return {"posX": NB_vid.draw.startDrawX, "posY":NB_vid.draw.startDrawY,"width": NB_vid.draw.drawWidth, "height": NB_vid.draw.drawHeight};
 		}else{
-			return "None";
+			return {}; //used to return "None", let's hope for no bugs
 		}
 	}
 	/*
-	 *	7. Tick-related code
+	 *	8. Tick-related code
 	 */
 
 	//calculate the tick location given the time in seconds where the associated comment is given
@@ -1157,7 +1474,7 @@ NB_vid = {};
 
 	//This function should be called the the page is loading
 	function addAllTicks(){
-		$(".tickmark_holder").html("<div id = 'zoomTick'><div class = 'rightTooltipDiv' style = 'float: right'></div></div>"); 
+		$(".tickmark_holder").html(""); 
 		var xLoc, ID, width, html;
 		for(var num = 0; num < NB_vid.commentObj.length; num++){
 			xLoc = NB_vid.tick.calculateTickLoc(NB_vid.commentObj[num].timeSec);
@@ -1265,8 +1582,37 @@ NB_vid = {};
 			}
 		}
 	}
+
 	/*
-	 *	8. jQuery(document).ready()
+	 * 	9. Progressbar tooltip hover
+	 */
+	//check functions
+	function progressBarHover(){
+		$("#progressbar").mouseenter(function(){
+			progressbarHovering = true;
+		});
+		$("#progressbar").mouseleave(function(){
+			progressbarHovering = false;
+		});
+		$("#videoCover").mouseenter(function(){
+			progressbarHovering = false;
+		})
+	}
+	function progressBarHoverTooltip(e){
+		if (progressbarHovering){
+			var xPosition = getRelMouseX("#progressbar", e);
+			$(".mouseTooltipDiv").css("left", xPosition);
+			$(".mouseTooltipDiv").tooltip("destroy");
+			$(".mouseTooltipDiv").tooltip({title: calculateTime(mouseXtoSec("#progressbar", e)), animation: false})
+			$(".mouseTooltipDiv").tooltip("show");
+			$("#progressbar .tooltip").css("opacity", "1");
+		}else if(!progressbarHovering){
+			hideToolTipDelay("#progressbar");
+		}
+	}
+
+	/*
+	 *	10. jQuery(document).ready()
 	 */
 
 	function mouseLoc(){
@@ -1277,11 +1623,12 @@ NB_vid = {};
 			NB_vid.drag.dragWidthCalc(e);
 			NB_vid.draw.drawAreaCalc();
 			NB_vid.zoom.zoomRecalc(e);
+			NB_vid.pbHover.progressBarHoverTooltip(e);
 		}); 
 	}
 
 	/*
-	 *	9. Keyboard Shortcuts
+	 * 11. Keyboard Shortcuts
 	 */
 	$(window).keyup(function(e) {
 		if (!NB_vid.comment.textboxFocused){
@@ -1313,10 +1660,21 @@ NB_vid = {};
 
 
 	/*
-	 *	10. Alert-related code
+	 *	12. Alert-related code
 	 */
 	function closeCommentAlert(){
 		alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
+	}
+	function refreshCommentAlert(){
+		$(".commentAlert").show();
+		$(".commentAlert").animate({"opacity": "1"}, 250, function(){
+			$(".commentAlert").animate({"opacity": "1"}, 5000, function(){
+				$(".commentAlert").animate({"opacity": "0"}, 250, function(){
+					$(".commentAlert").hide();
+					$(".commentAlert").css("opacity", "1");
+				})
+			})
+		})
 	}
 
 
@@ -1340,6 +1698,13 @@ NB_vid = {};
 				"_run":_run,
 				"goToTime":goToTime
 				},
+		"user":{ 
+				"yourUserName":localStorage.yourUserName,
+				"submitUsername":submitUsername,
+				"submitCommentUsername":submitCommentUsername,
+				"logout":logout,
+				"addLoginButton":addLoginButton
+		}
 		"progressbar": {
 				"updateProgressbar":updateProgressbar,
 				"progressbar_click": progressbar_click,
@@ -1348,9 +1713,13 @@ NB_vid = {};
 		},
 		"commentObj": commentObj,
 		"comment": {
+				"parseInit": parseInit,
 				"setup_commentDisplay":setup_commentDisplay,
 				"sortCommentObj":sortCommentObj,
 				"extractCommentHTML":extractCommentHTML,
+				"showDeleteModal":showDeleteModal,
+				"deleteComment":deleteComment,
+				"deleteHoverCheck":deleteHoverCheck,
 				"addAllCommentHTML":addAllCommentHTML,
 				"goToComment":goToComment,
 				"setupAccordion":setupAccordion,
@@ -1372,7 +1741,8 @@ NB_vid = {};
 				"timeEndFocused": false,
 				"setupTimeFocus":setupTimeFocus,
 				"textboxFocused":false,
-				"setupTextboxFocus":setupTextboxFocus
+				"setupTextboxFocus":setupTextboxFocus,
+				"upvoteClick":upvoteClick
 		},
 		"drag": {
 				"mouseXtoSec":mouseXtoSec,
@@ -1394,16 +1764,25 @@ NB_vid = {};
 				"hideToolTipDelay":hideToolTipDelay
 		},
 		"zoom": {
+				"startZoomX": "",
 				"zoomDragging":false,
-				"zoom_mouseup":false,
+				"zoom_mouseup":true,
+				"zoomInitResizing":false,
+				"zoomResizing":false,
+				"enlargedTimeStart":"--:--".
+				"enlargedTimeEnd": "--:--",
+				"enlargedDraggableCreated":false,
 				"zoomRangeOn": zoomRangeOn,
 				"showZoomTick":showZoomTick,
 				"hideZoomTick":hideZoomTick,
 				"enlargedTickHTML":enlargedTickHTML,
 				"createEnlargedTickPopover":createEnlargedTickPopover,
 				"zoomRecalc":zoomRecalc,
+				"updateEnlargedTickBar":updateEnlargedTickBar,
 				"addEnlargedTicks":addEnlargedTicks,
-				"zoomDrag":zoomDrag
+				"zoomDrag":zoomDrag,
+				"zoomClose":zoomClose
+
 		},
 		"draw": {
 				"showRect":showRect,
@@ -1437,6 +1816,11 @@ NB_vid = {};
 				"unTickHover":unTickHover,
 				"tickClick":tickClick,
 		},
+		"pbHover": {
+				"progressbarHovering":false,
+				"progressBarHover":progressBarHover,
+				"progressBarHoverTooltip":progressBarHoverTooltip
+		}
 		"jQueryReady": {
 				"mouseX": 0,
 				"mouseY": 0,
@@ -1450,10 +1834,12 @@ NB_vid = {};
 		}
 	};
 
-	NB_vid.funcLists = { "jQueryReady":[NB_vid.jQueryReady.mouseLoc, 
+	NB_vid.funcLists = { "jQueryReady":[NB_vid.user.addLoginButton,
+										NB_vid.jQueryReady.mouseLoc, 
 										NB_vid.progressbar.updateProgressbarClick, 
 										NB_vid.comment.setup_commentDisplay,
 										NB_vid.comment.isHoveringOverComments,
+										NB_vid.comment.upvoteClick,
 										NB_vid.comment.setupTimeFocus,
 										NB_vid.comment.setupTextboxFocus,
 										NB_vid.drag.time_updateTickRange,
@@ -1461,10 +1847,13 @@ NB_vid = {};
 										NB_vid.draw.drawRectOn,
 										NB_vid.zoom.zoomDrag,
 										NB_vid.drag.dragRangeOn,
-										NB_vid.zoom.zoomRangeOn]
+										NB_vid.zoom.zoomRangeOn,
+										NB_vid.pbHover.progressBarHover]
 						};
 						
 })();
+
+Parse.initialize("viexWXBNypmbAgN4HTsr000EkCzJ4t6mGle8wFoE", "bKkVou2qscsLmYvKsYiusjxAA0oJBUBE7vRXkJZP");
 
 // This function is automatically called by the player once it loads
 function onYouTubePlayerReady(playerId) {
@@ -1477,6 +1866,9 @@ function onYouTubePlayerReady(playerId) {
 		ytplayer.playVideo();
 	    ytplayer.pauseVideo();
 	}, 0);
+
+	NB_vid.comment.deleteHoverCheck();
+
 
 	// This causes the updatePlayerInfo function to be called every 250ms to
 	// get fresh data from the player
