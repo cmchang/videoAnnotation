@@ -104,7 +104,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			Username: <input class = "usernameInput"></input>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="submitUsername()">Submit</button>
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="NB_vid.user.submitUsername()">Submit</button>
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		</div>
 	</div>
@@ -119,7 +119,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			Username: <input class = "usernameCommentInput"></input>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="submitCommentUsername()">Submit</button>
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="NB_vid.user.submitCommentUsername()">Submit</button>
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		</div>
 	</div>
@@ -134,7 +134,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			Username: <input class = "usernameCommentInput"></input>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="submitCommentUsername()">Submit</button>
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="NB_vid.user.submitCommentUsername()">Submit</button>
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		</div>
 	</div>
@@ -148,7 +148,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			<p>Are you sure you want to log out?</p>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" onclick="logout()">Log out</button>
+			<button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" onclick="NB_vid.user.logout()">Log out</button>
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		</div>
 	</div>
@@ -161,7 +161,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 			</div>
 		</div>
 		<div class = "videoMenu">
-			<div class = "playORpause_holder"><img class = "playORpause" onclick="playORpause();" src="images/play.png"></div>
+			<div class = "playORpause_holder"><img class = "playORpause" onclick="NB_vid.yt.playORpause();" src="images/play.png"></div>
 			<div class = "progressbar_container">
 				<div id= "dragRangeContainer">
 					<div id="rangeTick">
@@ -182,13 +182,13 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 					<div id = "videoTotalTimeDisplay">--:--</div>
 				</div>
 			</div>
-			<div class = "muteORunmute_holder"><img class = "muteORunmute" onclick="muteORunmute()" src = "images/volume_up.png"></div>
+			<div class = "muteORunmute_holder"><img class = "muteORunmute" onclick="NB_vid.yt.muteORunmute()" src = "images/volume_up.png"></div>
 		</div>
 		<div class = "enlargedTickContainer">
 			<div class = "enlargedTickStart">--:--</div>
 			<div class = "enlargedTickBar"><div class = "tickmark currentPlayerLocationTick"></div></div>
 			
-			<button onclick = "zoomClose()" type="button" class="close closeEnlarged" style = "margin-top: 10px; margin-right: 8px; float: right">&times;</button>
+			<button onclick = "NB_vid.zoom.zoomClose()" type="button" class="close closeEnlarged" style = "margin-top: 10px; margin-right: 8px; float: right">&times;</button>
 			<div class = "enlargedTickEnd">--:--</div>
 		</div>
 	</div>
@@ -200,7 +200,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 
 	<div class = "commentsView">
 		<div class = "commentsView_menu">
-			<button class = "commentBtn btn btn-small" onclick="comment_btn()">Comment</button>
+			<button class = "commentBtn btn btn-small" onclick="NB_vid.comment.comment_btn()">Comment</button>
 			<div class="btn-group">
 				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
 					Filter Comments
@@ -232,8 +232,8 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 					<option>Just me</option>
 					<option>Instructor</option>
 				</select>
-				<button class = "btn btn-small" id = "submit_btn" onclick="submitNewComment()">Submit</button>
-				<button class ="btn btn-small" id = "cancel_btn" onclick = "hide_addNewComment()">Cancel</button>
+				<button class = "btn btn-small" id = "submit_btn" onclick="NB_vid.comment.submitNewComment()">Submit</button>
+				<button class ="btn btn-small" id = "cancel_btn" onclick = "NB_vid.comment.hide_addNewComment()">Cancel</button>
 
 			</div>
 		</div>
@@ -251,7 +251,7 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		<p> Time in Minutes and Seconds: <span id = "videoCurrentTimeMinSec">--:--</span></p>
 		<p>Current Time: <span id="videoCurrentTime">--:--</span> | Duration: <span id="videoDuration">--:--</span> | Percentage: <span id = "videoPercentage">--:--</span></p>
 		<p>Bytes Total: <span id="bytesTotal">--</span> | Start Bytes: <span id="startBytes">--</span> | Bytes Loaded: <span id="bytesLoaded">--</span></p>
-		<p><input id="volumeSetting" type="text" size="3" />&nbsp;<a href="javascript:void(0)" onclick="setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
+		<p><input id="volumeSetting" type="text" size="3" />&nbsp;<a href="javascript:void(0)" onclick="NB_vid.yt.setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
 	</div>				
 </body>
 </html>
