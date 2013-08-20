@@ -727,8 +727,12 @@ NB_vid = {};
 
 	//Called when the comment button is pushed
 	function comment_btn(){
-		NB_vid.yt.pauseVideo();
-		NB_vid.comment.show_addNewComment();
+		if ("yourUserName" in localStorage){
+			pauseVideo();
+			show_addNewComment();
+		}else{
+			$('#loginCommentModal').modal({'show': true});
+		}
 	}
 
 	//Called when the submit button is pushed
@@ -764,7 +768,7 @@ NB_vid = {};
 
 		var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
 		var parseCommentObj = new ParseCommentObj();
-		parseCommentObj.save( NB_vid.commentObj[NB_vid.commentObj.length -1], {
+		parseCommentObj.save(NB_vid.commentObj[NB_vid.commentObj.length -1], {
 	  		success: function(parseCommentObj) {
 	  			// Execute any logic that should take place after the object is saved.
 	  			console.log('New object created with objectId: ' + parseCommentObj.id);

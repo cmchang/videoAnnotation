@@ -1,5 +1,6 @@
-- get comments for each function
 - add danny's code that prevents the keyboard shortcuts from occuring when typing in username
+- parse bugs
+ typing in username
 - parse bugs
 - big red X bug
 - tooltip bug
