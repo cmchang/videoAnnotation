@@ -1099,7 +1099,7 @@ NB_vid = {};
 		}
 		if(NB_vid.zoom.startZoomX > 0 && !NB_vid.zoom.zoom_mouseup){ /////MOVE THIS TO OWN FUNCTION: zoomWidthCalc
 			var currentSec = NB_vid.drag.mouseXtoSec(".tickmark_holder", e);
-			NB_vid.drag.dragWidth = NB_vid.tick.mouseX-startZoomX - NB_vid.progressbar.progressbarOffsetX();
+			NB_vid.drag.dragWidth = NB_vid.tick.mouseX-NB_vid.zoom.startZoomX - NB_vid.progressbar.progressbarOffsetX();
 			var widthStr = NB_vid.drag.dragWidth.toString() + "px";
 			$("#zoomTick").css("width", widthStr);
 			$("#zoomTick .rightTooltipDiv").tooltip("destroy");
