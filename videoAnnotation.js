@@ -1196,20 +1196,25 @@ NB_vid = {};
 				}
 			}
 		});
-		$(".tickmark_holder").mouseup(function(e){	
-			NB_vid.zoom.zoom_mouseup = true;
-			var currentSec = NB_vid.drag.mouseXtoSec(this, e);
-			NB_vid.zoom.enlargedTimeEnd = currentSec;
-			$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeEnd));
-			$(".enlargedTickBar").html("");
-			hideToolTipDelay("#zoomTick");
-
-			$("#zoomTick").draggable({axis: "x", containment: "parent"});
+		$(document).mouseup(function(e){	
+			if(!NB_vid.zoom.zoom_mouseup){
+				NB_vid.zoom.zoom_mouseup = true;
+				var currentSec = NB_vid.drag.mouseXtoSec(".tickmark_holder", e);
+				NB_vid.zoom.enlargedTimeEnd = currentSec;
+				$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeEnd));
+				$(".enlargedTickBar").html("");
 			
-			window.setTimeout(NB_vid.drag.hideToolTip, 1500);
+				$(".enlargedTickContainer").show().animate({"opacity": 1}, 400);
 
-			// appends ticks to the enlarged tick bar
-			NB_vid.zoom.addEnlargedTicks();
+				$("#zoomTick").draggable({axis: "x", containment: "parent"});
+				$("#zoomTick").effect("transfer", {to: ".enlargedTickBar"});
+
+				NB_vid.zoom.enlargedDraggableCreated = true;
+				
+				NB_vid.drag.hideToolTipDelay("#zoomTick");
+				// appends ticks to the enlarged tick bar
+				NB_vid.zoom.addEnlargedTicks();
+			}
 		});
 	}
 
@@ -1476,7 +1481,6 @@ NB_vid = {};
 
 	//This function should be called the the page is loading
 	function addAllTicks(){
-		console.log(commentObj)
 		$(".tickmark_holder").html(""); 
 		var xLoc, ID, width, html;
 		for(var num = 0; num < NB_vid.commentObj.length; num++){
