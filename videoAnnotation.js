@@ -157,6 +157,7 @@ NB_vid = {};
 	function playVideo() {
 		if (ytplayer) {
 			ytplayer.playVideo();
+			NB_vid.yt.playVideoBool = true;
 		}
 	}
 
@@ -164,6 +165,7 @@ NB_vid = {};
 		if (ytplayer) {
 			$(".playORpause").attr("src", "images/play.png");
 			ytplayer.pauseVideo();
+			NB_vid.yt.playVideoBool = false;
 		}
 	}
 
@@ -301,7 +303,7 @@ NB_vid = {};
 	// the array of objects the stores all the information for every comment
 	// drawArr: an object with the information of the drawn rect {leftPos, rightPos, width, height}; or "None" if no rect drawn
 	// ID: number assigned in order of when comment is made (Starting at 0)
-	// timeEndSec: the end time in seconds at which the comment refers to; else “None”
+	// timeEndSec: the end time in seconds at which the comment refers to; else 0
 	// timeEndSecStr: the time as a string (in minute:second format) at which the comment refers to; else “None”
 	// timeSec: the time in seconds at which the comment refers to
 	// timeStr: the time as a string (in minute:second format) at which the comment refers to
@@ -340,7 +342,7 @@ NB_vid = {};
 					var parseViewer = object.get('viewer');
 
 					if(parseTimeEndSec == -1){
-						var parseTimeEndSec = "None";
+						var parseTimeEndSec = 0;
 					}
 
 					commentObj.push({"drawArr": parseDrawArr, 
@@ -746,7 +748,7 @@ NB_vid = {};
 		var timeEnd, parseTimeEnd;
 		if(timeEndStr == "" || timeStr == timeEndStr){
 			parseTimeEnd = -1;
-			timeEnd = "None";
+			timeEnd = 0;
 			timeEndStr = "None";
 		}else{
 			timeEnd = NB_vid.yt.calculateTime_stringToNum(timeEndStr);
@@ -824,7 +826,8 @@ NB_vid = {};
 
 	// Automatically keeps the current comment in view wihin the comment container
 	function commentAutoScroll(){ //Dsan
-		if(playVideo && !NB_vid.comment.isHoveringOver){
+		//console.log("NB_vid.yt.playVideoBool: "+ NB_vid.yt.playVideoBool, "!isHoveringOver" + !NB_vid.comment.isHoveringOver);
+		if(NB_vid.yt.playVideoBool && !NB_vid.comment.isHoveringOver){
 			createTimeSecArray();
 			var currentTime = parseInt(ytplayer.getCurrentTime());
 			var indexOfArr = NB_vid.comment.timeSecArray.indexOf(currentTime);
@@ -1199,11 +1202,7 @@ NB_vid = {};
 			NB_vid.zoom.enlargedTimeEnd = currentSec;
 			$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeEnd));
 			$(".enlargedTickBar").html("");
-			function hideToolTip(){
-				$("#zoomTick .tooltip").animate({"opacity": 0}, 250, function(){
-					$("#zoomTick .rightTooltipDiv").tooltip('destroy');
-				});
-			}
+			hideToolTipDelay("#zoomTick");
 
 			$("#zoomTick").draggable({axis: "x", containment: "parent"});
 			
@@ -1272,7 +1271,7 @@ NB_vid = {};
 	function addEnlargedTicks(){
 		$(".enlargedTickBar").html("");
 		for (var i = 0; i <= NB_vid.commentObj.length - 1; i++){
-			if (NB_vid.commentObj[i].timeEndSec == "None"){
+			if (NB_vid.commentObj[i].timeEndSec == 0){
 				if(NB_vid.commentObj[i].timeSec > NB_vid.zoom.enlargedTimeStart && NB_vid.commentObj[i].timeSec < NB_vid.zoom.enlargedTimeEnd){
 					var startToTickDiff = NB_vid.commentObj[i].timeSec - NB_vid.zoom.enlargedTimeStart;
 					var totalDiff = NB_vid.zoom.enlargedTimeEnd - NB_vid.zoom.enlargedTimeStart;
@@ -1694,6 +1693,7 @@ NB_vid = {};
 				"playORpause": playORpause,
 				"muteORunmute": muteORunmute,
 				"playVideo": playVideo,
+				"playVideoBool": false,
 				"pauseVideo": pauseVideo,
 				"muteVideo": muteVideo,
 				"unMuteVideo": unMuteVideo,
