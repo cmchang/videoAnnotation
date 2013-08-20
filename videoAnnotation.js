@@ -317,14 +317,13 @@ NB_vid = {};
 	/*var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
 	var parseCommentObj = new ParseCommentObj();*/
 	var commentObj = [];
+	var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
 
-	//
 	function parseInit(){
-		var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
 		var query = new Parse.Query(ParseCommentObj);
 		query.find({
 			success: function(results){
-				console.log("Successfully retrieved " + results.length + " results")
+				//console.log("Successfully retrieved " + results.length + " results")
 				for (var i = 0; i < results.length; i++){
 					var object = results[i];
 					var parseDrawArr = object.get('drawArr');
@@ -357,12 +356,12 @@ NB_vid = {};
 						"userName": parseUserName, 
 						"viewer": parseViewer})
 				}
-				console.log(commentObj);
 				showNewComment();
 				upvoteClick();
+			}, Ferror: function(error){
+				console.log("Could not create object");
 			}
-		})	
-
+		})
 	}
 
 	// var commentObj = [
@@ -572,7 +571,6 @@ NB_vid = {};
 		var userNameHTML = "<span id = userNameHTML><b>" + NB_vid.commentObj[num].userName + "</b></span>&nbsp&nbsp&nbsp"
 		var timeHTML = "<span id = 'commentTimeShow' onclick = 'NB_vid.comment.goToComment(" + num + ")' >Time: " +timeStr +"  </span>";
 		if (NB_vid.commentObj[num].upvotesUserArray.indexOf(NB_vid.user.yourUserName) == -1){
-			console.log("could not find you user name for this comment")
 			var upvoteHTML = "<span style = 'float: right;' class = 'comment" + NB_vid.commentObj[num].ID + "upvoteSpan'><img class = 'upvoteBtn' id = 'upvoteBtn" + NB_vid.commentObj[num].ID + "' style = 'width: 13px; height: 13px' src = 'images/unvoteIcon.png'><span style = 'vertical-align: middle' id = 'comment" + NB_vid.commentObj[num].ID + "upvotes' >" + NB_vid.commentObj[num].upvotes + "</span></span>"	
 		}else{
 			var upvoteHTML = "<span style = 'float: right;' class = 'comment" + NB_vid.commentObj[num].ID + "upvoteSpan'><img class = 'upvoteBtn' id = 'upvoteBtn" + NB_vid.commentObj[num].ID + "' style = 'width: 13px; height: 13px' src = 'images/upvoteIcon.png'><span style = 'vertical-align: middle' id = 'comment" + NB_vid.commentObj[num].ID + "upvotes' >" + NB_vid.commentObj[num].upvotes + "</span></span>"
@@ -1148,16 +1146,16 @@ NB_vid = {};
 		$("#rangeTick .rightTooltipDiv").tooltip('show');
 	}
 
-	//hides the tooltip 
-	function hideToolTip(){
-		$("#rangeTick .tooltip").animate({"opacity": 0}, 250, function(){
-			$("#rangeTick .rightTooltipDiv").tooltip('destroy');
+	//hides the tooltip
+	function hideToolTip(Parent){
+		$(Parent + " .tooltip").animate({"opacity": 0}, 250, function(){
+			$(Parent + " .rightTooltipDiv").tooltip('destroy');
 		});
 	}
 
 	//calls hideToolTip after a delay of 250 milliseconds
-	function hideToolTipDelay(){
-		window.setTimeout(NB_vid.drag.hideToolTip, 250);
+	function hideToolTipDelay(Parent){
+		window.setTimeout(hideToolTip(Parent), 250);
 	}
 
 	/*
@@ -1715,6 +1713,7 @@ NB_vid = {};
 		"commentObj": commentObj,
 		"comment": {
 				"parseInit": parseInit,
+				"ParseCommentObj":ParseCommentObj,
 				"setup_commentDisplay":setup_commentDisplay,
 				"sortCommentObj":sortCommentObj,
 				"extractCommentHTML":extractCommentHTML,
@@ -1835,7 +1834,8 @@ NB_vid = {};
 		}
 	};
 
-	NB_vid.funcLists = { "jQueryReady":[NB_vid.user.addLoginButton,
+	NB_vid.funcLists = { "jQueryReady":[NB_vid.comment.parseInit,
+										NB_vid.user.addLoginButton,
 										NB_vid.jQueryReady.mouseLoc, 
 										NB_vid.progressbar.updateProgressbarClick, 
 										NB_vid.comment.setup_commentDisplay,
