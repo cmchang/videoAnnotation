@@ -126,6 +126,7 @@
 }
 
 #showTime{
+	margin-top: -5px;
 	text-align: right;	
 	height: 100%;
 }
@@ -210,6 +211,7 @@
 }
 .popover-content{
 	max-height: 50px;
+	text-overflow: ellipsis;
 	overflow: hidden;
 }
 .popover-title{
@@ -222,14 +224,16 @@
 	/*display: none;*/
 }
 .enlargedTickContainer{
+	display: none;
 	margin-top: 5px;
 	height: 40px;
 	border-radius: 5px;
 	background: #E6E6E6; 
+	opacity: 0;
 }
 .enlargedTickBar{
 	position: absolute;
-	width: 660px;
+	width: 635px;
 	margin-top: 10px;
 	height: 15px;
 	border-radius: 5px;
@@ -260,4 +264,47 @@
 	opacity: .4;
 	cursor: pointer;
 }
+.currentPlayerLocationTick{
+	/*z-index: 1;*/
+	display: none;
+	opacity: 1;
+	background-color: green;
+	width: 3px;
+}
+.mouseTooltipDiv{
+	z-index: -1;
+	background-color: black;
+	width: 1px;
+	display: block;
+	opacity: 1;
+	background-color: rgba(255, 255, 255, 0);
+	position: absolute;
+	height: 100%;
 
+}
+.upvoteBtn{
+	cursor: pointer;
+}
+.ui-effects-transfer{
+	border: 1px solid black;
+	border-radius: 5px;
+}
+/*.tooltip{
+	z-index: 1;
+}*/
+.deleteComment{
+	opacity: 0;
+	padding: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-top: -3px;
+	/*background-image: linear-gradient(to bottom, #FA3631, #BD0D04);*/
+}
+.commentAlert{
+	opacity: 0;
+	/*background-color: rgba(252, 248, 227, 0.95);*/
+	margin-top: 372px;
+	margin-left: 5px;
+	z-index: 2;
+	position: absolute;
+}
