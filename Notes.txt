@@ -1,0 +1,1 @@
+1. drawArr always needs to be an object because of parse, so can't be "None" --> change to {"None":""}
