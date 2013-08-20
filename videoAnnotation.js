@@ -558,7 +558,7 @@ NB_vid = {};
 		}else if(typeInitial == "Q"){
 			iconHTML = "<i class='icon-question-sign'></i>";
 		}
-		if(NB_vid.commentObj[num].drawArr != "None"){
+		if(NB_vid.commentObj[num].drawArr.none == false){
 			iconHTML += "<i class='icon-picture'></i>";
 		}
 		var headerHTML = "<text>" + iconHTML + ": " + commentSnippet;
@@ -571,7 +571,7 @@ NB_vid = {};
 		var contentHTML = "<div>";
 		var userNameHTML = "<span id = userNameHTML><b>" + NB_vid.commentObj[num].userName + "</b></span>&nbsp&nbsp&nbsp"
 		var timeHTML = "<span id = 'commentTimeShow' onclick = 'NB_vid.comment.goToComment(" + num + ")' >Time: " +timeStr +"  </span>";
-		if (NB_vid.commentObj[num].upvotesUserArray.indexOf(yourUserName) == -1){
+		if (NB_vid.commentObj[num].upvotesUserArray.indexOf(NB_vid.user.yourUserName) == -1){
 			console.log("could not find you user name for this comment")
 			var upvoteHTML = "<span style = 'float: right;' class = 'comment" + NB_vid.commentObj[num].ID + "upvoteSpan'><img class = 'upvoteBtn' id = 'upvoteBtn" + NB_vid.commentObj[num].ID + "' style = 'width: 13px; height: 13px' src = 'images/unvoteIcon.png'><span style = 'vertical-align: middle' id = 'comment" + NB_vid.commentObj[num].ID + "upvotes' >" + NB_vid.commentObj[num].upvotes + "</span></span>"	
 		}else{
@@ -648,7 +648,7 @@ NB_vid = {};
 			var commentNum = deleteNum.slice(13, deleteNum.length);
 			for (var i = 0; i < NB_vid.commentObj.length; i++){
 				if (NB_vid.commentObj[i].ID == parseInt(commentNum)){
-					if (NB_vid.commentObj[i].userName == yourUserName){
+					if (NB_vid.commentObj[i].userName == NB_vid.user.yourUserName){
 						$("#deleteComment" + commentNum).css("opacity", "1");
 						$("#deleteComment" + commentNum).show();
 					}
@@ -676,7 +676,7 @@ NB_vid = {};
 	//show rectangle if exists or hide rectangle if none
 	function goToComment(index){
 		NB_vid.yt.goToTime(NB_vid.commentObj[index].timeSec);
-		if(NB_vid.commentObj[index].drawArr != "None"){
+		if(NB_vid.commentObj[index].drawArr.none == false){
 			NB_vid.draw.changeRectCSS(NB_vid.commentObj[index].drawArr.posX, NB_vid.commentObj[index].drawArr.posY, NB_vid.commentObj[index].drawArr.width, NB_vid.commentObj[index].drawArr.height);
 			$("#drawnRect").show();
 		}else{
@@ -784,7 +784,7 @@ NB_vid = {};
 		console.log(commentObj);
 		NB_vid.tick.addAllTicks();
 		NB_vid.comment.hide_addNewComment();
-		NB_vid.comment.goToComment(commentObj.length-1);
+		NB_vid.comment.goToComment(NB_vid.commentObj.length-1);
 		NB_vid.comment.showNewComment();
 		NB_vid.comment.upvoteClick();
 		NB_vid.comment.deleteHoverCheck();
@@ -822,10 +822,10 @@ NB_vid = {};
 
 	// Automatically keeps the current comment in view wihin the comment container
 	function commentAutoScroll(){ //Dsan
-		if(playVideo && !isHoveringOver){
+		if(playVideo && !NB_vid.comment.isHoveringOver){
 			createTimeSecArray();
 			var currentTime = parseInt(ytplayer.getCurrentTime());
-			var indexOfArr = timeSecArray.indexOf(currentTime);
+			var indexOfArr = NB_vid.comment.timeSecArray.indexOf(currentTime);
 			var commentID = "#ui-accordion-accordion-header-" + indexOfArr;
 
 			var container = $('.commentsView_holder'),
@@ -1097,7 +1097,7 @@ NB_vid = {};
 				NB_vid.comment.comment_btn();
 			}
 		}
-		if(startZoomX > 0 && !NB_vid.zoom.zoom_mouseup){ /////MOVE THIS TO OWN FUNCTION: zoomWidthCalc
+		if(NB_vid.zoom.startZoomX > 0 && !NB_vid.zoom.zoom_mouseup){ /////MOVE THIS TO OWN FUNCTION: zoomWidthCalc
 			var currentSec = NB_vid.drag.mouseXtoSec(".tickmark_holder", e);
 			NB_vid.drag.dragWidth = NB_vid.tick.mouseX-startZoomX - NB_vid.progressbar.progressbarOffsetX();
 			var widthStr = NB_vid.drag.dragWidth.toString() + "px";
@@ -1309,7 +1309,7 @@ NB_vid = {};
 
 	// Closes the enlarged tick bar and deletes the blue enlarged selection if they exist
 	function zoomClose(){
-		if(enlargedDraggableCreated){
+		if(NB_vid.zoom.enlargedDraggableCreated){
 			$(".enlargedTickContainer").animate({"opacity": 0}, 400, function(){
 				$(".enlargedTickContainer").hide();
 			})
@@ -1318,7 +1318,7 @@ NB_vid = {};
 				$("#zoomTick").hide();
 				$("#zoomTick").css("opacity", 1);
 			})
-			enlargedDraggableCreated = false;
+			NB_vid.zoom.enlargedDraggableCreated = false;
 		}
 	}
 
@@ -1425,9 +1425,9 @@ NB_vid = {};
 	//This functions gets all the informatino from the rectangle that needs to be stored in the commentObj
 	function extractRectInfo(){
 		if (NB_vid.draw.drawWidth > 0){
-			return {"posX": NB_vid.draw.startDrawX, "posY":NB_vid.draw.startDrawY,"width": NB_vid.draw.drawWidth, "height": NB_vid.draw.drawHeight};
+			return {"posX": NB_vid.draw.startDrawX, "posY":NB_vid.draw.startDrawY,"width": NB_vid.draw.drawWidth, "height": NB_vid.draw.drawHeight, "none":false};
 		}else{
-			return {}; //used to return "None", let's hope for no bugs
+			return {"none": true}; //this used to return "None", let's hope for no bugs
 		}
 	}
 	/*
@@ -1589,25 +1589,25 @@ NB_vid = {};
 	//check functions
 	function progressBarHover(){
 		$("#progressbar").mouseenter(function(){
-			progressbarHovering = true;
+			NB_vid.pbHover.progressbarHovering = true;
 		});
 		$("#progressbar").mouseleave(function(){
-			progressbarHovering = false;
+			NB_vid.pbHover.progressbarHovering = false;
 		});
 		$("#videoCover").mouseenter(function(){
-			progressbarHovering = false;
+			NB_vid.pbHover.progressbarHovering = false;
 		})
 	}
 	function progressBarHoverTooltip(e){
-		if (progressbarHovering){
+		if (NB_vid.pbHover.progressbarHovering){
 			var xPosition = getRelMouseX("#progressbar", e);
 			$(".mouseTooltipDiv").css("left", xPosition);
 			$(".mouseTooltipDiv").tooltip("destroy");
 			$(".mouseTooltipDiv").tooltip({title: calculateTime(mouseXtoSec("#progressbar", e)), animation: false})
 			$(".mouseTooltipDiv").tooltip("show");
 			$("#progressbar .tooltip").css("opacity", "1");
-		}else if(!progressbarHovering){
-			hideToolTipDelay("#progressbar");
+		}else if(!NB_vid.pbHover.progressbarHovering){
+			NB_vid.drag.hideToolTipDelay("#progressbar");
 		}
 	}
 
@@ -1704,7 +1704,7 @@ NB_vid = {};
 				"submitCommentUsername":submitCommentUsername,
 				"logout":logout,
 				"addLoginButton":addLoginButton
-		}
+		},
 		"progressbar": {
 				"updateProgressbar":updateProgressbar,
 				"progressbar_click": progressbar_click,
@@ -1769,7 +1769,7 @@ NB_vid = {};
 				"zoom_mouseup":true,
 				"zoomInitResizing":false,
 				"zoomResizing":false,
-				"enlargedTimeStart":"--:--".
+				"enlargedTimeStart":"--:--",
 				"enlargedTimeEnd": "--:--",
 				"enlargedDraggableCreated":false,
 				"zoomRangeOn": zoomRangeOn,
@@ -1820,7 +1820,7 @@ NB_vid = {};
 				"progressbarHovering":false,
 				"progressBarHover":progressBarHover,
 				"progressBarHoverTooltip":progressBarHoverTooltip
-		}
+		},
 		"jQueryReady": {
 				"mouseX": 0,
 				"mouseY": 0,
