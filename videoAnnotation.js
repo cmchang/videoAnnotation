@@ -897,6 +897,7 @@ NB_vid = {};
 
 
 	function upvoteClick(){
+		var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
 		$(".upvoteBtn").on("click", function(){
 			var commentID = $(this).attr("id");
 			var commentNum = parseInt(commentID.slice(9, commentID.length));
@@ -913,7 +914,7 @@ NB_vid = {};
 									for(var i = 0; i < results.length; i++){
 										results[i].increment("upvotes", -1); 
 										var parseUsernameArray = results[i].get("upvotesUserArray");
-										var index = parseUsernameArray.indexOf(yourUserName);
+										var index = parseUsernameArray.indexOf(NB_vid.user.yourUserName);
 										parseUsernameArray.splice(index, 1);
 										results[i].set("upvotesUserArray", parseUsernameArray);
 										results[i].save();
@@ -922,7 +923,7 @@ NB_vid = {};
 							})
 							NB_vid.commentObj[i].upvotes -= 1;
 							var array = NB_vid.commentObj[i].upvotesUserArray
-							var index = array.indexOf(yourUserName);
+							var index = array.indexOf(NB_vid.user.yourUserName);
 							array.splice(index, 1);
 						}
 					}
@@ -939,13 +940,13 @@ NB_vid = {};
 										results[i].increment("upvotes"); 
 										console.log("Increased upvotes by 1");
 										var parseUsernameArray = results[i].get("upvotesUserArray");
-										parseUsernameArray.push(yourUserName); 
+										parseUsernameArray.push(NB_vid.user.yourUserName); 
 										results[i].save();
 									}
 								}
 							})
 							NB_vid.commentObj[i].upvotes += 1;
-							NB_vid.commentObj[i].upvotesUserArray.push(yourUserName);
+							NB_vid.commentObj[i].upvotesUserArray.push(NB_vid.user.yourUserName);
 							
 						}
 					}
