@@ -1446,7 +1446,7 @@ NB_vid = {};
 
 	//calculate the tick width given the starting and end time associated with the comment
 	function calculateTickWidth(startTime, endTime){
-		if (endTime != "None"){
+		if (endTime != 0){
 			var leftLoc = NB_vid.tick.calculateTickLoc(startTime);
 			var rightLoc = NB_vid.tick.calculateTickLoc(endTime);
 			var width = rightLoc - leftLoc;
@@ -1476,6 +1476,7 @@ NB_vid = {};
 
 	//This function should be called the the page is loading
 	function addAllTicks(){
+		console.log(commentObj)
 		$(".tickmark_holder").html(""); 
 		var xLoc, ID, width, html;
 		for(var num = 0; num < NB_vid.commentObj.length; num++){
