@@ -217,7 +217,7 @@ NB_vid = {};
 		$('#loginModal').modal('hide')
 	}
 
-	// 
+	// Same as above, but for different modal
 	function submitCommentUsername(){
 		NB_vid.user.yourUserName = $(".usernameCommentInput").val();
 		localStorage.yourUserName = NB_vid.user.yourUserName;
@@ -226,6 +226,7 @@ NB_vid = {};
 		$('#loginCommentModal').modal('hide')
 	}
 
+	// Same as above, but for different modal
 	function submitUpvoteUsername(){
 		NB_vid.user.yourUserName = $(".usernameUpvoteInput").val();
 		localStorage.yourUserName = NB_vid.user.yourUserName;
@@ -234,11 +235,13 @@ NB_vid = {};
 		$('#loginUpvoteModal').modal('hide');
 	}
 
+	// Deletes you username from local storage and reloads page
 	function logout(){
 		delete localStorage["yourUserName"];
 		location.reload();
 	}
 
+	// Creates login button depending on whether or not you are currently logged
 	function addLoginButton(){
 		var loginBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#loginModal" data-toggle = "modal">Log In</a></li>');
 		var logoutBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#logoutModal" data-toggle = "modal">' + NB_vid.user.yourUserName + '</a></li>')
@@ -334,6 +337,7 @@ NB_vid = {};
 	var commentObj = [];
 	var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
 
+	// Retrieves data from Parse, and then stores it in commentObj
 	function parseInit(){
 		var query = new Parse.Query(ParseCommentObj);
 		query.find({
@@ -604,6 +608,8 @@ NB_vid = {};
 		$("#deleteModal .btn-danger").attr("id", commentID);
 
 	}
+
+	// Removes comment from commentObj and parse
 	function deleteComment(commentID){
 		// Client Side
 		for (var i = 0; i < NB_vid.commentObj.length; i++){
@@ -913,7 +919,7 @@ NB_vid = {};
 
 	}
 
-
+	// Updates commentObj when clicking on upvote icon and updates parse as well
 	function upvoteClick(){
 		var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
 		$(".upvoteBtn").on("click", function(){
@@ -1231,6 +1237,7 @@ NB_vid = {};
 		});
 	}
 
+	
 	function showZoomTick(currentSec){ 
 		var tickLoc = NB_vid.tick.calculateTickLoc(currentSec);
 		NB_vid.drag.startDragX = tickLoc;
@@ -1239,17 +1246,23 @@ NB_vid = {};
 		$("#zoomTick").css("width", "2px")
 		$("#zoomTick").show();	
 	}
+
+	
 	function hideZoomTick(){ 
 		$("#zoomTick").hide();
 		$("#zoomTick").css("width", "2px")	
 		NB_vid.drag.dragWidth = 2;
 	}
+
+	// Figures out where ticks lie in enlarged tick bar
+	// Called on mouseup in tickbar
 	function enlargedTickHTML(xLoc, width, ID){
 		var style = "'left:" + xLoc + "px; width:"+width + "px'";
 		var html = "<div class = 'enlargedTickmark' id = 'enlargedTickmark"+ID + "' style="+style+" onclick = NB_vid.tick.tickClick(this)></div>"; //onmouseover = 'tickHover(this)'
 		return html;
 	}
 
+	// Creates popovers for enlarged tick bar
 	function createEnlargedTickPopover(ID){
 		for (var i = 0; i <= NB_vid.commentObj.length - 1; i++){
 	        if (NB_vid.commentObj[i].ID == ID){
@@ -1259,6 +1272,9 @@ NB_vid = {};
 	        }
 	    }
 	}
+
+	// Called when dragging blue zoomed area or when creating the initial zoom
+	// Recalculates the ticks within the enlarged tick bar
 	function zoomRecalc(e){
 		if (NB_vid.zoom.zoomInitResizing && !NB_vid.zoom.zoomResizing || NB_vid.zoom.zoomDragging){
 			var zoomTickLeft = parseFloat($("#zoomTick").css("left"));
@@ -1273,6 +1289,7 @@ NB_vid = {};
 		}
 	}
 
+	// updates the current player location (green tick) within enlarged bar
 	function updateEnlargedTickBar(){ 
 		if (NB_vid.zoom.enlargedTimeStart != "--:--" && NB_vid.zoom.enlargedTimeEnd != "--:--"){
 			var enlargedDuration = NB_vid.zoom.enlargedTimeEnd - NB_vid.zoom.enlargedTimeStart;
@@ -1286,6 +1303,7 @@ NB_vid = {};
 		}
 	}
 
+	// Adds all appropriate ticks to enlarged tick bar
 	function addEnlargedTicks(){
 		$(".enlargedTickBar").html("");
 		for (var i = 0; i <= NB_vid.commentObj.length - 1; i++){
@@ -1320,6 +1338,7 @@ NB_vid = {};
 		}
 	}
 
+	// changes zommDragging variable depending on if you're dragging the blue zoom area or not
 	function zoomDrag(){
 		$("#zoomTick").mousedown(function(e){
 			NB_vid.zoom.zoomDragging = true;
@@ -1620,6 +1639,8 @@ NB_vid = {};
 			NB_vid.pbHover.progressbarHovering = false;
 		})
 	}
+
+	// When hovering over progressbar, tooltip shows displaying the time you are hovering over
 	function progressBarHoverTooltip(e){
 		if (NB_vid.pbHover.progressbarHovering){
 			var xPosition = getRelMouseX("#progressbar", e);
