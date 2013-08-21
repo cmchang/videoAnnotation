@@ -276,8 +276,8 @@ NB_vid = {};
 	//Boolean indicating if the login textbox is focused
 	//setupLoginTextbox assigns the correct values to boolean depending on action
 	function setupLoginTextbox(){
-		$(".newCommentTextbox").focus(function(){NB_vid.user.textboxFocused = true;});
-		$(".newCommentTextbox").focusout(function(){NB_vid.user.textboxFocused = false;});
+		$(".newCommentTextbox").focus(function(){NB_vid.comment.textboxFocused = true;});
+		$(".newCommentTextbox").focusout(function(){NB_vid.comment.textboxFocused = false;});
 
 	}
 
@@ -923,8 +923,8 @@ NB_vid = {};
 	//Boolean indicating if the main textbox in the comment editor is focused
 	//setupTextboxFocus assigns the correct values to boolean depending on action
 	function setupTextboxFocus(){
-		$(".usernameInput").focus(function(){NB_vid.comment.loginFocused = true;});
-		$(".usernameInput").focusout(function(){NB_vid.comment.loginFocused = false;});
+		$(".usernameInput").focus(function(){NB_vid.user.loginFocused = true;});
+		$(".usernameInput").focusout(function(){NB_vid.user.loginFocused = false;});
 
 	}
 
@@ -1322,7 +1322,7 @@ NB_vid = {};
 					var totalDiff = NB_vid.zoom.enlargedTimeEnd - NB_vid.zoom.enlargedTimeStart;
 					var tickRatio = startToTickDiff/totalDiff;
 					var tickPxLeft = tickRatio*$(".enlargedTickBar").width();
-					console.log("enlargedTimeStart: " + NB_vid.zoom.enlargedTimeStart);
+					// console.log("enlargedTimeStart: " + NB_vid.zoom.enlargedTimeStart);
 					var html = NB_vid.zoom.enlargedTickHTML(tickPxLeft, 1, NB_vid.commentObj[i].ID);
 					$(".enlargedTickBar").append(html);
 					NB_vid.zoom.createEnlargedTickPopover(NB_vid.commentObj[i].ID);
@@ -1337,7 +1337,7 @@ NB_vid = {};
 					if (NB_vid.commentObj[i].timeEndSec > NB_vid.zoom.enlargedTimeEnd){var tickEndRatio = 1;}
 					if (NB_vid.commentObj[i].timeSec < NB_vid.zoom.enlargedTimeStart){var tickStartRatio = 0;}
 					var tickPxLeft = tickStartRatio*$(".enlargedTickBar").width();
-					console.log(tickPxLeft);
+					// console.log(tickPxLeft);
 					var tickWidth = (tickEndRatio-tickStartRatio)*$(".enlargedTickBar").width();
 					var html = NB_vid.zoom.enlargedTickHTML(tickPxLeft, tickWidth, NB_vid.commentObj[i].ID);
 					$(".enlargedTickBar").append(html);
@@ -1680,10 +1680,9 @@ NB_vid = {};
 	function gatherVidThumbnails(){
 		var length = ytplayer.getDuration();
 		for(var x = 0; x < 5; x++){
-			console.log("here");
 			NB_vid.pbHover.getImgSrc(x)
 			NB_Vid.pbHover.imgArr.push(NB_vid.pbHover.imgSrc);
-			console.log(NB_vid.pbHover.imgArr);
+			// console.log(NB_vid.pbHover.imgArr);
 		}
 	}
 
@@ -1708,13 +1707,51 @@ NB_vid = {};
 	 *	10. My Notes Section
 	 */
 
+	//When "myNotes" button in the nav bar is clicked, it will either open the modal or tell you to sign in if you haven't already
 	function myNotes_btn(){
 		if ("yourUserName" in localStorage){
 			pauseVideo();
+			NB_vid.notes.setupNotesModal();
 			$('#myNotesModal').modal({'show': true});
 		}else{
 			$('#loginCommentModal').modal({'show': true});
 		}
+	}
+
+	//calls the necessary functions to setup your personal notes modal before it is shown
+	function setupNotesModal(){
+		NB_vid.notes.getMyComments();
+		NB_vid.notes.addMyComments();
+	}
+
+	//Find all the comments you made within the commentObj and make a copy of your comments in myNotesCommentObj
+	function getMyComments(){
+		for(var x = 0; x < NB_vid.commentObj.length; x++){
+			if(NB_vid.commentObj[x].userName == localStorage.yourUserName){
+				NB_vid.notes.myNotesCommentObj.push(NB_vid.commentObj[x]);
+
+			}
+		}
+		console.log("Done");
+		console.log(NB_vid.notes.myNotesCommentObj);
+	}
+
+	//Adds the collected comments within myNotesCommentObj to the Modal
+	function addMyComments(){
+		$(".myNotesBody").html("");
+		var html = "";
+		for(var x = 0; x < NB_vid.notes.myNotesCommentObj.length; x++){
+			var imgSrc = getImgSrc(NB_vid.notes.myNotesCommentObj[x].timeSec);
+			var imgHTML = "<img src = '"+ imgSrc + "'/>";
+			console.log(imgSrc);
+			var text = NB_vid.notes.myNotesCommentObj[x].text;
+			if(text == "" || text == " "){
+				text = "(No text)";
+			}
+			html += "Time: " + NB_vid.notes.myNotesCommentObj[x].timeStr + "<br><ul><li>" + imgHTML + text + "</li></ul><br>";
+		}
+		$(".myNotesBody").html(html);
+
 	}
 
 	/*
@@ -1737,7 +1774,7 @@ NB_vid = {};
 	 * 12. Keyboard Shortcuts
 	 */
 	$(window).keyup(function(e) {
-		if (!NB_vid.comment.textboxFocused && !NB_vid.comment.loginFocused){
+		if (!NB_vid.comment.textboxFocused && !NB_vid.user.loginFocused){
 			if(e.which == 32){ //spacebar
 				NB_vid.yt.videoClicked();
 			}else if (e.which === 67){ // c
@@ -1939,7 +1976,11 @@ NB_vid = {};
 				"getImgSrc":getImgSrc
 		},
 		"notes":{
-				"myNotes_btn":myNotes_btn
+				"myNotes_btn":myNotes_btn,
+				"setupNotesModal": setupNotesModal,
+				"myNotesCommentObj": [],
+				"getMyComments": getMyComments,
+				"addMyComments": addMyComments
 		},
 		"jQueryReady": {
 				"mouseX": 0,
