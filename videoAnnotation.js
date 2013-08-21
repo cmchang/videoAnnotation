@@ -205,6 +205,9 @@ NB_vid = {};
 	/*
 	 * 2. Username Storage-related Code
 	 */
+
+	// Called when user clicks submit within username modal
+	// stores their input for their username in localstorage
 	function submitUsername(){
 		NB_vid.user.yourUserName = $(".usernameInput").val();
 		localStorage.yourUserName = NB_vid.user.yourUserName;
@@ -213,12 +216,22 @@ NB_vid = {};
 		$('.logBtn').attr("href", "#logoutModal");
 		$('#loginModal').modal('hide')
 	}
+
+	// 
 	function submitCommentUsername(){
 		NB_vid.user.yourUserName = $(".usernameCommentInput").val();
 		localStorage.yourUserName = NB_vid.user.yourUserName;
 		$('.logBtn').html(NB_vid.user.yourUserName);
 		$('.logBtn').attr("href", "#logoutModal");
 		$('#loginCommentModal').modal('hide')
+	}
+
+	function submitUpvoteUsername(){
+		NB_vid.user.yourUserName = $(".usernameUpvoteInput").val();
+		localStorage.yourUserName = NB_vid.user.yourUserName;
+		$('.logBtn').html(NB_vid.user.yourUserName);
+		$('.logBtn').attr("href", "#logoutModal");
+		$('#loginUpvoteModal').modal('hide');
 	}
 
 	function logout(){
@@ -1712,6 +1725,7 @@ NB_vid = {};
 				"yourUserName":localStorage.yourUserName,
 				"submitUsername":submitUsername,
 				"submitCommentUsername":submitCommentUsername,
+				"submitUpvoteUsername":submitUpvoteUsername,
 				"logout":logout,
 				"addLoginButton":addLoginButton
 		},
