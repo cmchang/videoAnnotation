@@ -244,7 +244,7 @@ NB_vid = {};
 	// Creates login button depending on whether or not you are currently logged
 	function addLoginButton(){
 		var loginBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#loginModal" data-toggle = "modal">Log In</a></li>');
-		var logoutBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#logoutModal" data-toggle = "modal">' + NB_vid.user.yourUserName + '</a></li>')
+		var logoutBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#logoutModal" data-toggle = "modal">' + NB_vid.user.yourUserName + '</a></li><li class = "nav-collapse collapse divider-vertical"><a class = "myNotes" href="#myNotesModal" data-toggle = "modal">My Notes</a></li>')
 		if("yourUserName" in localStorage){
 			$(".nav").append(logoutBtn);
 		}else{
@@ -270,6 +270,14 @@ NB_vid = {};
 				NB_vid.user.submitCommentUsername();    
 			}
 		});
+	}
+
+	//Boolean indicating if the login textbox is focused
+	//setupLoginTextbox assigns the correct values to boolean depending on action
+	function setupLoginTextbox(){
+		$(".newCommentTextbox").focus(function(){NB_vid.user.textboxFocused = true;});
+		$(".newCommentTextbox").focusout(function(){NB_vid.user.textboxFocused = false;});
+
 	}
 
 /*
@@ -914,8 +922,8 @@ NB_vid = {};
 	//Boolean indicating if the main textbox in the comment editor is focused
 	//setupTextboxFocus assigns the correct values to boolean depending on action
 	function setupTextboxFocus(){
-		$(".newCommentTextbox").focus(function(){NB_vid.comment.textboxFocused = true;});
-		$(".newCommentTextbox").focusout(function(){NB_vid.comment.textboxFocused = false;});
+		$(".usernameInput").focus(function(){NB_vid.comment.loginFocused = true;});
+		$(".usernameInput").focusout(function(){NB_vid.comment.loginFocused = false;});
 
 	}
 
@@ -1555,6 +1563,7 @@ NB_vid = {};
 					NB_vid.tick.changeTickCSS(NB_vid.tick.currentHighlightedTick, "red", "No Change", ".4");
 				}
 				NB_vid.tick.currentHighlightedTick = tickmark;
+				console.log(NB_vid.tick.currentHighlightedTick.attr("ID").length);
 				NB_vid.tick.currentID = NB_vid.tick.currentHighlightedTick.attr("ID").substr(8, NB_vid.tick.currentHighlightedTick.attr("ID").length-1);
 			}
 		}else{
@@ -1650,8 +1659,8 @@ NB_vid = {};
 					url: "http://juhokim.com/framegrabber/make-thumbnail.php",        
 					type: "GET",
 					data: {
-					tm: mouseXtoSec("#progressbar", e),
-					id: "HtSuA80QTyo"
+						tm: mouseXtoSec("#progressbar", e),
+						id: "HtSuA80QTyo"
 				}}).done(function(data){
 					//$("img").attr("src", data);   
 					NB_vid.pbHover.imgSrc = data;                        
@@ -1667,6 +1676,31 @@ NB_vid = {};
 		}
 	}
 
+	function gatherVidThumbnails(){
+		var length = ytplayer.getDuration();
+		for(var x = 0; x < 5; x++){
+			console.log("here");
+			NB_vid.pbHover.getImgSrc(x)
+			NB_Vid.pbHover.imgArr.push(NB_vid.pbHover.imgSrc);
+			console.log(NB_vid.pbHover.imgArr);
+		}
+	}
+
+	function getImgSrc(time){
+		NB_vid.pbHover.imgTime = time;
+		$.ajax({
+					url: "http://juhokim.com/framegrabber/make-thumbnail.php",        
+					type: "GET",
+					data: {
+						tm: NB_vid.pbHover.imgTime,
+						id: "HtSuA80QTyo"
+				}}).done(function(data){
+					NB_vid.pbHover.imgSrc = data;   
+					console.log(NB_vid.pbHover.imgSrc);                    
+				}).fail(function(){
+				console.log("capture failed."); 
+		});
+	}
 
 	/*
 	 *	10. jQuery(document).ready()
@@ -1688,7 +1722,7 @@ NB_vid = {};
 	 * 11. Keyboard Shortcuts
 	 */
 	$(window).keyup(function(e) {
-		if (!NB_vid.comment.textboxFocused){
+		if (!NB_vid.comment.textboxFocused && !NB_vid.comment.loginFocused){
 			if(e.which == 32){ //spacebar
 				NB_vid.yt.videoClicked();
 			}else if (e.which === 67){ // c
@@ -1762,7 +1796,9 @@ NB_vid = {};
 				"submitCommentUsername":submitCommentUsername,
 				"submitUpvoteUsername":submitUpvoteUsername,
 				"logout":logout,
-				"addLoginButton":addLoginButton
+				"addLoginButton":addLoginButton,
+				"loginFocused": false,
+				"setupLoginTextbox":setupLoginTextbox
 		},
 		"progressbar": {
 				"updateProgressbar":updateProgressbar,
@@ -1880,7 +1916,12 @@ NB_vid = {};
 				"progressbarHovering":false,
 				"progressBarHover":progressBarHover,
 				"imgSrc": "",
-				"progressBarHoverTooltip":progressBarHoverTooltip
+				"imgArr": [],
+				"forLoopVal": 0,
+				"gatherVidThumbnails": gatherVidThumbnails,
+				"progressBarHoverTooltip":progressBarHoverTooltip,
+				"imgTime": 0,
+				"getImgSrc":getImgSrc
 		},
 		"jQueryReady": {
 				"mouseX": 0,
@@ -1904,6 +1945,7 @@ NB_vid = {};
 										NB_vid.comment.upvoteClick,
 										NB_vid.comment.setupTimeFocus,
 										NB_vid.comment.setupTextboxFocus,
+										NB_vid.user.setupLoginTextbox,
 										NB_vid.drag.time_updateTickRange,
 										NB_vid.drag.timeEnd_updateTickRange,
 										NB_vid.draw.drawRectOn,
@@ -1941,6 +1983,7 @@ function onYouTubePlayerReady(playerId) {
 	ytplayer.addEventListener("onError", "onPlayerError");
 	//Load an initial video into the player
 	ytplayer.cueVideoById("HtSuA80QTyo");
+	NB_vid.pbHover.gatherVidThumbnails();
 }
 
 

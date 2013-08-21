@@ -5308,7 +5308,7 @@ input[type="submit"].btn.btn-mini {
 }
 
 .tooltip.in {
-  opacity: 0.8;
+  opacity: 0.6;
   filter: alpha(opacity=80);
 }
 

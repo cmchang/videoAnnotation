@@ -273,8 +273,7 @@
 }
 .mouseTooltipDiv{
 	z-index: -1;
-	background-color: black;
-	width: 1px;
+	width: 4px;
 	display: block;
 	opacity: 1;
 	background-color: rgba(255, 255, 255, 0);
@@ -306,5 +305,7 @@
 	margin-top: 372px;
 	margin-left: 5px;
 	z-index: 2;
+	position: absolute;
+}2;
 	position: absolute;
 }
