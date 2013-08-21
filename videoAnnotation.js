@@ -1646,13 +1646,27 @@ NB_vid = {};
 			var xPosition = getRelMouseX("#progressbar", e);
 			$(".mouseTooltipDiv").css("left", xPosition);
 			$(".mouseTooltipDiv").tooltip("destroy");
-			$(".mouseTooltipDiv").tooltip({title: calculateTime(mouseXtoSec("#progressbar", e)), animation: false})
+			$.ajax({
+					url: "http://juhokim.com/framegrabber/make-thumbnail.php",        
+					type: "GET",
+					data: {
+					tm: mouseXtoSec("#progressbar", e),
+					id: "HtSuA80QTyo"
+				}}).done(function(data){
+					//$("img").attr("src", data);   
+					NB_vid.pbHover.imgSrc = data;                        
+				}).fail(function(){
+				console.log("capture failed."); 
+			});
+			var img = "<img src= '" + NB_vid.pbHover.imgSrc + "' style = 'width: 100px'/><br>";
+			$(".mouseTooltipDiv").tooltip({title: img + calculateTime(mouseXtoSec("#progressbar", e)), html:true, animation: false})
 			$(".mouseTooltipDiv").tooltip("show");
 			$("#progressbar .tooltip").css("opacity", "1");
 		}else if(!NB_vid.pbHover.progressbarHovering){
 			NB_vid.drag.hideToolTipDelay("#progressbar");
 		}
 	}
+
 
 	/*
 	 *	10. jQuery(document).ready()
@@ -1865,6 +1879,7 @@ NB_vid = {};
 		"pbHover": {
 				"progressbarHovering":false,
 				"progressBarHover":progressBarHover,
+				"imgSrc": "",
 				"progressBarHoverTooltip":progressBarHoverTooltip
 		},
 		"jQueryReady": {
