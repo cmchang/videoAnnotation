@@ -1247,15 +1247,15 @@ NB_vid = {};
 	    }
 	}
 	function zoomRecalc(e){
-		if (NB_vid.zoom.zoomDragging){
+		if (NB_vid.zoom.zoomInitResizing && !NB_vid.zoom.zoomResizing || NB_vid.zoom.zoomDragging){
 			var zoomTickLeft = parseFloat($("#zoomTick").css("left"));
 			var zoomTickRight = zoomTickLeft + $("#zoomTick").width();
 			var startRatio = zoomTickLeft/$(".tickmark_holder").width();
 			var endRatio = zoomTickRight/$(".tickmark_holder").width();
-			enlargedTimeStart = startRatio*ytplayer.getDuration();
-			enlargedTimeEnd = endRatio*ytplayer.getDuration();
-			$(".enlargedTickStart").html(NB_vid.yt.calculateTime(enlargedTimeStart));
-			$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(enlargedTimeEnd));
+			NB_vid.zoom.enlargedTimeStart = startRatio*ytplayer.getDuration();
+			NB_vid.zoom.enlargedTimeEnd = endRatio*ytplayer.getDuration();
+			$(".enlargedTickStart").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeStart));
+			$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeEnd));
 			NB_vid.zoom.addEnlargedTicks();
 		}
 	}
@@ -1276,17 +1276,18 @@ NB_vid = {};
 	function addEnlargedTicks(){
 		$(".enlargedTickBar").html("");
 		for (var i = 0; i <= NB_vid.commentObj.length - 1; i++){
-			if (NB_vid.commentObj[i].timeEndSec == 0){
+			if (NB_vid.commentObj[i].timeEndSec == 0){ //for ticks without range
 				if(NB_vid.commentObj[i].timeSec > NB_vid.zoom.enlargedTimeStart && NB_vid.commentObj[i].timeSec < NB_vid.zoom.enlargedTimeEnd){
 					var startToTickDiff = NB_vid.commentObj[i].timeSec - NB_vid.zoom.enlargedTimeStart;
 					var totalDiff = NB_vid.zoom.enlargedTimeEnd - NB_vid.zoom.enlargedTimeStart;
 					var tickRatio = startToTickDiff/totalDiff;
 					var tickPxLeft = tickRatio*$(".enlargedTickBar").width();
+					console.log("enlargedTimeStart: " + NB_vid.zoom.enlargedTimeStart);
 					var html = NB_vid.zoom.enlargedTickHTML(tickPxLeft, 1, NB_vid.commentObj[i].ID);
 					$(".enlargedTickBar").append(html);
 					NB_vid.zoom.createEnlargedTickPopover(NB_vid.commentObj[i].ID);
 				}
-			}else{
+			}else{ //for ticks with range
 				if((NB_vid.commentObj[i].timeSec > NB_vid.zoom.enlargedTimeStart && NB_vid.commentObj[i].timeSec < NB_vid.zoom.enlargedTimeEnd) || (NB_vid.commentObj[i].timeEndSec > NB_vid.zoom.enlargedTimeStart && NB_vid.commentObj[i].timeSec < NB_vid.zoom.enlargedTimeEnd)){
 					var startToTickStartDiff = NB_vid.commentObj[i].timeSec - NB_vid.zoom.enlargedTimeStart;
 					var startToTickEndDiff = NB_vid.commentObj[i].timeEndSec - NB_vid.zoom.enlargedTimeStart;
@@ -1296,6 +1297,7 @@ NB_vid = {};
 					if (NB_vid.commentObj[i].timeEndSec > NB_vid.zoom.enlargedTimeEnd){var tickEndRatio = 1;}
 					if (NB_vid.commentObj[i].timeSec < NB_vid.zoom.enlargedTimeStart){var tickStartRatio = 0;}
 					var tickPxLeft = tickStartRatio*$(".enlargedTickBar").width();
+					console.log(tickPxLeft);
 					var tickWidth = (tickEndRatio-tickStartRatio)*$(".enlargedTickBar").width();
 					var html = NB_vid.zoom.enlargedTickHTML(tickPxLeft, tickWidth, NB_vid.commentObj[i].ID);
 					$(".enlargedTickBar").append(html);
