@@ -11,10 +11,11 @@ NB_vid = {};
  *		7. Draw Rectangle-related Code
  *		8. Tick-related code
  *		9. Progressbar hover tooltip-related Code
- *		10. jQuery(document).ready() 
+ *		10. My Notes Section 
+ *		11. jQuery(document).ready() 
  *				-includes: updateProgressbar(), addAllCommentHTML(), setupAccordion(), isHoveringOverComments()
- *		11. Keyboard Shortcuts
- *		12. Alert-related code
+ *		12. Keyboard Shortcuts
+ *		13. Alert-related code
  */
 
 (function(){
@@ -244,7 +245,7 @@ NB_vid = {};
 	// Creates login button depending on whether or not you are currently logged
 	function addLoginButton(){
 		var loginBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#loginModal" data-toggle = "modal">Log In</a></li>');
-		var logoutBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#logoutModal" data-toggle = "modal">' + NB_vid.user.yourUserName + '</a></li><li class = "nav-collapse collapse divider-vertical"><a class = "myNotes" href="#myNotesModal" data-toggle = "modal">My Notes</a></li>')
+		var logoutBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#logoutModal" data-toggle = "modal">' + NB_vid.user.yourUserName + '</a></li>');
 		if("yourUserName" in localStorage){
 			$(".nav").append(logoutBtn);
 		}else{
@@ -1702,8 +1703,22 @@ NB_vid = {};
 		});
 	}
 
+
 	/*
-	 *	10. jQuery(document).ready()
+	 *	10. My Notes Section
+	 */
+
+	function myNotes_btn(){
+		if ("yourUserName" in localStorage){
+			pauseVideo();
+			$('#myNotesModal').modal({'show': true});
+		}else{
+			$('#loginCommentModal').modal({'show': true});
+		}
+	}
+
+	/*
+	 *	11. jQuery(document).ready()
 	 */
 
 	function mouseLoc(){
@@ -1719,7 +1734,7 @@ NB_vid = {};
 	}
 
 	/*
-	 * 11. Keyboard Shortcuts
+	 * 12. Keyboard Shortcuts
 	 */
 	$(window).keyup(function(e) {
 		if (!NB_vid.comment.textboxFocused && !NB_vid.comment.loginFocused){
@@ -1751,7 +1766,7 @@ NB_vid = {};
 
 
 	/*
-	 *	12. Alert-related code
+	 *	13. Alert-related code
 	 */
 	function closeCommentAlert(){
 		alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
@@ -1922,6 +1937,9 @@ NB_vid = {};
 				"progressBarHoverTooltip":progressBarHoverTooltip,
 				"imgTime": 0,
 				"getImgSrc":getImgSrc
+		},
+		"notes":{
+				"myNotes_btn":myNotes_btn
 		},
 		"jQueryReady": {
 				"mouseX": 0,
