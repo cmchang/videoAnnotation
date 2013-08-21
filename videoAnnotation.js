@@ -553,6 +553,12 @@ NB_vid = {};
 		NB_vid.comment.setupAccordion();
 	}
 
+	function setup_commentDisplay_filtered(type){
+		NB_vid.comment.sortCommentObj();
+		NB_vid.comment.addAllCommentHTML_type(type);
+		NB_vid.comment.setupAccordion();
+	}
+
 	//This function sorts the commentObj array by the timeSec so we can later display the comments in order
 	function sortCommentObj(){
 		function compare(a,b) {
@@ -700,6 +706,18 @@ NB_vid = {};
 		$("#accordion").append(html);
 	}
 
+	//given the comment type, goes in a for loop to add all of the objects with that type to the accordion section of the html
+	function addAllCommentHTML_type(type){
+		var html = "";
+		for(var num = 0; num < NB_vid.commentObj.length; num++){
+			if(NB_vid.commentObj[num].type == type){
+				var htmlSection = NB_vid.comment.extractCommentHTML(num);
+				html += htmlSection;
+			}
+		}
+		$("#accordion").append(html);
+	}
+
 	//Given the comment index (for commentObj), go to the time in the video associated to the comment
 	//show rectangle if exists or hide rectangle if none
 	function goToComment(index){
@@ -829,6 +847,15 @@ NB_vid = {};
 		$("#accordion").accordion('destroy');
 		$("#accordion").html("");
 		NB_vid.comment.setup_commentDisplay();
+	}
+
+	//gets rid of accordion and gets rid of the html
+	//extracts information from the commentObj
+	//calls setup_commentDisplay to inject new HTML and setup new accordion
+	function showFilteredComments(type){
+		$("#accordion").accordion('destroy');
+		$("#accordion").html("");
+		NB_vid.comment.setup_commentDisplay_filtered(type);
 	}
 
 	//An array to hold all the seconds at which there are comments
@@ -1564,7 +1591,6 @@ NB_vid = {};
 					NB_vid.tick.changeTickCSS(NB_vid.tick.currentHighlightedTick, "red", "No Change", ".4");
 				}
 				NB_vid.tick.currentHighlightedTick = tickmark;
-				console.log(NB_vid.tick.currentHighlightedTick.attr("ID").length);
 				NB_vid.tick.currentID = NB_vid.tick.currentHighlightedTick.attr("ID").substr(8, NB_vid.tick.currentHighlightedTick.attr("ID").length-1);
 			}
 		}else{
@@ -1863,12 +1889,14 @@ NB_vid = {};
 				"parseInit": parseInit,
 				"ParseCommentObj":ParseCommentObj,
 				"setup_commentDisplay":setup_commentDisplay,
+				"setup_commentDisplay_filtered":setup_commentDisplay_filtered,
 				"sortCommentObj":sortCommentObj,
 				"extractCommentHTML":extractCommentHTML,
 				"showDeleteModal":showDeleteModal,
 				"deleteComment":deleteComment,
 				"deleteHoverCheck":deleteHoverCheck,
 				"addAllCommentHTML":addAllCommentHTML,
+				"addAllCommentHTML_type":addAllCommentHTML_type,
 				"goToComment":goToComment,
 				"setupAccordion":setupAccordion,
 				"show_addNewComment":show_addNewComment,
@@ -1878,6 +1906,7 @@ NB_vid = {};
 				"comment_btn":comment_btn,
 				"submitNewComment":submitNewComment,
 				"showNewComment":showNewComment,
+				"showFilteredComments":showFilteredComments,
 				"timeSecArray": [],
 				"createTimeSecArray":createTimeSecArray,
 				"openCommentSyncVideo":openCommentSyncVideo,

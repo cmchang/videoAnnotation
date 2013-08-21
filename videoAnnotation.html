@@ -223,10 +223,10 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
-					<li><a>View All</a></li>
-					<li><a>Comments</a></li>
-					<li><a>Questions</a></li>
-					<li><a>Your notes</a></li>
+					<li><a onclick="NB_vid.comment.showNewComment()">View All</a></li>
+					<li><a onclick="NB_vid.comment.showFilteredComments('Comment')" >Comments</a></li>
+					<li><a onclick="NB_vid.comment.showFilteredComments('Question')">Questions</a></li>
+					<li><a onclick="NB_vid.comment.showFilteredComments('Note')">Notes</a></li>
 				</ul>
 			</div>
 		</div>
