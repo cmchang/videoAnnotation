@@ -238,10 +238,9 @@
 	height: 15px;
 	border-radius: 5px;
 	background: white;
-	border: 1px solid grey;
 	vertical-align: middle;
 	display: inline-block;
-	/*overflow: hidden;*/
+	border: solid 1px #B5AF9F;
 }
 .enlargedTickStart{
 	width: 45px;
@@ -306,6 +305,7 @@
 	margin-left: 5px;
 	z-index: 2;
 	position: absolute;
+}osition: absolute;
 }2;
 	position: absolute;
 }
