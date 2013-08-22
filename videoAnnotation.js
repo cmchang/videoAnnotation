@@ -634,6 +634,8 @@ NB_vid = {};
 			}
 		}
 		NB_vid.comment.showNewComment();
+		NB_vid.tick.addAllTicks();
+		
 		// Server Side
 		var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
 		var query = new Parse.Query(ParseCommentObj);
