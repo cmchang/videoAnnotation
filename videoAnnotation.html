@@ -209,11 +209,6 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		</div>
 	</div>
 
-	<div class="alert commentAlert">
-	  <button type="button" class="close" data-dismiss="alert">&times;</button>
-	  Your changes will appear when you refresh the page
-	</div>
-
 	<div class = "commentsView">
 		<div class = "commentsView_menu">
 			<button class = "commentBtn btn btn-small" onclick="NB_vid.comment.comment_btn()">Comment</button>
@@ -226,7 +221,6 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 					<li><a onclick="NB_vid.comment.showNewComment()">View All</a></li>
 					<li><a onclick="NB_vid.comment.showFilteredComments('Comment')" >Comments</a></li>
 					<li><a onclick="NB_vid.comment.showFilteredComments('Question')">Questions</a></li>
-					<li><a onclick="NB_vid.comment.showFilteredComments('Note')">Notes</a></li>
 				</ul>
 			</div>
 		</div>
@@ -267,6 +261,10 @@ Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
 		<p> Time in Minutes and Seconds: <span id = "videoCurrentTimeMinSec">--:--</span></p>
 		<p>Current Time: <span id="videoCurrentTime">--:--</span> | Duration: <span id="videoDuration">--:--</span> | Percentage: <span id = "videoPercentage">--:--</span></p>
 		<p>Bytes Total: <span id="bytesTotal">--</span> | Start Bytes: <span id="startBytes">--</span> | Bytes Loaded: <span id="bytesLoaded">--</span></p>
+		<p><input id="volumeSetting" type="text" size="3" />&nbsp;<a href="javascript:void(0)" onclick="NB_vid.yt.setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
+	</div>				
+</body>
+</html>d: <span id="bytesLoaded">--</span></p>
 		<p><input id="volumeSetting" type="text" size="3" />&nbsp;<a href="javascript:void(0)" onclick="NB_vid.yt.setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
 	</div>				
 </body>

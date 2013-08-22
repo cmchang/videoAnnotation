@@ -628,14 +628,12 @@ NB_vid = {};
 	function deleteComment(commentID){
 		// Client Side
 		for (var i = 0; i < NB_vid.commentObj.length; i++){
-			if (NB_vid.commentObj[i].ID == NB_vid.comment.commentID){
+			if (NB_vid.commentObj[i].ID == commentID){
+				console.log(NB_vid.commentObj[i].ID,commentID);
 				NB_vid.commentObj.splice(i, 1);
-				// location.reload();
-				// console.log(commentObj);
-				// console.log("Your changes will appear when you refresh the page")
 			}
 		}
-
+		NB_vid.comment.showNewComment();
 		// Server Side
 		var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
 		var query = new Parse.Query(ParseCommentObj);
@@ -648,17 +646,7 @@ NB_vid = {};
 		      var object = results[i];
 		      object.destroy({
 		      	success: function(object){
-		      		console.log("successfully removed your comment")
-		      		$(".commentAlert").show();
-		      		$(".commentAlert").animate({"opacity": "1"}, 250, function(){
-		      			$(".commentAlert").animate({"opacity": "1"}, 5000, function(){
-			      			$(".commentAlert").animate({"opacity": "0"}, 250, function(){
-			      				$(".commentAlert").hide();
-			      				$(".commentAlert").css("opacity", "1");
-			      			})
-			      		})
-		      		})
-		      		
+		      		console.log("successfully removed your comment");
 		      	},
 		      	error: function(object, error){
 		      		console.log("We were unable to remove your object: " + error);
@@ -1682,20 +1670,21 @@ NB_vid = {};
 			var xPosition = getRelMouseX("#progressbar", e);
 			$(".mouseTooltipDiv").css("left", xPosition);
 			$(".mouseTooltipDiv").tooltip("destroy");
-			$.ajax({
-					url: "http://juhokim.com/framegrabber/make-thumbnail.php",        
-					type: "GET",
-					data: {
-						tm: mouseXtoSec("#progressbar", e),
-						id: "HtSuA80QTyo"
-				}}).done(function(data){
-					//$("img").attr("src", data);   
-					NB_vid.pbHover.imgSrc = data;                        
-				}).fail(function(){
-				console.log("capture failed."); 
-			});
-			var img = "<img src= '" + NB_vid.pbHover.imgSrc + "' style = 'width: 100px'/><br>";
-			$(".mouseTooltipDiv").tooltip({title: img + calculateTime(mouseXtoSec("#progressbar", e)), html:true, animation: false})
+			// $.ajax({
+			// 		url: "http://juhokim.com/framegrabber/make-thumbnail.php",        
+			// 		type: "GET",
+			// 		data: {
+			// 			tm: mouseXtoSec("#progressbar", e),
+			// 			id: "HtSuA80QTyo"
+			// 	}}).done(function(data){
+			// 		//$("img").attr("src", data);   
+			// 		NB_vid.pbHover.imgSrc = data;                        
+			// 	}).fail(function(){
+			// 	console.log("capture failed."); 
+			// });
+			// var img = "<img src= '" + NB_vid.pbHover.imgSrc + "' style = 'width: 100px'/><br>";
+			// $(".mouseTooltipDiv").tooltip({title: img + calculateTime(mouseXtoSec("#progressbar", e)), html:true, animation: false})
+			$(".mouseTooltipDiv").tooltip({title: calculateTime(mouseXtoSec("#progressbar", e)), html:true, animation: false})
 			$(".mouseTooltipDiv").tooltip("show");
 			$("#progressbar .tooltip").css("opacity", "1");
 		}else if(!NB_vid.pbHover.progressbarHovering){
@@ -1714,6 +1703,7 @@ NB_vid = {};
 
 	function getImgSrc(time){
 		NB_vid.pbHover.imgTime = time;
+		
 		$.ajax({
 					url: "http://juhokim.com/framegrabber/make-thumbnail.php",        
 					type: "GET",
@@ -1813,7 +1803,10 @@ NB_vid = {};
 				}
 			}else if(e.which === 77){ // m
 				NB_vid.yt.muteORunmute();
+			}else if(e.which === 78){ // n
+				NB_vid.notes.myNotes_btn()
 			}
+
 		}
 		//here so that unaffected if textbox becomes focused
 		if(e.which == 27){ //esc
@@ -2070,6 +2063,18 @@ function onYouTubePlayerReady(playerId) {
 	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
 	ytplayer.addEventListener("onError", "onPlayerError");
 	//Load an initial video into the player
+	ytplayer.cueVideoById("HtSuA80QTyo");
+	NB_vid.pbHover.gatherVidThumbnails();
+}
+
+
+$(function(){ 
+	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
+		NB_vid.funcLists.jQueryReady[x]();
+	}
+	
+});
+al video into the player
 	ytplayer.cueVideoById("HtSuA80QTyo");
 	NB_vid.pbHover.gatherVidThumbnails();
 }
