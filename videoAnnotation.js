@@ -1670,49 +1670,60 @@ NB_vid = {};
 			var xPosition = getRelMouseX("#progressbar", e);
 			$(".mouseTooltipDiv").css("left", xPosition);
 			$(".mouseTooltipDiv").tooltip("destroy");
-			// $.ajax({
-			// 		url: "http://juhokim.com/framegrabber/make-thumbnail.php",        
-			// 		type: "GET",
-			// 		data: {
-			// 			tm: mouseXtoSec("#progressbar", e),
-			// 			id: "HtSuA80QTyo"
-			// 	}}).done(function(data){
-			// 		//$("img").attr("src", data);   
-			// 		NB_vid.pbHover.imgSrc = data;                        
-			// 	}).fail(function(){
-			// 	console.log("capture failed."); 
-			// });
-			// var img = "<img src= '" + NB_vid.pbHover.imgSrc + "' style = 'width: 100px'/><br>";
-			// $(".mouseTooltipDiv").tooltip({title: img + calculateTime(mouseXtoSec("#progressbar", e)), html:true, animation: false})
-			$(".mouseTooltipDiv").tooltip({title: calculateTime(mouseXtoSec("#progressbar", e)), html:true, animation: false})
-			$(".mouseTooltipDiv").tooltip("show");
-			$("#progressbar .tooltip").css("opacity", "1");
+			$.ajax({
+					url: "http://juhokim.com/framegrabber/make-thumbnail.php",        
+					type: "GET",
+					data: {
+						tm: mouseXtoSec("#progressbar", e),
+						id: "HtSuA80QTyo"
+				}}).done(function(data){
+					//$("img").attr("src", data);   
+
+					var img = "<img src= '" + data + "' style = 'width: 100px; height: 60px'/><br>";
+					$(".mouseTooltipDiv").tooltip({title: img + calculateTime(mouseXtoSec("#progressbar", e)), html:true, animation: false})
+					//$(".mouseTooltipDiv").tooltip({title: calculateTime(mouseXtoSec("#progressbar", e)), html:true, animation: false})
+					$(".mouseTooltipDiv").tooltip("show");
+					$("#progressbar .tooltip").css("opacity", "1");  
+
+				}).fail(function(){
+				console.log("capture failed."); 
+			});
 		}else if(!NB_vid.pbHover.progressbarHovering){
 			NB_vid.drag.hideToolTipDelay("#progressbar");
 		}
 	}
 
-	function gatherVidThumbnails(){
-		var length = ytplayer.getDuration();
-		for(var x = 0; x < 5; x++){
-			NB_vid.pbHover.getImgSrc(x)
-			NB_Vid.pbHover.imgArr.push(NB_vid.pbHover.imgSrc);
-			// console.log(NB_vid.pbHover.imgArr);
+	//Makes sure gatherVidThumbnails is called at the correct time so that getDuration returns the correct value
+	function gatherThumbnailHandler(event){
+		//console.log(event, ytplayer.getDuration());
+		if (NB_vid.pbHover.calledFunc == false && event == 1){
+			ytplayer.pauseVideo();
+			//console.log(event, ytplayer.getDuration());
+			NB_vid.pbHover.calledFunc = true;
+			NB_vid.pbHover.gatherVidThumbnails(ytPlayer.getDuration());
 		}
 	}
 
+	//calls a for loop to add all the image urls to the imgDic
+	function gatherVidThumbnails(length){
+		for(var x = 0; x < length; x++){
+			NB_vid.pbHover.getImgSrc(x)
+			// NB_Vid.pbHover.imgDic.push(NB_vid.pbHover.imgSrc);
+			// console.log(NB_vid.pbHover.imgDic);
+		}
+	}
+
+	//Given the time in the video (seconds), add the url to the imgDic dictionary
 	function getImgSrc(time){
-		NB_vid.pbHover.imgTime = time;
-		
 		$.ajax({
 					url: "http://juhokim.com/framegrabber/make-thumbnail.php",        
 					type: "GET",
 					data: {
-						tm: NB_vid.pbHover.imgTime,
+						tm: time,
 						id: "HtSuA80QTyo"
 				}}).done(function(data){
-					NB_vid.pbHover.imgSrc = data;   
-					console.log(NB_vid.pbHover.imgSrc);                    
+					NB_vid.pbHover.imgDic[time] = data;   
+					//console.log(NB_vid.pbHover.imgArr);                    
 				}).fail(function(){
 				console.log("capture failed."); 
 		});
@@ -1989,9 +2000,10 @@ NB_vid = {};
 		"pbHover": {
 				"progressbarHovering":false,
 				"progressBarHover":progressBarHover,
-				"imgSrc": "",
-				"imgArr": [],
+				"imgDic": {},
 				"forLoopVal": 0,
+				"gatherThumbnailHandler":gatherThumbnailHandler,
+				"calledFunc": false,
 				"gatherVidThumbnails": gatherVidThumbnails,
 				"progressBarHoverTooltip":progressBarHoverTooltip,
 				"imgTime": 0,
@@ -2044,12 +2056,14 @@ Parse.initialize("viexWXBNypmbAgN4HTsr000EkCzJ4t6mGle8wFoE", "bKkVou2qscsLmYvKsY
 function onYouTubePlayerReady(playerId) {
 	ytplayer = document.getElementById("ytPlayer");
 
+	//ytplayer.addEventListener("onStateChange", "NB_vid.pbHover.gatherThumbnailHandler");
+
 	//This hack is an attempt to eliminate the big red play button by default
 	//it prevents the default play button from playing the video without changing my own play button
 	//it also starts the loading of the video sooner
 	window.setTimeout(function() {
 		ytplayer.playVideo();
-	    ytplayer.pauseVideo();
+	    ytplayer.pauseVideo(); //comment this out if using the gatherThumbnailHandler
 	}, 0);
 
 	NB_vid.comment.deleteHoverCheck();
@@ -2064,19 +2078,6 @@ function onYouTubePlayerReady(playerId) {
 	ytplayer.addEventListener("onError", "onPlayerError");
 	//Load an initial video into the player
 	ytplayer.cueVideoById("HtSuA80QTyo");
-	NB_vid.pbHover.gatherVidThumbnails();
-}
-
-
-$(function(){ 
-	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
-		NB_vid.funcLists.jQueryReady[x]();
-	}
-	
-});
-al video into the player
-	ytplayer.cueVideoById("HtSuA80QTyo");
-	NB_vid.pbHover.gatherVidThumbnails();
 }
 
 
