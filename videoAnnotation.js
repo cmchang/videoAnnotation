@@ -635,7 +635,7 @@ NB_vid = {};
 		}
 		NB_vid.comment.showNewComment();
 		NB_vid.tick.addAllTicks();
-		
+
 		// Server Side
 		var ParseCommentObj = Parse.Object.extend("ParseCommentObj");
 		var query = new Parse.Query(ParseCommentObj);
@@ -1225,7 +1225,6 @@ NB_vid = {};
 					NB_vid.zoom.startZoomX = NB_vid.tick.mouseX - NB_vid.progressbar.progressbarOffsetX(); 
 					NB_vid.zoom.zoom_mouseup = false; 
 					var currentSec = NB_vid.drag.mouseXtoSec(this, e);
-					NB_vid.comment.comment_btn();
 
 					NB_vid.zoom.enlargedTimeStart = currentSec;
 					$(".enlargedTickStart").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeStart));
@@ -1768,6 +1767,7 @@ NB_vid = {};
 	//Adds the collected comments within myNotesCommentObj to the Modal
 	function addMyComments(){
 		$(".myNotesBody").html("");
+		NB_vid.notes.myNotesCommentObj = [];
 		var html = "";
 		for(var x = 0; x < NB_vid.notes.myNotesCommentObj.length; x++){
 			var imgSrc = getImgSrc(NB_vid.notes.myNotesCommentObj[x].timeSec);
@@ -1826,6 +1826,7 @@ NB_vid = {};
 			if($(".newCommentTextbox").val() == ""){
 				NB_vid.comment.hide_addNewComment();
 				NB_vid.keyboard.commentOrCancel = true;
+				NB_vid.zoom.zoomClose();
 			}else{
 				NB_vid.alert.closeCommentAlert();
 			}
