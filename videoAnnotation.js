@@ -733,10 +733,8 @@ NB_vid = {};
 		var currentSec = ytplayer.getCurrentTime();
 		NB_vid.comment.shrinkCommentHolder();
 		$(".commentsView_newComment").css("display", "");
-		if(!NB_vid.comment.timeEndFocused){
-			$("#comment_time").val(NB_vid.yt.calculateTime(currentSec));
-			$("#comment_timeEnd").val("");
-		}
+		$("#comment_time").val(NB_vid.yt.calculateTime(currentSec));
+		$("#comment_timeEnd").val("");
 		$(".newCommentTextbox").focus();
 		NB_vid.drag.showRangeTick(currentSec);
 	}
@@ -748,7 +746,6 @@ NB_vid = {};
 		$("#comment_timeEnd").val("");
 		$(".newCommentTextbox").val("");
 		$(".newCommentTextbox").focusout();
-		NB_vid.comment.timeEndFocused = false;
 		NB_vid.drag.hideRangeTick();
 		NB_vid.draw.hideDrawnRect();
 
@@ -925,19 +922,6 @@ NB_vid = {};
 		return false;
 	}
 
-	//Booleans indicating if the timeStart or timeEnd input box is focused -- interacts with dragRangeOn
-	//setupTimeFocus assigns correct values to booleans depending on action
-	function setupTimeFocus(){
-		$("#comment_timeEnd").focus(function(){
-										NB_vid.comment.timeEndFocused = true;
-										NB_vid.comment.timeStartFocused = false;
-										});
-		$("#comment_time").focus(function(){
-										NB_vid.comment.timeEndFocused = false;
-										NB_vid.comment.timeStartFocused = true;	
-										});
-	}
-
 	//Boolean indicating if the main textbox in the comment editor is focused
 	//setupTextboxFocus assigns the correct values to boolean depending on action
 	function setupTextboxFocus(){
@@ -1033,44 +1017,26 @@ NB_vid = {};
 	//the width of the tick is controlled under document.ready() in the mousemove function
 	function dragRangeOn(){
 		$("#progressbar").mousedown(function(e){
-			if(!NB_vid.comment.timeStartFocused){
-				if (!NB_vid.comment.timeEndFocused){
-					NB_vid.drag.startDragX = NB_vid.tick.mouseX - NB_vid.progressbar.progressbarOffsetX();
-					NB_vid.drag.drag_mouseup = false; 
-					NB_vid.drag.dragCurrentSec = NB_vid.drag.mouseXtoSec(this, e);
-					if($(".commentsView_newComment").css("display") != "none"){
-						//NB_vid.drag.showToolTip(NB_vid.drag.dragCurrentSec);
-						NB_vid.comment.comment_btn();
-						NB_vid.drag.showRangeTick(NB_vid.drag.dragCurrentSec);
-					}
-				}
+			NB_vid.drag.startDragX = NB_vid.tick.mouseX - NB_vid.progressbar.progressbarOffsetX();
+			NB_vid.drag.drag_mouseup = false; 
+			NB_vid.drag.dragCurrentSec = NB_vid.drag.mouseXtoSec(this, e);
+			if($(".commentsView_newComment").css("display") != "none"){
+				//NB_vid.drag.showToolTip(NB_vid.drag.dragCurrentSec);
+				NB_vid.comment.comment_btn();
+				NB_vid.drag.showRangeTick(NB_vid.drag.dragCurrentSec);
 			}
-
 		});
 		$(document).mouseup(function(e){
 			if(!NB_vid.drag.drag_mouseup){
 				NB_vid.drag.drag_mouseup = true;
 				var currentSec = NB_vid.drag.mouseXtoSec("#progressbar", e);
 				NB_vid.drag.hideToolTipDelay("#rangeTick");
-				if(NB_vid.comment.timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
-					$("#comment_timeEnd").val(NB_vid.yt.calculateTime(currentSec));
-					NB_vid.drag.timeEndFocused_adjustTickWidth(this,e);
-					
-				}else if(NB_vid.comment.timeStartFocused){//if the timeStart inpus is focused, adjust the tick location and width on this click
-					NB_vid.drag.timeStartFocused_adjustTick(this, e);
 
+				if($("#comment_time").val() == NB_vid.yt.calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
+					$("#comment_timeEnd").val("");
 				}else{
-					if($("#comment_time").val() == NB_vid.yt.calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
-						if (!NB_vid.comment.timeStartFocused){//only the clear it if dragging - if user just wants to change the starting time don't clear
-							$("#comment_timeEnd").val("");
-						}
-					}else{
-						$("#comment_timeEnd").val(NB_vid.yt.calculateTime(currentSec));
-					}
+					$("#comment_timeEnd").val(NB_vid.yt.calculateTime(currentSec));
 				}
-
-				NB_vid.comment.timeStartFocused = false;
-				NB_vid.comment.timeEndFocused = false;
 			}
 		});
 
@@ -1092,7 +1058,6 @@ NB_vid = {};
 				var widthStr = NB_vid.drag.dragWidth.toString() + "px";
 				$("#rangeTick").css("width", widthStr);
 			}
-			NB_vid.comment.timeStartFocused = false;
 		})
 	}
 
@@ -1110,8 +1075,6 @@ NB_vid = {};
 				NB_vid.yt.goToTime(timeEnd);
 
 			}
-			NB_vid.comment.timeEndFocused = false;
-
 		})
 	}
 
@@ -1159,37 +1122,6 @@ NB_vid = {};
 		}
 	}
 
-	//if the timeEnd is focused, when the progressbar is clicked, this function is called
-	//the function readjusts the width of the tick depending on where the click occurs
-	function timeEndFocused_adjustTickWidth(This, e){
-		var currentSec = NB_vid.drag.mouseXtoSec(This, e);
-		var currentX = NB_vid.tick.calculateTickLoc(currentSec);
-		NB_vid.drag.dragWidth = currentX-NB_vid.drag.startDragX;
-		var widthStr = NB_vid.drag.dragWidth.toString() + "px";
-		$("#rangeTick").css("width", widthStr);
-	}
-
-	//if the timeStart is focused, when the progressbar is clicked, this function is called
-	//the function readjusts the width and the left position of the tick depending on where the click occurs
-	function timeStartFocused_adjustTick(This, e){
-		var currentSec = NB_vid.drag.mouseXtoSec(This, e);
-		NB_vid.drag.startDragX = NB_vid.tick.calculateTickLoc(currentSec);
-		var currentTickX = parseInt($("#rangeTick").css("left").substr(0, $("#rangeTick").css("left").length-2));
-		var xDiff = NB_vid.drag.startDragX - currentTickX;
-
-		if(xDiff < 0){ //new X location is left of original, width increases 
-			NB_vid.drag.dragWidth += Math.abs(xDiff);
-		}else{//new X location is left of original, width increases  
-			NB_vid.drag.dragWidth -= Math.abs(xDiff);
-		}
-		var widthStr = NB_vid.drag.dragWidth.toString() + "px";
-		$("#rangeTick").css("width", widthStr);
-		$("#comment_time").val(NB_vid.yt.calculateTime(currentSec));
-		var tickLocStr = NB_vid.drag.startDragX.toString() + "px";
-		$("#rangeTick").css("left", tickLocStr);
-		
-	}
-
 	//Shows the tooltip given the current seconds
 	function showToolTip(currentSec){
 		// $("#rangeTick .rightTooltipDiv").show();
@@ -1217,27 +1149,25 @@ NB_vid = {};
 	function zoomRangeOn(){ 
 		$(".tickmark_holder").mousedown(function(e){
 			//console.log("tickmar_holder mousedown");
-			if(!NB_vid.comment.timeStartFocused){
-				if (!NB_vid.comment.timeEndFocused && !NB_vid.zoom.zoomDragging ){
-					if (NB_vid.zoom.enlargedDraggableCreated){
-						$("#zoomTick").draggable("destroy");
-					}
-					NB_vid.zoom.startZoomX = NB_vid.tick.mouseX - NB_vid.progressbar.progressbarOffsetX(); 
-					NB_vid.zoom.zoom_mouseup = false; 
-					var currentSec = NB_vid.drag.mouseXtoSec(this, e);
-
-					NB_vid.zoom.enlargedTimeStart = currentSec;
-					$(".enlargedTickStart").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeStart));
-					var tickLoc = NB_vid.tick.calculateTickLoc(currentSec);
-					var tickLocStr = tickLoc.toString() + "px";
-					
-					$("#zoomTick").css("left", tickLocStr);
-					$("#zoomTick").css("width", "2px")
-					$("#zoomTick").show();
-					$("#zoomTick .rightTooltipDiv").show();
-					$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: NB_vid.yt.calculateTime(currentSec)});	
-					$("#zoomTick .rightTooltipDiv").tooltip('show');
+			if (!NB_vid.zoom.zoomDragging ){
+				if (NB_vid.zoom.enlargedDraggableCreated){
+					$("#zoomTick").draggable("destroy");
 				}
+				NB_vid.zoom.startZoomX = NB_vid.tick.mouseX - NB_vid.progressbar.progressbarOffsetX(); 
+				NB_vid.zoom.zoom_mouseup = false; 
+				var currentSec = NB_vid.drag.mouseXtoSec(this, e);
+
+				NB_vid.zoom.enlargedTimeStart = currentSec;
+				$(".enlargedTickStart").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeStart));
+				var tickLoc = NB_vid.tick.calculateTickLoc(currentSec);
+				var tickLocStr = tickLoc.toString() + "px";
+				
+				$("#zoomTick").css("left", tickLocStr);
+				$("#zoomTick").css("width", "2px")
+				$("#zoomTick").show();
+				$("#zoomTick .rightTooltipDiv").show();
+				$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: NB_vid.yt.calculateTime(currentSec)});	
+				$("#zoomTick .rightTooltipDiv").tooltip('show');
 			}
 		});
 		$(document).mouseup(function(e){	
@@ -1919,9 +1849,6 @@ NB_vid = {};
 				"isHoveringOver": false,
 				"isHoveringOverComments": isHoveringOverComments,
 				"IDtoIndex":IDtoIndex,
-				"timeStartFocused": false,
-				"timeEndFocused": false,
-				"setupTimeFocus":setupTimeFocus,
 				"textboxFocused":false,
 				"setupTextboxFocus":setupTextboxFocus,
 				"upvoteClick":upvoteClick
@@ -1939,8 +1866,6 @@ NB_vid = {};
 				"showRangeTick":showRangeTick,
 				"hideRangeTick":hideRangeTick,
 				"dragWidthCalc":dragWidthCalc, //take out the zoom into its own function...
-				"timeEndFocused_adjustTickWidth":timeEndFocused_adjustTickWidth,
-				"timeStartFocused_adjustTick":timeStartFocused_adjustTick,
 				"showToolTip":showToolTip,
 				"hideToolTip":hideToolTip,
 				"hideToolTipDelay":hideToolTipDelay
@@ -1984,6 +1909,110 @@ NB_vid = {};
 		},
 		"tick": {
 				"calculateTickLoc":calculateTickLoc,
+				"calculateTickWidth":calculateTickWidth,
+				"tickHTML":tickHTML,
+				"createTickPopover":createTickPopover,
+				"addAllTicks":addAllTicks,
+				"currentHighlightedTick": "none", //changed from "None"
+				"currentID": "none",
+				"highlightTick": highlightTick,
+				"highlightTickControl": highlightTickControl,
+				"changeTickCSS":changeTickCSS,
+				"addTickHover":addTickHover,
+				"tickHover":tickHover,
+				"unTickHover":unTickHover,
+				"tickClick":tickClick,
+		},
+		"pbHover": {
+				"progressbarHovering":false,
+				"progressBarHover":progressBarHover,
+				"imgDic": {},
+				"forLoopVal": 0,
+				"gatherThumbnailHandler":gatherThumbnailHandler,
+				"calledFunc": false,
+				"gatherVidThumbnails": gatherVidThumbnails,
+				"progressBarHoverTooltip":progressBarHoverTooltip,
+				"imgTime": 0,
+				"getImgSrc":getImgSrc
+		},
+		"notes":{
+				"myNotes_btn":myNotes_btn,
+				"setupNotesModal": setupNotesModal,
+				"myNotesCommentObj": [],
+				"getMyComments": getMyComments,
+				"addMyComments": addMyComments
+		},
+		"jQueryReady": {
+				"mouseX": 0,
+				"mouseY": 0,
+				"mouseLoc": mouseLoc
+		},
+		"keyboard": {
+				"commentOrCancel": true  // true - next click is comment, false - next click cancels
+		},
+		"alert": {
+				"closeCommentAlert":closeCommentAlert
+		}
+	};
+
+	NB_vid.funcLists = { "jQueryReady":[NB_vid.comment.parseInit,
+										NB_vid.user.addLoginButton,
+										NB_vid.jQueryReady.mouseLoc, 
+										NB_vid.progressbar.updateProgressbarClick, 
+										NB_vid.comment.setup_commentDisplay,
+										NB_vid.comment.isHoveringOverComments,
+										NB_vid.comment.upvoteClick,
+										NB_vid.comment.setupTextboxFocus,
+										NB_vid.user.setupLoginTextbox,
+										NB_vid.drag.time_updateTickRange,
+										NB_vid.drag.timeEnd_updateTickRange,
+										NB_vid.draw.drawRectOn,
+										NB_vid.zoom.zoomDrag,
+										NB_vid.drag.dragRangeOn,
+										NB_vid.zoom.zoomRangeOn,
+										NB_vid.pbHover.progressBarHover]
+						};
+						
+})();
+
+Parse.initialize("viexWXBNypmbAgN4HTsr000EkCzJ4t6mGle8wFoE", "bKkVou2qscsLmYvKsYiusjxAA0oJBUBE7vRXkJZP");
+
+// This function is automatically called by the player once it loads
+function onYouTubePlayerReady(playerId) {
+	ytplayer = document.getElementById("ytPlayer");
+
+	//ytplayer.addEventListener("onStateChange", "NB_vid.pbHover.gatherThumbnailHandler");
+
+	//This hack is an attempt to eliminate the big red play button by default
+	//it prevents the default play button from playing the video without changing my own play button
+	//it also starts the loading of the video sooner
+	window.setTimeout(function() {
+		ytplayer.playVideo();
+	    ytplayer.pauseVideo(); //comment this out if using the gatherThumbnailHandler
+	}, 0);
+
+	NB_vid.comment.deleteHoverCheck();
+
+
+	// This causes the updatePlayerInfo function to be called every 250ms to
+	// get fresh data from the player
+	setInterval(NB_vid.progressbar.updateProgressbar, 1000);
+	setInterval(NB_vid.yt.updatePlayerInfo, 250);
+	NB_vid.yt.updatePlayerInfo();		
+	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
+	ytplayer.addEventListener("onError", "onPlayerError");
+	//Load an initial video into the player
+	ytplayer.cueVideoById("HtSuA80QTyo");
+}
+
+
+$(function(){ 
+	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
+		NB_vid.funcLists.jQueryReady[x]();
+	}
+	
+});
+Loc,
 				"calculateTickWidth":calculateTickWidth,
 				"tickHTML":tickHTML,
 				"createTickPopover":createTickPopover,
