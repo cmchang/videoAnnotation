@@ -1109,15 +1109,6 @@ NB_vid = {};
 				NB_vid.comment.comment_btn();
 			}
 		}
-		if(NB_vid.zoom.startZoomX > 0 && !NB_vid.zoom.zoom_mouseup){ /////MOVE THIS TO OWN FUNCTION: zoomWidthCalc
-			var currentSec = NB_vid.drag.mouseXtoSec(".tickmark_holder", e);
-			NB_vid.drag.dragWidth = NB_vid.tick.mouseX-NB_vid.zoom.startZoomX - NB_vid.progressbar.progressbarOffsetX();
-			var widthStr = NB_vid.drag.dragWidth.toString() + "px";
-			$("#zoomTick").css("width", widthStr);
-			$("#zoomTick .rightTooltipDiv").tooltip("destroy");
-			$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: NB_vid.yt.calculateTime(currentSec)});
-			$("#zoomTick .rightTooltipDiv").tooltip('show');
-		}
 	}
 
 	//Shows the tooltip given the current seconds
@@ -1188,23 +1179,6 @@ NB_vid = {};
 				NB_vid.zoom.addEnlargedTicks();
 			}
 		});
-	}
-
-	
-	function showZoomTick(currentSec){ 
-		var tickLoc = NB_vid.tick.calculateTickLoc(currentSec);
-		NB_vid.drag.startDragX = tickLoc;
-		var tickLocStr = tickLoc.toString() + "px";
-		$("#zoomTick").css("left", tickLocStr);
-		$("#zoomTick").css("width", "2px")
-		$("#zoomTick").show();	
-	}
-
-	
-	function hideZoomTick(){ 
-		$("#zoomTick").hide();
-		$("#zoomTick").css("width", "2px")	
-		NB_vid.drag.dragWidth = 2;
 	}
 
 	// Figures out where ticks lie in enlarged tick bar
@@ -1313,6 +1287,18 @@ NB_vid = {};
 				$("#zoomTick").css("opacity", 1);
 			})
 			NB_vid.zoom.enlargedDraggableCreated = false;
+		}
+	}
+
+	function zoomWidthCalc(e){
+		if(NB_vid.zoom.startZoomX > 0 && !NB_vid.zoom.zoom_mouseup){ /////MOVE THIS TO OWN FUNCTION: zoomWidthCalc
+			var currentSec = NB_vid.drag.mouseXtoSec(".tickmark_holder", e);
+			NB_vid.zoom.zoomWidth = NB_vid.tick.mouseX-NB_vid.zoom.startZoomX - NB_vid.progressbar.progressbarOffsetX();
+			var widthStr = NB_vid.zoom.zoomWidth.toString() + "px";
+			$("#zoomTick").css("width", widthStr);
+			$("#zoomTick .rightTooltipDiv").tooltip("destroy");
+			$("#zoomTick .rightTooltipDiv").tooltip({animation: false, title: NB_vid.yt.calculateTime(currentSec)});
+			$("#zoomTick .rightTooltipDiv").tooltip('show');
 		}
 	}
 
@@ -1743,6 +1729,7 @@ NB_vid = {};
 			NB_vid.tick.mouseX = e.pageX;
 			NB_vid.tick.mouseY = e.pageY;
 			NB_vid.drag.dragWidthCalc(e);
+			NB_vid.zoom.zoomWidthCalc(e);
 			NB_vid.draw.drawAreaCalc();
 			NB_vid.zoom.zoomRecalc(e);
 			NB_vid.pbHover.progressBarHoverTooltip(e);
@@ -1875,7 +1862,7 @@ NB_vid = {};
 				"timeEnd_updateTickRange":timeEnd_updateTickRange,
 				"showRangeTick":showRangeTick,
 				"hideRangeTick":hideRangeTick,
-				"dragWidthCalc":dragWidthCalc, //take out the zoom into its own function...
+				"dragWidthCalc":dragWidthCalc,
 				"showToolTip":showToolTip,
 				"hideToolTip":hideToolTip,
 				"hideToolTipDelay":hideToolTipDelay
@@ -1890,15 +1877,15 @@ NB_vid = {};
 				"enlargedTimeEnd": "--:--",
 				"enlargedDraggableCreated":false,
 				"zoomRangeOn": zoomRangeOn,
-				"showZoomTick":showZoomTick,
-				"hideZoomTick":hideZoomTick,
 				"enlargedTickHTML":enlargedTickHTML,
 				"createEnlargedTickPopover":createEnlargedTickPopover,
 				"zoomRecalc":zoomRecalc,
 				"updateEnlargedTickBar":updateEnlargedTickBar,
 				"addEnlargedTicks":addEnlargedTicks,
 				"zoomDrag":zoomDrag,
-				"zoomClose":zoomClose
+				"zoomClose":zoomClose,
+				"zoomWidth": 0,
+				"zoomWidthCalc":zoomWidthCalc
 
 		},
 		"draw": {
@@ -2009,6 +1996,21 @@ function onYouTubePlayerReady(playerId) {
 	// get fresh data from the player
 	setInterval(NB_vid.progressbar.updateProgressbar, 1000);
 	setInterval(NB_vid.yt.updatePlayerInfo, 250);
+	NB_vid.yt.updatePlayerInfo();		
+	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
+	ytplayer.addEventListener("onError", "onPlayerError");
+	//Load an initial video into the player
+	ytplayer.cueVideoById("HtSuA80QTyo");
+}
+
+
+$(function(){ 
+	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
+		NB_vid.funcLists.jQueryReady[x]();
+	}
+	
+});
+al(NB_vid.yt.updatePlayerInfo, 250);
 	NB_vid.yt.updatePlayerInfo();		
 	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
 	ytplayer.addEventListener("onError", "onPlayerError");
