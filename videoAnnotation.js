@@ -735,6 +735,7 @@ NB_vid = {};
 		$(".commentsView_newComment").css("display", "");
 		if(!NB_vid.comment.timeEndFocused){
 			$("#comment_time").val(NB_vid.yt.calculateTime(currentSec));
+			$("#comment_timeEnd").val("");
 		}
 		$(".newCommentTextbox").focus();
 		NB_vid.drag.showRangeTick(currentSec);
@@ -2083,11 +2084,6 @@ function onYouTubePlayerReady(playerId) {
 
 $(function(){ 
 	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
-		NB_vid.funcLists.jQueryReady[x]();
-	}
-	
-});
-){
 		NB_vid.funcLists.jQueryReady[x]();
 	}
 	
