@@ -629,7 +629,7 @@ NB_vid = {};
 		// Client Side
 		for (var i = 0; i < NB_vid.commentObj.length; i++){
 			if (NB_vid.commentObj[i].ID == commentID){
-				console.log(NB_vid.commentObj[i].ID,commentID);
+				//console.log(NB_vid.commentObj[i].ID,commentID);
 				NB_vid.commentObj.splice(i, 1);
 			}
 		}
@@ -648,10 +648,10 @@ NB_vid = {};
 		      var object = results[i];
 		      object.destroy({
 		      	success: function(object){
-		      		console.log("successfully removed your comment");
+		      		//console.log("successfully removed your comment");
 		      	},
 		      	error: function(object, error){
-		      		console.log("We were unable to remove your object: " + error);
+		      		//console.log("We were unable to remove your object: " + error);
 		      	}
 		      })
 		    }
@@ -807,19 +807,19 @@ NB_vid = {};
 		parseCommentObj.save(NB_vid.commentObj[NB_vid.commentObj.length -1], {
 	  		success: function(parseCommentObj) {
 	  			// Execute any logic that should take place after the object is saved.
-	  			console.log('New object created with objectId: ' + parseCommentObj.id);
+	  			//console.log('New object created with objectId: ' + parseCommentObj.id);
 	  		},
 			error: function(parseCommentObj, error) {
 				// Execute any logic that should take place if the save fails.
 				// error is a Parse.Error with an error code and description.
-				console.log('Failed to create new object, with error code: ' + error.description);
+				//console.log('Failed to create new object, with error code: ' + error.description);
 			}
 		});
 
 
 
 		//order matters for the next few functions!
-		console.log(commentObj);
+		//console.log(commentObj);
 		NB_vid.tick.addAllTicks();
 		NB_vid.comment.hide_addNewComment();
 		NB_vid.comment.goToComment(NB_vid.commentObj.length-1);
@@ -2012,8 +2012,7 @@ $(function(){
 	}
 	
 });
-Loc,
-				"calculateTickWidth":calculateTickWidth,
+lculateTickWidth":calculateTickWidth,
 				"tickHTML":tickHTML,
 				"createTickPopover":createTickPopover,
 				"addAllTicks":addAllTicks,
