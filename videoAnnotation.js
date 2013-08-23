@@ -1162,21 +1162,24 @@ NB_vid = {};
 		$(document).mouseup(function(e){	
 			if(!NB_vid.zoom.zoom_mouseup){
 				NB_vid.zoom.zoom_mouseup = true;
-				var currentSec = NB_vid.drag.mouseXtoSec(".tickmark_holder", e);
-				NB_vid.zoom.enlargedTimeEnd = currentSec;
-				$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeEnd));
-				$(".enlargedTickBar").html("");
-			
-				$(".enlargedTickContainer").show().animate({"opacity": 1}, 400);
-
-				$("#zoomTick").draggable({axis: "x", containment: "parent"});
-				$("#zoomTick").effect("transfer", {to: ".enlargedTickBar"});
-
-				NB_vid.zoom.enlargedDraggableCreated = true;
+				if(NB_vid.zoom.zoomWidth > 2){//starting to try to separate the click interactions -- clicking tick should open comment while dragging should open zoom ticks
+					var currentSec = NB_vid.drag.mouseXtoSec(".tickmark_holder", e);
+					NB_vid.zoom.enlargedTimeEnd = currentSec;
+					$(".enlargedTickEnd").html(NB_vid.yt.calculateTime(NB_vid.zoom.enlargedTimeEnd));
+					$(".enlargedTickBar").html("");
 				
+					$(".enlargedTickContainer").show().animate({"opacity": 1}, 400);
+
+					$("#zoomTick").draggable({axis: "x", containment: "parent"});
+					$("#zoomTick").effect("transfer", {to: ".enlargedTickBar"});
+
+					NB_vid.zoom.enlargedDraggableCreated = true;
+					// appends ticks to the enlarged tick bar
+					NB_vid.zoom.addEnlargedTicks();
+				}
+
 				NB_vid.drag.hideToolTipDelay("#zoomTick");
-				// appends ticks to the enlarged tick bar
-				NB_vid.zoom.addEnlargedTicks();
+
 			}
 		});
 	}
@@ -2010,11 +2013,7 @@ $(function(){
 	}
 	
 });
-);
-al(NB_vid.yt.updatePlayerInfo, 250);
-	NB_vid.yt.updatePlayerInfo();		
-	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
-	ytplayer.addEventListener("onError", "onPlayerError");
+", "onPlayerError");
 	//Load an initial video into the player
 	ytplayer.cueVideoById("HtSuA80QTyo");
 }
