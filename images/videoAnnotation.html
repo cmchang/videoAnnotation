@@ -1,0 +1,267 @@
+<!--
+You are free to copy and use this sample in accordance with the terms of the
+Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Video Annotation</title>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<script src="http://www.parsecdn.com/js/parse-1.2.9.min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+	<script type="text/javascript">
+		google.load("swfobject", "2.1");
+	</script>    
+
+	<script src = "videoAnnotation.js" type="text/javascript"></script>
+	
+	<script src = "js/bootstrap.js"></script>
+	<link rel = "stylesheet" href = "css/bootstrap.css"></link>
+	<link rel="stylesheet" type="text/css" href="videoAnnotation.css">
+
+</head>
+<body>
+	<div class = "navbar">
+		<div class = "navbar-inner">
+			<a class = "brand" id = "title">Video Annotation</a>
+			<ul class = "nav">
+				<li class = "nav-collapse collapse divider-vertical">
+					<a class = "navbar_btn" href="#rulesModal" data-toggle = "modal" >Instructions</a>
+				</li>
+				<li class = "nav-collapse collapse">
+					<a class = "myNotes" onclick = "NB_vid.notes.myNotes_btn()" >My Notes</a>
+				</li>
+				<!-- the li below should be defined in JS, and should depend on whether or not the user has logged in -->
+				<!-- <li class = "nav-collapse collapse divider-vertical">
+					<a class = "navbar_btn" href="#loginModal" data-toggle = "modal">Log In</a>
+				</li> -->
+			</ul>
+		</div>
+	</div>
+
+
+	<div id="rulesModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Instructions</h3>
+		</div>
+		<div class="modal-body">
+			<h5>Ways to comment</h5>
+			<p>The following methods can be executed in any order
+				<ol>
+					<li>Click "comment" button: the video will automatically pause and open up the comment editor with the current timestamp</li>
+					<li>Keyboard Shortcut "C": has the same effect as the "comment" button</li>
+					<li>Drag a range: When clicking in the timeline, if you drag (from left to right) you can select a time range and the comment editor will automatically open with the correct timestamps</li>
+					<li>Draw and highlight directly on the video: If you click and draw your mouse (from top-left to buttom-right), the video will pause, a yellow highlight will be visible, and the comment editor will open automatically with a timestamp from the current frame</li>
+				</ol>
+			</p>
+
+			<h5>Icons</h5>
+			<p>
+				<i class = "icon-comment"></i> : A comment <br>
+				<i class = "icon-question-sign"></i> : A question <br>
+				<i class = "icon-picture"></i> : There is a highlighted section associated with the video.  If you click the comment time, it will appear<br>
+			</p>
+
+			<h5>Keyboard Shortcuts</h5>
+			<p>
+				<b>spacebar</b>: plays/pauses video <br>
+				<b>c</b>: opens up comment editor and adds current video time in starting time input box (it will also close the comment editor if the textbox is not focused) <br>
+				<b>esc</b>: closes out of comment editor and hides a drawn rectangle over the video if it exists<br>
+				<b>m</b>: mutes/unmutes the video <br>
+				<br>
+				If you are navigating through the comments, you can use the <b>up/down arrows</b> with the <b>spacebar/return</b> to select a different comment
+			</p>
+
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
+	<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Delete Comment</h3>	
+		</div>
+		<div class="modal-body">
+			<p>Are you sure you'd like to delete your comment?</p>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" onclick="NB_vid.comment.deleteComment($(this).attr('id'))">Delete</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		</div>
+	</div>
+
+	<div id="loginModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Log In</h3>	
+			<p>Please input the username that you'd like to use for commenting below:</p>
+		</div>
+		<div class="modal-body">
+			Username: <input class = "usernameInput"></input>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="NB_vid.user.submitUsername()">Submit</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
+	<div id="loginCommentModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Log In</h3>	
+			<p>In order to comment, you need to log in first:</p>
+		</div>
+		<div class="modal-body">
+			Username: <input class = "usernameCommentInput"></input>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="NB_vid.user.submitCommentUsername()">Submit</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
+	<div id="loginUpvoteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Log In</h3>	
+			<p>In order to upvote comments, you must log in first:</p>
+		</div>
+		<div class="modal-body">
+			Username: <input class = "usernameUpvoteInput"></input>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="NB_vid.user.submitUpvoteUsername()">Submit</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
+	<div id="logoutModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">Log Out</h3>	
+		</div>
+		<div class="modal-body">
+			<p>Are you sure you want to log out?</p>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" onclick="NB_vid.user.logout()">Log out</button>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
+	<div id="myNotesModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="myModalLabel">My Notes</h3>	
+		</div>
+		<div class="modal-body myNotesBody">
+			<p>myNotes</p>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
+	<div class = "videoView">
+		<div class = "videoContainer">
+			<div id="videoDiv">Loading...</div>
+			<div id = "videoCover">
+				<div id = "drawnRect" style = "display: none"></div>
+			</div>
+		</div>
+		<div class = "videoMenu">
+			<div class = "playORpause_holder"><img class = "playORpause" onclick="NB_vid.yt.playORpause();" src="images/play.png"></div>
+			<div class = "progressbar_container">
+				<div id= "dragRangeContainer">
+					<div id="rangeTick">
+						<div class = "rightTooltipDiv" style = "float: right"></div>
+					</div>
+				</div>
+				<div id= "progressbar">
+					<div class = "mouseTooltipDiv"></div>
+					<div id = "progressbar_filler"></div>
+				</div>
+				<div id = "zoomTick"><div class = 'rightTooltipDiv' style = 'float: right'></div></div>
+				<div class = "tickmark_holder">
+
+				</div>	
+
+				<div id ="showTime">
+					<div id = "videoTimeDisplay">--:--</div><text> /</text>
+					<div id = "videoTotalTimeDisplay">--:--</div>
+				</div>
+			</div>
+			<div class = "muteORunmute_holder"><img class = "muteORunmute" onclick="NB_vid.yt.muteORunmute()" src = "images/volume_up.png"></div>
+		</div>
+		<div class = "enlargedTickContainer">
+			<div class = "enlargedTickStart">--:--</div>
+			<div class = "enlargedTickBar"><div class = "tickmark currentPlayerLocationTick"></div></div>
+			
+			<button onclick = "NB_vid.zoom.zoomClose()" type="button" class="close closeEnlarged" style = "margin-top: 10px; margin-right: 8px; float: right">&times;</button>
+			<div class = "enlargedTickEnd">--:--</div>
+		</div>
+	</div>
+
+	<div class = "commentsView">
+		<div class = "commentsView_menu">
+			<button class = "commentBtn btn btn-small" onclick="NB_vid.comment.comment_btn()">Comment</button>
+			<div class="btn-group">
+				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+					Filter Comments
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a onclick="NB_vid.comment.showNewComment()">View All</a></li>
+					<li><a onclick="NB_vid.comment.showFilteredComments('Comment')" >Comments</a></li>
+					<li><a onclick="NB_vid.comment.showFilteredComments('Question')">Questions</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class = "commentsView_newComment" style = "display:none;">
+			<div class = "commentsView_menu">
+				Type: 
+				<select id = "comment_type">
+					<option>Comment</option>
+					<option>Question</option>
+				</select>
+				<text>Time:</text>
+				<input id = "comment_time" type = "text"></input>
+				To: 
+				<input id = "comment_timeEnd" type = "text"></input>
+				<textarea class = "newCommentTextbox" rows = "3"></textarea>
+				Visible to:
+				<select id = "comment_viewer">
+					<option>Class</option>
+					<option>Just me</option>
+					<option>Instructor</option>
+				</select>
+				<button class = "btn btn-small" id = "submit_btn" onclick="NB_vid.comment.submitNewComment()">Submit</button>
+				<button class ="btn btn-small" id = "cancel_btn" onclick = "NB_vid.comment.hide_addNewComment()">Cancel</button>
+
+			</div>
+		</div>
+		<div class = "commentsView_holder">
+			<div class = "offsetInf"style = "display:none;">
+				<div>Mouse Postion: <text id="status">0, 0</text></div>
+				<div>Relative Mouse Postion in Progressbar:<text id = "offset">0, 0</text> </div>
+			</div>
+			<div id="accordion"></div> 
+		</div>
+	</div>
+
+	<div id="videoInfo" class = "videoInfo" style = "display:None">
+		<p>Player state: <span id="playerState">--</span></p>
+		<p> Time in Minutes and Seconds: <span id = "videoCurrentTimeMinSec">--:--</span></p>
+		<p>Current Time: <span id="videoCurrentTime">--:--</span> | Duration: <span id="videoDuration">--:--</span> | Percentage: <span id = "videoPercentage">--:--</span></p>
+		<p>Bytes Total: <span id="bytesTotal">--</span> | Start Bytes: <span id="startBytes">--</span> | Bytes Loaded: <span id="bytesLoaded">--</span></p>
+		<p><input id="volumeSetting" type="text" size="3" />&nbsp;<a href="javascript:void(0)" onclick="NB_vid.yt.setVideoVolume();">&lt;- Set Volume</a> | Volume: <span id="volume">--</span></p>
+	</div>				
+</body>
+</html>

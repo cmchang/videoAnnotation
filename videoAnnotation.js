@@ -245,7 +245,7 @@ NB_vid = {};
 	// Creates login button depending on whether or not you are currently logged
 	function addLoginButton(){
 		var loginBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#loginModal" data-toggle = "modal">Log In</a></li>');
-		var logoutBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn" href="#logoutModal" data-toggle = "modal">' + NB_vid.user.yourUserName + '</a></li>');
+		var logoutBtn = $('<li class = "nav-collapse collapse divider-vertical"><a class = "logBtn navbar_btn pull-right" href="#logoutModal" data-toggle = "modal">' + NB_vid.user.yourUserName + '</a></li>');
 		if("yourUserName" in localStorage){
 			$(".nav").append(logoutBtn);
 		}else{
@@ -2013,7 +2013,7 @@ $(function(){
 	}
 	
 });
-", "onPlayerError");
+rError");
 	//Load an initial video into the player
 	ytplayer.cueVideoById("HtSuA80QTyo");
 }
