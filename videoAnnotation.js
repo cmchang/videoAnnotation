@@ -1690,7 +1690,6 @@ NB_vid = {};
 
 			}
 		}
-		// console.log(NB_vid.notes.myNotesCommentObj);
 	}
 
 	//Adds the collected comments within myNotesCommentObj to the Modal
@@ -1698,14 +1697,19 @@ NB_vid = {};
 		$(".myNotesBody").html("");
 		var html = "";
 		for(var x = 0; x < NB_vid.notes.myNotesCommentObj.length; x++){
-			// var imgSrc = getImgSrc(NB_vid.notes.myNotesCommentObj[x].timeSec);
-			// var imgHTML = "<img src = '"+ imgSrc + "'/>";
-			// console.log(imgSrc);
+			html += "Time: " + NB_vid.notes.myNotesCommentObj[x].timeStr + "<br><ul><li>";
+			console.log(NB_vid.notes.myNotesCommentObj.drawArr);
+			if (NB_vid.notes.myNotesCommentObj[x].drawArr.none == false){ //check if has drawArr
+				var imgSrc = "images/loadingImg.png";
+				var imgHTML = "<img src = '"+ imgSrc + "'style = 'width:100px'/>";
+				html += imgHTML + "</li><li>";
+			}
+			
 			var text = NB_vid.notes.myNotesCommentObj[x].text;
 			if(text == "" || text == " "){
 				text = "(No text)";
 			}
-			html += "Time: " + NB_vid.notes.myNotesCommentObj[x].timeStr + "<br><ul><li>" + text + "</li></ul><br>";
+			html += text + "</li></ul><br>";
 		}
 		$(".myNotesBody").html(html);
 		NB_vid.notes.myNotesCommentObj = [];
@@ -1731,7 +1735,7 @@ NB_vid = {};
 	 * 12. Keyboard Shortcuts
 	 */
 	$(window).keyup(function(e) {
-		if (!NB_vid.comment.textboxFocused && !NB_vid.user.loginFocused){
+		if (!NB_vid.comment.textboxFocused && !$("#loginModal").hasClass("in")){
 			if(e.which == 32){ //spacebar
 				NB_vid.yt.videoClicked();
 			}else if (e.which === 67){ // c
@@ -2012,10 +2016,7 @@ $(function(){
 	}
 	
 });
-lculateTickWidth":calculateTickWidth,
-				"tickHTML":tickHTML,
-				"createTickPopover":createTickPopover,
-				"addAllTicks":addAllTicks,
+lTicks":addAllTicks,
 				"currentHighlightedTick": "none", //changed from "None"
 				"currentID": "none",
 				"highlightTick": highlightTick,
