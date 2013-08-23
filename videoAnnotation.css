@@ -35,9 +35,11 @@
 	max-width: 742px;
 	padding: 5px;
 	height:50px;
-	background: #E6E6E6;
+	/*background: #E6E6E6;*/
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
+	background-color: #fafafa;
+	background-image: linear-gradient(to bottom, #f9f9f9, #e2e0e0);
 }
 
 .playORpause_holder, .progressbar_container, .muteORunmute_holder{
@@ -45,6 +47,10 @@
 }
 .playORpause_holder, .muteORunmute_holder{
 	width: 35px;
+}
+
+.muteORunmute_holder{
+	margin-left: 4px;
 }
 
 .progressbar_container{
