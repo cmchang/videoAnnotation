@@ -988,7 +988,6 @@ NB_vid = {};
 								success: function(results){
 									for(var i = 0; i < results.length; i++){
 										results[i].increment("upvotes"); 
-										console.log("Increased upvotes by 1");
 										var parseUsernameArray = results[i].get("upvotesUserArray");
 										parseUsernameArray.push(NB_vid.user.yourUserName); 
 										results[i].save();
@@ -2084,6 +2083,11 @@ function onYouTubePlayerReady(playerId) {
 
 $(function(){ 
 	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
+		NB_vid.funcLists.jQueryReady[x]();
+	}
+	
+});
+){
 		NB_vid.funcLists.jQueryReady[x]();
 	}
 	
