@@ -1195,7 +1195,7 @@ NB_vid = {};
 	        if (NB_vid.commentObj[i].ID == ID){
 	          	var tickContent = NB_vid.commentObj[i].text;
 	          	var tickTitle = NB_vid.commentObj[i].userName;
-	          	$("#enlargedTickmark" + ID).popover({trigger: "hover", placement: "bottom",title: tickTitle, content: tickContent});
+	          	$("#enlargedTickmark" + ID).popover({trigger: "hover", placement: "top",title: tickTitle, content: tickContent});
 	        }
 	    }
 	}
@@ -2010,6 +2010,7 @@ $(function(){
 	}
 	
 });
+);
 al(NB_vid.yt.updatePlayerInfo, 250);
 	NB_vid.yt.updatePlayerInfo();		
 	ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
