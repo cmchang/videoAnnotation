@@ -665,8 +665,6 @@ NB_vid = {};
 	// If you are, then a delete button is shown
 	function deleteHoverCheck(){
 		$(".deleteComment").hide();
-		$(".commentAlert").hide();
-		$(".commentAlert").css("background-color", "rgba(252, 248, 227, 0.95)");
 		$(".ui-accordion-header").mouseenter(function(){
 			var deleteNum = $(this).children(".deleteComment").attr("id");
 			var commentNum = deleteNum.slice(13, deleteNum.length);
@@ -1698,11 +1696,13 @@ NB_vid = {};
 		var html = "";
 		for(var x = 0; x < NB_vid.notes.myNotesCommentObj.length; x++){
 			html += "Time: " + NB_vid.notes.myNotesCommentObj[x].timeStr + "<br><ul><li>";
-			console.log(NB_vid.notes.myNotesCommentObj.drawArr);
+			console.log(NB_vid.notes.myNotesCommentObj);
 			if (NB_vid.notes.myNotesCommentObj[x].drawArr.none == false){ //check if has drawArr
+				var imgClass = 'notesImg' + x;
 				var imgSrc = "images/loadingImg.png";
-				var imgHTML = "<img src = '"+ imgSrc + "'style = 'width:100px'/>";
+				var imgHTML = "<img class = '" + imgClass + "'src = '"+ imgSrc + "'style = 'width:100px'/>";
 				html += imgHTML + "</li><li>";
+				NB_vid.notes.getImgSrc_myNotes(NB_vid.notes.myNotesCommentObj[x].timeSec ,"."+imgClass);
 			}
 			
 			var text = NB_vid.notes.myNotesCommentObj[x].text;
@@ -1713,6 +1713,21 @@ NB_vid = {};
 		}
 		$(".myNotesBody").html(html);
 		NB_vid.notes.myNotesCommentObj = [];
+	}
+
+	function getImgSrc_myNotes(time, imgClass){
+		$.ajax({
+					url: "http://juhokim.com/framegrabber/make-thumbnail.php",        
+					type: "GET",
+					data: {
+						tm: time,
+						id: "HtSuA80QTyo"
+				}}).done(function(data){
+					$(imgClass).attr("src", data);  
+					//console.log(NB_vid.pbHover.imgArr);                    
+				}).fail(function(){
+				console.log("capture failed."); 
+		});
 	}
 
 	/*
@@ -1759,8 +1774,6 @@ NB_vid = {};
 				NB_vid.comment.hide_addNewComment();
 				NB_vid.keyboard.commentOrCancel = true;
 				NB_vid.zoom.zoomClose();
-			}else{
-				NB_vid.alert.closeCommentAlert();
 			}
 		}
 
@@ -1773,17 +1786,7 @@ NB_vid = {};
 	function closeCommentAlert(){
 		alert("You added text to the new comment.  Click the 'cancel' button if you are sure you want to lose your data.");
 	}
-	function refreshCommentAlert(){
-		$(".commentAlert").show();
-		$(".commentAlert").animate({"opacity": "1"}, 250, function(){
-			$(".commentAlert").animate({"opacity": "1"}, 5000, function(){
-				$(".commentAlert").animate({"opacity": "0"}, 250, function(){
-					$(".commentAlert").hide();
-					$(".commentAlert").css("opacity", "1");
-				})
-			})
-		})
-	}
+
 
 
 	NB_vid = {
@@ -1944,7 +1947,8 @@ NB_vid = {};
 				"setupNotesModal": setupNotesModal,
 				"myNotesCommentObj": [],
 				"getMyComments": getMyComments,
-				"addMyComments": addMyComments
+				"addMyComments": addMyComments,
+				"getImgSrc_myNotes":getImgSrc_myNotes
 		},
 		"jQueryReady": {
 				"mouseX": 0,
@@ -2016,9 +2020,7 @@ $(function(){
 	}
 	
 });
-lTicks":addAllTicks,
-				"currentHighlightedTick": "none", //changed from "None"
-				"currentID": "none",
+			"currentID": "none",
 				"highlightTick": highlightTick,
 				"highlightTickControl": highlightTickControl,
 				"changeTickCSS":changeTickCSS,
