@@ -664,7 +664,7 @@ NB_vid = {};
 	// When hovering over an accordion header, checks if you were the user that created that comment
 	// If you are, then a delete button is shown
 	function deleteHoverCheck(){
-		$(".deleteComment").hide();
+		//$(".deleteComment").hide();
 		$(".ui-accordion-header").mouseenter(function(){
 			var deleteNum = $(this).children(".deleteComment").attr("id");
 			var commentNum = deleteNum.slice(13, deleteNum.length);
@@ -1486,10 +1486,12 @@ NB_vid = {};
 	//issue: can only call highlightTickControl() one at a time for hover and focus
 	//			--without the if statement, the last function called will be the only one that works (it un-does what the first one did)
 	function highlightTick(){
-		if($(".ui-state-hover").length>0){
-			NB_vid.tick.highlightTickControl(".ui-state-hover");
-		}else{
-			NB_vid.tick.highlightTickControl(".ui-state-focus");
+		if(!NB_vid.yt.createTicks){
+			if($(".ui-state-hover").length == 1){
+				NB_vid.tick.highlightTickControl(".ui-state-hover");
+			}else if ($(".ui-state-hover").length ==1){
+				NB_vid.tick.highlightTickControl(".ui-state-focus");
+			}
 		}
 	}
 
@@ -1502,18 +1504,20 @@ NB_vid = {};
 	 		var tickID = NB_vid.commentObj[index].ID;
 	 		if(NB_vid.tick.currentID != tickID){ //if the mouse is not hovering over same comment, continue
 				var tickStr = "#tickmark" + tickID;
+				console.log(tickStr);
 				var tickmark = $(tickStr);
 				NB_vid.tick.changeTickCSS(tickmark, "red", "No Change", "1");
-				if(NB_vid.tick.currentHighlightedTick != "none"){
+				if(NB_vid.tick.currentHighlightedTick.length != 0){
 					NB_vid.tick.changeTickCSS(NB_vid.tick.currentHighlightedTick, "red", "No Change", ".4");
 				}
 				NB_vid.tick.currentHighlightedTick = tickmark;
+				console.log(NB_vid.tick.currentHighlightedTick, NB_vid.tick.currentHighlightedTick.attr("ID"));
 				NB_vid.tick.currentID = NB_vid.tick.currentHighlightedTick.attr("ID").substr(8, NB_vid.tick.currentHighlightedTick.attr("ID").length-1);
 			}
 		}else{
-			if(NB_vid.tick.currentHighlightedTick != "none"){
+			if(NB_vid.tick.currentHighlightedTick.length != 0){
 				NB_vid.tick.changeTickCSS(NB_vid.tick.currentHighlightedTick, "red", "No Change", ".4");
-				NB_vid.tick.currentHighlightedTick = "none";
+				NB_vid.tick.currentHighlightedTick = [];
 				NB_vid.tick.currentID = "none";
 
 			}
@@ -1696,11 +1700,10 @@ NB_vid = {};
 		var html = "";
 		for(var x = 0; x < NB_vid.notes.myNotesCommentObj.length; x++){
 			html += "Time: " + NB_vid.notes.myNotesCommentObj[x].timeStr + "<br><ul><li>";
-			console.log(NB_vid.notes.myNotesCommentObj);
 			if (NB_vid.notes.myNotesCommentObj[x].drawArr.none == false){ //check if has drawArr
 				var imgClass = 'notesImg' + x;
 				var imgSrc = "images/loadingImg.png";
-				var imgHTML = "<img class = '" + imgClass + "'src = '"+ imgSrc + "'style = 'width:100px'/>";
+				var imgHTML = "<img class = '" + imgClass + "'src = '"+ imgSrc + "'style = 'width:200px'/>";
 				html += imgHTML + "</li><li>";
 				NB_vid.notes.getImgSrc_myNotes(NB_vid.notes.myNotesCommentObj[x].timeSec ,"."+imgClass);
 			}
@@ -1723,7 +1726,10 @@ NB_vid = {};
 						tm: time,
 						id: "HtSuA80QTyo"
 				}}).done(function(data){
-					$(imgClass).attr("src", data);  
+					$(imgClass).attr("src", data); 
+					$(imgClass).wrap($('<a>',{
+						href: data
+					}));
 					//console.log(NB_vid.pbHover.imgArr);                    
 				}).fail(function(){
 				console.log("capture failed."); 
@@ -1920,7 +1926,7 @@ NB_vid = {};
 				"tickHTML":tickHTML,
 				"createTickPopover":createTickPopover,
 				"addAllTicks":addAllTicks,
-				"currentHighlightedTick": "none", //changed from "None"
+				"currentHighlightedTick": [], //changed from "None"
 				"currentID": "none",
 				"highlightTick": highlightTick,
 				"highlightTickControl": highlightTickControl,
@@ -2020,13 +2026,7 @@ $(function(){
 	}
 	
 });
-			"currentID": "none",
-				"highlightTick": highlightTick,
-				"highlightTickControl": highlightTickControl,
-				"changeTickCSS":changeTickCSS,
-				"addTickHover":addTickHover,
-				"tickHover":tickHover,
-				"unTickHover":unTickHover,
+ickHover":unTickHover,
 				"tickClick":tickClick,
 		},
 		"pbHover": {
