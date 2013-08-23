@@ -1039,7 +1039,7 @@ NB_vid = {};
 					NB_vid.drag.drag_mouseup = false; 
 					NB_vid.drag.dragCurrentSec = NB_vid.drag.mouseXtoSec(this, e);
 					if($(".commentsView_newComment").css("display") != "none"){
-						NB_vid.drag.showToolTip(NB_vid.drag.dragCurrentSec);
+						//NB_vid.drag.showToolTip(NB_vid.drag.dragCurrentSec);
 						NB_vid.comment.comment_btn();
 						NB_vid.drag.showRangeTick(NB_vid.drag.dragCurrentSec);
 					}
@@ -1142,7 +1142,7 @@ NB_vid = {};
 			$("#rangeTick").css("width", widthStr);
 
 			var currentSec = NB_vid.drag.mouseXtoSec("#dragRangeContainer", e);
-			NB_vid.drag.showToolTip(currentSec);
+			//NB_vid.drag.showToolTip(currentSec);
 
 			if($(".commentsView_newComment").css("display") == "none"){
 				NB_vid.comment.comment_btn();
@@ -1760,27 +1760,25 @@ NB_vid = {};
 
 			}
 		}
-		console.log("Done");
-		console.log(NB_vid.notes.myNotesCommentObj);
+		// console.log(NB_vid.notes.myNotesCommentObj);
 	}
 
 	//Adds the collected comments within myNotesCommentObj to the Modal
 	function addMyComments(){
 		$(".myNotesBody").html("");
-		NB_vid.notes.myNotesCommentObj = [];
 		var html = "";
 		for(var x = 0; x < NB_vid.notes.myNotesCommentObj.length; x++){
-			var imgSrc = getImgSrc(NB_vid.notes.myNotesCommentObj[x].timeSec);
-			var imgHTML = "<img src = '"+ imgSrc + "'/>";
-			console.log(imgSrc);
+			// var imgSrc = getImgSrc(NB_vid.notes.myNotesCommentObj[x].timeSec);
+			// var imgHTML = "<img src = '"+ imgSrc + "'/>";
+			// console.log(imgSrc);
 			var text = NB_vid.notes.myNotesCommentObj[x].text;
 			if(text == "" || text == " "){
 				text = "(No text)";
 			}
-			html += "Time: " + NB_vid.notes.myNotesCommentObj[x].timeStr + "<br><ul><li>" + imgHTML + text + "</li></ul><br>";
+			html += "Time: " + NB_vid.notes.myNotesCommentObj[x].timeStr + "<br><ul><li>" + text + "</li></ul><br>";
 		}
 		$(".myNotesBody").html(html);
-
+		NB_vid.notes.myNotesCommentObj = [];
 	}
 
 	/*
@@ -1990,7 +1988,7 @@ NB_vid = {};
 				"tickHTML":tickHTML,
 				"createTickPopover":createTickPopover,
 				"addAllTicks":addAllTicks,
-				"currentHighlightedTick": "none",
+				"currentHighlightedTick": "none", //changed from "None"
 				"currentID": "none",
 				"highlightTick": highlightTick,
 				"highlightTickControl": highlightTickControl,
