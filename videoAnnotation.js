@@ -1504,14 +1504,12 @@ NB_vid = {};
 	 		var tickID = NB_vid.commentObj[index].ID;
 	 		if(NB_vid.tick.currentID != tickID){ //if the mouse is not hovering over same comment, continue
 				var tickStr = "#tickmark" + tickID;
-				console.log(tickStr);
 				var tickmark = $(tickStr);
 				NB_vid.tick.changeTickCSS(tickmark, "red", "No Change", "1");
 				if(NB_vid.tick.currentHighlightedTick.length != 0){
 					NB_vid.tick.changeTickCSS(NB_vid.tick.currentHighlightedTick, "red", "No Change", ".4");
 				}
 				NB_vid.tick.currentHighlightedTick = tickmark;
-				console.log(NB_vid.tick.currentHighlightedTick, NB_vid.tick.currentHighlightedTick.attr("ID"));
 				NB_vid.tick.currentID = NB_vid.tick.currentHighlightedTick.attr("ID").substr(8, NB_vid.tick.currentHighlightedTick.attr("ID").length-1);
 			}
 		}else{
@@ -1546,7 +1544,7 @@ NB_vid = {};
 
 	//gives the associated comment in the accodrion the correct attributes to act as if the mouse is hovering over it
 	function tickHover(div){
-		var ID = div.id.substr(-1,1);
+		var ID = div.id.substr(8,div.id.length);
 		var index = NB_vid.comment.IDtoIndex(ID);
 		var identifier = "#ui-accordion-accordion-header-" + index;
 		$(identifier).attr("class", "ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-corner-all ui-state-hover");
@@ -1554,7 +1552,7 @@ NB_vid = {};
 
 	//gives the associated comment in the accodrion the correct attributes to act as if the mouse is not hovering over it
 	function unTickHover(div){
-		var ID = div.id.substr(-1,1);
+		var ID = div.id.substr(8,div.id.length);
 		var index = NB_vid.comment.IDtoIndex(ID);
 		var identifier = "#ui-accordion-accordion-header-" + index;
 		$(identifier).attr("class", "ui-accordion-header ui-helper-reset ui-state-default ui-accordion-icons ui-corner-all");
@@ -1588,8 +1586,7 @@ NB_vid = {};
 	function progressBarHover(){
 		$("#progressbar").mouseenter(function(){
 			NB_vid.pbHover.progressbarHovering = true;
-		});
-		$("#progressbar").mouseleave(function(){
+		}).mouseleave(function(){
 			NB_vid.pbHover.progressbarHovering = false;
 		});
 		$("#videoCover").mouseenter(function(){
@@ -1621,7 +1618,7 @@ NB_vid = {};
 				}).fail(function(){
 				console.log("capture failed."); 
 			});
-		}else if(!NB_vid.pbHover.progressbarHovering){
+		}else{
 			NB_vid.drag.hideToolTipDelay("#progressbar");
 		}
 	}
@@ -2022,6 +2019,16 @@ function onYouTubePlayerReady(playerId) {
 
 $(function(){ 
 	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
+		NB_vid.funcLists.jQueryReady[x]();
+	}
+	
+});
+length; x++ ){
+		NB_vid.funcLists.jQueryReady[x]();
+	}
+	
+});
+ar x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
 		NB_vid.funcLists.jQueryReady[x]();
 	}
 	
