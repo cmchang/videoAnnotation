@@ -58,6 +58,7 @@ NB_vid = {};
 			NB_vid.comment.openCommentSyncVideo(); //syncs opening the comments with the video
 			NB_vid.comment.commentAutoScroll(); //Automatically scrolls to correct comment
 			NB_vid.tick.highlightTick();
+			NB_vid.comment.deleteHoverCheck();
 
 			//this makes sure the ticks are only created AFTER ytplayer is created so we can use .getDuration()
 			if(NB_vid.yt.createTicks && ytplayer.getDuration() > 0){ 
@@ -572,6 +573,19 @@ NB_vid = {};
 		NB_vid.commentObj.sort(compare);
 	}
 
+	//This function sorts the commentObj array by the ID so we can figure out the highest ID number
+	function sortCommentObjID(){
+		function compare(a,b) {
+			if (a.ID > b.ID)
+				return -1;
+			if (a.ID < b.ID)
+				return 1;
+		return 0;
+		}
+
+		NB_vid.commentObj.sort(compare);
+	}	
+
 	//Given the array index, this function gets the stored text and wraps it in HTML to be put into accordion
 	//called in addAllCommentHTML(), showNewComment()
 	//html format:
@@ -600,6 +614,7 @@ NB_vid = {};
 		}
 		var deleteCommentBtn = '<button onclick="NB_vid.comment.showDeleteModal(' + NB_vid.commentObj[num].ID + ')" type="button" id = "deleteComment' + NB_vid.commentObj[num].ID + '" class = "btn btn-danger deleteComment" style="float: right"><b>×</b></button>';
 		headerHTML += deleteCommentBtn + "</text>";
+		console.log(num, NB_vid.commentObj[num].ID)
 
 		var contentHTML = "<div>";
 		var userNameHTML = "<span id = userNameHTML><b>" + NB_vid.commentObj[num].userName + "</b></span>&nbsp&nbsp&nbsp"
@@ -667,10 +682,13 @@ NB_vid = {};
 		//$(".deleteComment").hide();
 		$(".ui-accordion-header").mouseenter(function(){
 			var deleteNum = $(this).children(".deleteComment").attr("id");
+			// console.log("deleteNum", deleteNum)
 			var commentNum = deleteNum.slice(13, deleteNum.length);
+			// console.log("commentNumb", commentNum)
 			for (var i = 0; i < NB_vid.commentObj.length; i++){
 				if (NB_vid.commentObj[i].ID == parseInt(commentNum)){
 					if (NB_vid.commentObj[i].userName == NB_vid.user.yourUserName){
+						// console.log(NB_vid.commentObj[i].userName, NB_vid.user.yourUserName);
 						$("#deleteComment" + commentNum).css("opacity", "1");
 						$("#deleteComment" + commentNum).show();
 					}
@@ -772,6 +790,8 @@ NB_vid = {};
 	//Called when the submit button is pushed
 	function submitNewComment(){
 		NB_vid.comment.normalSizeCommentHolder();
+		NB_vid.comment.sortCommentObjID(); //Necessary so we can get the current highest commentID
+		var ID = NB_vid.commentObj[0].ID + 1;
 		var text = $(".newCommentTextbox").val();
 		var type = $('#comment_type').find(":selected").text();
 		var viewer = $('#comment_viewer').find(":selected").text();
@@ -787,7 +807,7 @@ NB_vid = {};
 			parseTimeEnd = NB_vid.yt.calculateTime_stringToNum(timeEndStr);
 		}
 		commentObj.push({ "drawArr": NB_vid.draw.extractRectInfo(),
-							"ID": NB_vid.commentObj.length,
+							"ID": ID, //issue: if comments are deleted, there can be repeat in IDs
 							"text" : text,
 							"timeEndSec": timeEnd,
 							"timeEndStr": timeEndStr,
@@ -1826,6 +1846,7 @@ NB_vid = {};
 				"setup_commentDisplay":setup_commentDisplay,
 				"setup_commentDisplay_filtered":setup_commentDisplay_filtered,
 				"sortCommentObj":sortCommentObj,
+				"sortCommentObjID": sortCommentObjID,
 				"extractCommentHTML":extractCommentHTML,
 				"showDeleteModal":showDeleteModal,
 				"deleteComment":deleteComment,
@@ -1991,9 +2012,6 @@ function onYouTubePlayerReady(playerId) {
 		ytplayer.playVideo();
 	    ytplayer.pauseVideo(); //comment this out if using the gatherThumbnailHandler
 	}, 0);
-
-	NB_vid.comment.deleteHoverCheck();
-
 
 	// This causes the updatePlayerInfo function to be called every 250ms to
 	// get fresh data from the player
