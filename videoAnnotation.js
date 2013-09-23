@@ -614,7 +614,6 @@ NB_vid = {};
 		}
 		var deleteCommentBtn = '<button onclick="NB_vid.comment.showDeleteModal(' + NB_vid.commentObj[num].ID + ')" type="button" id = "deleteComment' + NB_vid.commentObj[num].ID + '" class = "btn btn-danger deleteComment" style="float: right"><b>×</b></button>';
 		headerHTML += deleteCommentBtn + "</text>";
-		console.log(num, NB_vid.commentObj[num].ID)
 
 		var contentHTML = "<div>";
 		var userNameHTML = "<span id = userNameHTML><b>" + NB_vid.commentObj[num].userName + "</b></span>&nbsp&nbsp&nbsp"
@@ -679,16 +678,13 @@ NB_vid = {};
 	// When hovering over an accordion header, checks if you were the user that created that comment
 	// If you are, then a delete button is shown
 	function deleteHoverCheck(){
-		//$(".deleteComment").hide();
 		$(".ui-accordion-header").mouseenter(function(){
 			var deleteNum = $(this).children(".deleteComment").attr("id");
-			// console.log("deleteNum", deleteNum)
 			var commentNum = deleteNum.slice(13, deleteNum.length);
-			// console.log("commentNumb", commentNum)
 			for (var i = 0; i < NB_vid.commentObj.length; i++){
 				if (NB_vid.commentObj[i].ID == parseInt(commentNum)){
 					if (NB_vid.commentObj[i].userName == NB_vid.user.yourUserName){
-						// console.log(NB_vid.commentObj[i].userName, NB_vid.user.yourUserName);
+						console.log(deleteNum, commentNum, NB_vid.commentObj[i].userName, NB_vid.user.yourUserName)
 						$("#deleteComment" + commentNum).css("opacity", "1");
 						$("#deleteComment" + commentNum).show();
 					}
@@ -2022,6 +2018,16 @@ function onYouTubePlayerReady(playerId) {
 	ytplayer.addEventListener("onError", "onPlayerError");
 	//Load an initial video into the player
 	ytplayer.cueVideoById("HtSuA80QTyo");
+}
+
+
+$(function(){ 
+	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
+		NB_vid.funcLists.jQueryReady[x]();
+	}
+	
+});
+"HtSuA80QTyo");
 }
 
 
