@@ -684,7 +684,6 @@ NB_vid = {};
 			for (var i = 0; i < NB_vid.commentObj.length; i++){
 				if (NB_vid.commentObj[i].ID == parseInt(commentNum)){
 					if (NB_vid.commentObj[i].userName == NB_vid.user.yourUserName){
-						console.log(deleteNum, commentNum, NB_vid.commentObj[i].userName, NB_vid.user.yourUserName)
 						$("#deleteComment" + commentNum).css("opacity", "1");
 						$("#deleteComment" + commentNum).show();
 					}
@@ -1565,11 +1564,13 @@ NB_vid = {};
 
 	//if a tick is click, open the corresponding comment in the accordion by triggering a click on the comment
 	function tickClick(div){
-		var ID = div.id.substr(-1,1);
+		console.log(div)
+		var ID = div.id.substr(16,div.id.length);
 		var index = NB_vid.comment.IDtoIndex(ID);
 		var identifier = "#ui-accordion-accordion-header-" + index;
 		$(identifier).trigger("click");
 		NB_vid.yt.pauseVideo();
+		console.log(NB_vid.commentObj[index].timeStr)
 		NB_vid.yt.goToTime(NB_vid.commentObj[index].timeSec);
 	}
 
@@ -2024,6 +2025,10 @@ function onYouTubePlayerReady(playerId) {
 $(function(){ 
 	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
 		NB_vid.funcLists.jQueryReady[x]();
+	}
+	
+});
+ady[x]();
 	}
 	
 });
