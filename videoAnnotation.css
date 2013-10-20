@@ -42,20 +42,30 @@
 	background-image: linear-gradient(to bottom, #f9f9f9, #d3d1d1);
 }
 
-.playORpause_holder, .progressbar_container, .muteORunmute_holder{
+.playORpause_holder, .refresh_holder, .progressbar_container, .muteORunmute_holder{
 	display:inline-block;
 }
-.playORpause_holder, .muteORunmute_holder{
+.playORpause_holder, .muteORunmute_holder, .refresh_holder{
 	width: 35px;
+}
+.playORpause:hover, .muteORunmute:hover, .refresh:hover{
+	opacity: 1;
+}
+.playORpause, .muteORunmute, .refresh{
+	opacity: .5;
 }
 
 .muteORunmute_holder{
 	margin-left: 4px;
 }
 
+.progressbar_container, #dragRangeContainer, .tickmark_holder{
+	width: 610px;
+}
+	
+
 .progressbar_container{
 	position:relative;
-	width: 660px;
 	height: 10px;
 	top: 8px;
 	margin-bottom: 13px;
@@ -72,7 +82,6 @@
 	opacity: .7;
 	border: solid 1px #B5AF9F;
 	border-bottom: none;
-	/*overflow: hidden;*/
 
 }
 
@@ -87,7 +96,6 @@
 
 #dragRangeContainer{
 	position: absolute;
-	width: 660px;
 	height:16px;
 	background: white;
 	border-top-right-radius: 5px;
@@ -114,7 +122,6 @@
 }
 .tickmark_holder{
 	position: relative;
-	width: 660px;
 	height: 8px;
 	margin-bottom: 6px;
 	background: white;
