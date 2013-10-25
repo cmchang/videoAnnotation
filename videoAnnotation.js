@@ -1334,6 +1334,13 @@ NB_vid = {};
 	/*
 	 *	7. Draw Rectangle-related Code
 	 */
+ 
+	 //Call this function in jQueryReady so that the rectangle can be draggable and resizeable
+	 function rectUIfeatures(){
+	 	$("#drawnRect").draggable();
+	 	$("#drawnRect").resizable()
+
+	 }
 
 	//Pause the video, make the rectangle visible
 	function showRect(){
@@ -1353,10 +1360,16 @@ NB_vid = {};
 	//this function is the mousehandler for drawing the rectangle
 	function drawRectOn(){
 		$("#videoCover").mousedown(function(e){
-			NB_vid.draw.draw_mouseup = false;
-			NB_vid.draw.resetRectCSS();
-			NB_vid.draw.startDrawX = NB_vid.tick.mouseX - NB_vid.draw.videoCoverOffsetX();
-			NB_vid.draw.startDrawY = NB_vid.tick.mouseY - NB_vid.draw.videoCoverOffsetY();
+			if($("#drawnRect").css("display") == "none"){ //if no rectangle is displayed, clicking/dragging will create a new rect
+				NB_vid.draw.draw_mouseup = false;
+				NB_vid.draw.resetRectCSS();
+				NB_vid.draw.startDrawX = NB_vid.tick.mouseX - NB_vid.draw.videoCoverOffsetX();
+				NB_vid.draw.startDrawY = NB_vid.tick.mouseY - NB_vid.draw.videoCoverOffsetY();
+			}else{ //a rectangle is already visible: if rectangle is clicked, it can be dragged
+
+
+			}
+			
 			
 		});
 		$("#videoCover").mouseup(function(e){
@@ -1410,7 +1423,6 @@ NB_vid = {};
 		if (left != "None"){
 			var leftStr = left.toString() + "px";
 			$("#drawnRect").css("left", leftStr);
-			console.log(leftStr)
 		}
 		if (top != "None"){
 			var topStr = top.toString() + "px";
@@ -1453,6 +1465,11 @@ NB_vid = {};
 		}else{
 			return {"none": true}; //this used to return "None", let's hope for no bugs
 		}
+	}
+
+	//This function allows the rectangle to be draggable and is called when the rectangle is clicked
+	function dragRect(){
+
 	}
 	/*
 	 *	8. Tick-related code
@@ -1937,6 +1954,7 @@ NB_vid = {};
 
 		},
 		"draw": {
+				"rectUIfeatures":rectUIfeatures, 
 				"showRect":showRect,
 				"startDrawX": 0, //relative to the video cover
 				"startDrawY": 0, //relative to the video cover
@@ -2016,7 +2034,8 @@ NB_vid = {};
 										NB_vid.zoom.zoomDrag,
 										NB_vid.drag.dragRangeOn,
 										NB_vid.zoom.zoomRangeOn,
-										NB_vid.pbHover.progressBarHover]
+										NB_vid.pbHover.progressBarHover,
+										NB_vid.draw.rectUIfeatures]
 						};
 						
 })();
