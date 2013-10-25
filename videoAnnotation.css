@@ -33,13 +33,14 @@
 }
 
 #drawnRectClose{
-	padding: 5px;
+	margin: 5px;
 	width: 5px;
 	-webkit-user-select: none;
 }
 
 #drawnRectClose:hover{
 	cursor: pointer;
+	text-decoration: underline;
 }
 .videoMenu{
 	max-width: 742px;
