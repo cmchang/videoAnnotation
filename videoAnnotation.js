@@ -1375,13 +1375,23 @@ NB_vid = {};
 			NB_vid.draw.drawWidth = NB_vid.tick.mouseX - NB_vid.draw.startDrawX - NB_vid.draw.videoCoverOffsetX();
 			NB_vid.draw.drawHeight = NB_vid.tick.mouseY - NB_vid.draw.startDrawY - NB_vid.draw.videoCoverOffsetY();
 
-			if(NB_vid.draw.drawWidth > 2 || NB_vid.draw.drawHeight > 2){
+			if(NB_vid.draw.drawWidth > 2){ //dragging to the right relative to the initial click
 				NB_vid.draw.showRect();
-				var widthStr = NB_vid.draw.drawWidth.toString() + "px";
-				var heightStr = NB_vid.draw.drawHeight.toString() + "px";
-				$("#drawnRect").css("width", widthStr);
-				$("#drawnRect").css("height", heightStr);
+				NB_vid.draw.changeRectCSS("None", "None", NB_vid.draw.drawWidth, "None");
+			}else if(NB_vid.draw.drawWidth < -2){ //dragging to the left relative to the initial click
+				NB_vid.draw.showRect();
+				NB_vid.draw.changeRectCSS(NB_vid.draw.startDrawX + NB_vid.draw.drawWidth, "None", -1*NB_vid.draw.drawWidth, "None");
+				console.log(NB_vid.draw.startDrawX + NB_vid.draw.drawWidth, -1*NB_vid.draw.drawWidth)
 			}
+
+			if(NB_vid.draw.drawHeight > 2){ //dragging downward relative to the initial click
+				NB_vid.draw.showRect();
+				NB_vid.draw.changeRectCSS("None", "None", "None", NB_vid.draw.drawHeight);
+			}else if(NB_vid.draw.drawHeight < -2){ //dragging to the left relative to the initial click
+				NB_vid.draw.showRect();
+				NB_vid.draw.changeRectCSS("None", NB_vid.draw.startDrawY + NB_vid.draw.drawHeight, "None", -1*NB_vid.draw.drawHeight);
+			}
+			// console.log(NB_vid.draw.drawWidth, $("#drawnRect").css("left"))
 		}	
 	}
 
@@ -1400,6 +1410,7 @@ NB_vid = {};
 		if (left != "None"){
 			var leftStr = left.toString() + "px";
 			$("#drawnRect").css("left", leftStr);
+			console.log(leftStr)
 		}
 		if (top != "None"){
 			var topStr = top.toString() + "px";
@@ -1433,8 +1444,12 @@ NB_vid = {};
 
 	//This functions gets all the informatino from the rectangle that needs to be stored in the commentObj
 	function extractRectInfo(){
-		if (NB_vid.draw.drawWidth > 0){
-			return {"posX": NB_vid.draw.startDrawX, "posY":NB_vid.draw.startDrawY,"width": NB_vid.draw.drawWidth, "height": NB_vid.draw.drawHeight, "none":false};
+		if (NB_vid.draw.drawWidth >= 2 || NB_vid.draw.drawWidth <= -2){
+			return {"posX": parseInt($("#drawnRect").css("left").substr(0, $("#drawnRect").css("left").length-2)), 
+					"posY": parseInt($("#drawnRect").css("top").substr(0, $("#drawnRect").css("left").length-2)),
+					"width": parseInt($("#drawnRect").css("width").substr(0, $("#drawnRect").css("width").length-2)), 
+					"height": parseInt($("#drawnRect").css("height").substr(0, $("#drawnRect").css("height").length-2)), 
+					"none":false};
 		}else{
 			return {"none": true}; //this used to return "None", let's hope for no bugs
 		}
