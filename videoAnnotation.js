@@ -736,6 +736,7 @@ NB_vid = {};
 		NB_vid.yt.goToTime(NB_vid.commentObj[index].timeSec);
 		if(NB_vid.commentObj[index].drawArr.none == false){
 			NB_vid.draw.changeRectCSS(NB_vid.commentObj[index].drawArr.posX, NB_vid.commentObj[index].drawArr.posY, NB_vid.commentObj[index].drawArr.width, NB_vid.commentObj[index].drawArr.height);
+			NB_vid.draw.disableRectUIfeatures();
 			$("#drawnRect").show();
 		}else{
 			NB_vid.draw.hideDrawnRect();
@@ -1336,11 +1337,17 @@ NB_vid = {};
 	 */
  
 	 //Call this function in jQueryReady so that the rectangle can be draggable and resizeable
-	 function rectUIfeatures(){
+	 function enableRectUIfeatures(){
 	 	$("#drawnRect").draggable();
 	 	$("#drawnRect").resizable()
-
 	 }
+
+	 //Call this function in jQueryReady so that the rectangle can be draggable and resizeable
+	 function disableRectUIfeatures(){
+	 	$("#drawnRect").draggable("destroy");
+	 	$("#drawnRect").resizable("destroy")
+	 }
+
 
 	//Pause the video, make the rectangle visible
 	function showRect(){
@@ -1827,6 +1834,7 @@ NB_vid = {};
 				NB_vid.comment.hide_addNewComment();
 				NB_vid.keyboard.commentOrCancel = true;
 				NB_vid.zoom.zoomClose();
+				NB_vid.draw.enableRectUIfeatures();
 			}
 		}
 
@@ -1954,7 +1962,8 @@ NB_vid = {};
 
 		},
 		"draw": {
-				"rectUIfeatures":rectUIfeatures, 
+				"enableRectUIfeatures":enableRectUIfeatures,
+				"disableRectUIfeatures":disableRectUIfeatures, 
 				"showRect":showRect,
 				"startDrawX": 0, //relative to the video cover
 				"startDrawY": 0, //relative to the video cover
@@ -2035,7 +2044,7 @@ NB_vid = {};
 										NB_vid.drag.dragRangeOn,
 										NB_vid.zoom.zoomRangeOn,
 										NB_vid.pbHover.progressBarHover,
-										NB_vid.draw.rectUIfeatures]
+										NB_vid.draw.enableRectUIfeatures]
 						};
 						
 })();
