@@ -771,7 +771,6 @@ NB_vid = {};
 		$(".newCommentTextbox").focusout();
 		NB_vid.drag.hideRangeTick();
 		NB_vid.draw.hideDrawnRect();
-
 	}
 
 	//Called when the showing the comment editor to adjust the div height
@@ -1449,6 +1448,7 @@ NB_vid = {};
 	function hideDrawnRect(){
 		$("#drawnRect").hide();
 		NB_vid.draw.resetRectCSS();
+		NB_vid.draw.enableRectUIfeatures();
 	}
 
 	//returns the x offset of the objects containing the videoCover
@@ -1834,7 +1834,6 @@ NB_vid = {};
 				NB_vid.comment.hide_addNewComment();
 				NB_vid.keyboard.commentOrCancel = true;
 				NB_vid.zoom.zoomClose();
-				NB_vid.draw.enableRectUIfeatures();
 			}
 		}
 
@@ -2083,4 +2082,6 @@ $(function(){
 	}
 	
 });
+
+;
 
