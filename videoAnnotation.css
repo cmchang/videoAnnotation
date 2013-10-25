@@ -31,6 +31,16 @@
 	top: 0px;
 	border-radius: 5px;
 }
+
+#drawnRectClose{
+	padding: 5px;
+	width: 5px;
+	-webkit-user-select: none;
+}
+
+#drawnRectClose:hover{
+	cursor: pointer;
+}
 .videoMenu{
 	max-width: 742px;
 	padding: 5px;
@@ -319,5 +329,4 @@
 	margin-left: 5px;
 	z-index: 2;
 	position: absolute;
-}solute;
 }
