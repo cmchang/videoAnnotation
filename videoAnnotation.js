@@ -144,6 +144,17 @@ NB_vid = {};
 		}
 	}
 
+	// called when the playback/"refresh" button is clicked
+	function playback(){
+		var time = ytplayer.getCurrentTime()
+		if (time > 5){
+			goToTime(time - 5);
+		}else{
+			goToTime(0);
+		}
+		
+	}
+
 	// called when the mute/unmute button is clicked
 	// syncs the correct image with the action
 	function muteORunmute(){
@@ -1810,6 +1821,7 @@ NB_vid = {};
 				"setVideoVolume": setVideoVolume,
 				"videoClicked": videoClicked,
 				"playORpause": playORpause,
+				"playback": playback,
 				"muteORunmute": muteORunmute,
 				"playVideo": playVideo,
 				"playVideoBool": false,
@@ -2029,17 +2041,3 @@ $(function(){
 	
 });
 
-dy[x]();
-	}
-	
-});
-"HtSuA80QTyo");
-}
-
-
-$(function(){ 
-	for (var x = 0; x < NB_vid.funcLists.jQueryReady.length; x++ ){
-		NB_vid.funcLists.jQueryReady[x]();
-	}
-	
-});

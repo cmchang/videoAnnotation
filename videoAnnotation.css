@@ -42,16 +42,16 @@
 	background-image: linear-gradient(to bottom, #f9f9f9, #d3d1d1);
 }
 
-.playORpause_holder, .refresh_holder, .progressbar_container, .muteORunmute_holder{
+.playORpause_holder, .playback, .progressbar_container, .muteORunmute_holder{
 	display:inline-block;
 }
-.playORpause_holder, .muteORunmute_holder, .refresh_holder{
+.playORpause_holder, .muteORunmute_holder, .playback{
 	width: 35px;
 }
-.playORpause:hover, .muteORunmute:hover, .refresh:hover{
+.playORpause:hover, .muteORunmute:hover, .playback:hover{
 	opacity: 1;
 }
-.playORpause, .muteORunmute, .refresh{
+.playORpause, .muteORunmute, .playback{
 	opacity: .5;
 }
 
@@ -319,4 +319,5 @@
 	margin-left: 5px;
 	z-index: 2;
 	position: absolute;
+}solute;
 }
